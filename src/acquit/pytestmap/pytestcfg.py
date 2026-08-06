@@ -1,0 +1,150 @@
+"""Static view of pytest configuration.
+
+Mirrors pytest's own precedence without importing pytest: pytest.ini beats
+pyproject.toml [tool.pytest.ini_options] beats tox.ini [pytest] beats
+setup.cfg [tool:pytest]. A file only counts as the config source when it
+actually contains its pytest section.
+"""
+
+import configparser
+import shlex
+import tomllib
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Final
+
+from acquit.errors import AcquitError
+
+DEFAULT_PYTHON_FILES: Final = ("test_*.py", "*_test.py")
+DEFAULT_NORECURSEDIRS: Final = (
+    "*.egg",
+    ".*",
+    "_darcs",
+    "build",
+    "CVS",
+    "dist",
+    "node_modules",
+    "venv",
+    "{arch}",
+)
+
+_LIST_KEYS: Final = ("python_files", "testpaths", "norecursedirs", "pythonpath")
+
+# (filename, ini section); pyproject.toml is handled separately as toml.
+_CANDIDATES: Final = (
+    ("pytest.ini", "pytest"),
+    ("pyproject.toml", ""),
+    ("tox.ini", "pytest"),
+    ("setup.cfg", "tool:pytest"),
+)
+
+
+@dataclass(frozen=True, slots=True)
+class PytestConfig:
+    """Everything acquit needs to know about how pytest is configured."""
+
+    source: str | None
+    python_files: tuple[str, ...]
+    testpaths: tuple[str, ...]
+    norecursedirs: tuple[str, ...]
+    addopts: tuple[str, ...]
+    pythonpath: tuple[str, ...]
+    doctest_modules: bool
+    extra_plugins: tuple[str, ...]
+
+
+def _as_word_list(value: object, key: str, source: str) -> tuple[str, ...]:
+    if isinstance(value, str):
+        return tuple(value.split())
+    if isinstance(value, list) and all(isinstance(item, str) for item in value):
+        return tuple(value)
+    raise AcquitError(f"{source}: {key} must be a string or a list of strings")
+
+
+def _as_addopts(value: object, source: str) -> tuple[str, ...]:
+    if isinstance(value, str):
+        try:
+            return tuple(shlex.split(value))
+        except ValueError as error:
+            raise AcquitError(f"{source}: addopts is not shell-splittable: {error}") from error
+    if isinstance(value, list) and all(isinstance(item, str) for item in value):
+        return tuple(value)
+    raise AcquitError(f"{source}: addopts must be a string or a list of strings")
+
+
+def _extra_plugins(addopts: Sequence[str]) -> tuple[str, ...]:
+    plugins: list[str] = []
+    expecting_value = False
+    for token in addopts:
+        if expecting_value:
+            expecting_value = False
+            if not token.startswith("no:"):
+                plugins.append(token)
+        elif token == "-p":
+            expecting_value = True
+        elif token.startswith("-p") and not token.startswith("-pno:"):
+            plugins.append(token[2:])
+    return tuple(plugins)
+
+
+def _build_config(source: str | None, raw: Mapping[str, object]) -> PytestConfig:
+    lists = {key: _as_word_list(raw[key], key, source or "?") for key in _LIST_KEYS if key in raw}
+    addopts = _as_addopts(raw["addopts"], source or "?") if "addopts" in raw else ()
+    return PytestConfig(
+        source=source,
+        python_files=lists.get("python_files", DEFAULT_PYTHON_FILES),
+        testpaths=lists.get("testpaths", ()),
+        norecursedirs=lists.get("norecursedirs", DEFAULT_NORECURSEDIRS),
+        addopts=addopts,
+        pythonpath=lists.get("pythonpath", ()),
+        doctest_modules="--doctest-modules" in addopts,
+        extra_plugins=_extra_plugins(addopts),
+    )
+
+
+def _read_ini_section(path: Path, section: str) -> Mapping[str, object] | None:
+    parser = configparser.ConfigParser(interpolation=None)
+    try:
+        parser.read_string(path.read_text(encoding="utf-8"), source=path.name)
+    except (configparser.Error, UnicodeDecodeError) as error:
+        raise AcquitError(f"{path.name}: unreadable ini file: {error}") from error
+    if not parser.has_section(section):
+        return None
+    return dict(parser[section])
+
+
+def _read_toml_section(path: Path) -> Mapping[str, object] | None:
+    try:
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+    except (tomllib.TOMLDecodeError, UnicodeDecodeError) as error:
+        raise AcquitError(f"{path.name}: unreadable toml file: {error}") from error
+    tool = data.get("tool")
+    if not isinstance(tool, dict):
+        return None
+    pytest_table = tool.get("pytest")
+    if not isinstance(pytest_table, dict):
+        return None
+    ini_options = pytest_table.get("ini_options")
+    if not isinstance(ini_options, dict):
+        return None
+    return {str(key): value for key, value in ini_options.items()}
+
+
+def load_pytest_config(repo_root: Path) -> PytestConfig:
+    """Locate and statically parse the winning pytest config under repo_root.
+
+    This is the only function in the pytest mapping layer that touches the
+    filesystem. Returns all-defaults with source=None when no config exists.
+    """
+    for filename, section in _CANDIDATES:
+        path = repo_root / filename
+        if not path.is_file():
+            continue
+        if filename == "pyproject.toml":
+            raw = _read_toml_section(path)
+        else:
+            raw = _read_ini_section(path, section)
+        if raw is not None:
+            return _build_config(filename, raw)
+    return _build_config(None, {})
