@@ -52,13 +52,18 @@ jobs:
             study-mirror-${{ inputs.repo }}-
       - run: uv sync --frozen
       - name: Replay shard
-        run: >
-          uv run acquit-study run
-          --manifest study/manifests/${{ inputs.repo }}.json
-          --workdir workdir
-          --shard ${{ matrix.shard }}/${{ inputs.shards }}
-          --constraints study/constraints/${{ inputs.repo }}.txt
-          --results-dir results-shard
+        run: |
+          CONSTRAINTS="study/constraints/${{ inputs.repo }}.txt"
+          ARGS=()
+          # Constraints are mandatory for the published study; debug manifests
+          # may run without them while the frozen env is still being built.
+          if [ -f "$CONSTRAINTS" ]; then ARGS+=(--constraints "$CONSTRAINTS"); fi
+          uv run acquit-study run \
+            --manifest "study/manifests/${{ inputs.repo }}.json" \
+            --workdir workdir \
+            --shard "${{ matrix.shard }}/${{ inputs.shards }}" \
+            "${ARGS[@]}" \
+            --results-dir results-shard
       - uses: actions/upload-artifact@v4
         if: always()
         with:
