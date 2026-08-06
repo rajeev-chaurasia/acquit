@@ -455,5 +455,8 @@
   "repo_slug": "Textualize/rich",
   "repo_url": "https://github.com/Textualize/rich.git",
   "schema": "acquit/study-manifest-v1",
+  "suite_deps": [
+    "attrs"
+  ],
   "window_months": 18
 }

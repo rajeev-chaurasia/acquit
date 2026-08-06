@@ -294,5 +294,8 @@
   "repo_slug": "pallets/flask",
   "repo_url": "https://github.com/pallets/flask.git",
   "schema": "acquit/study-manifest-v1",
+  "suite_deps": [
+    "pytest<9"
+  ],
   "window_months": 18
 }

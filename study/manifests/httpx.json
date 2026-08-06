@@ -588,5 +588,14 @@
   "repo_slug": "encode/httpx",
   "repo_url": "https://github.com/encode/httpx.git",
   "schema": "acquit/study-manifest-v1",
+  "suite_deps": [
+    "trio",
+    "trustme",
+    "cryptography",
+    "uvicorn",
+    "chardet",
+    "zstandard",
+    "click"
+  ],
   "window_months": 18
 }

@@ -10,7 +10,5 @@ markupsafe==3.0.3
 packaging==26.3
 pluggy==1.6.0
 pygments==2.20.0
-# pytest 9 removed the private _pytest.monkeypatch notset API; flask shas
-# before PR 6095 fail collection, absorbed by the study exclusion accounting
-pytest==9.1.1
+pytest==8.4.2
 werkzeug==3.1.8
