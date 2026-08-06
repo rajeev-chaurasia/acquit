@@ -75,9 +75,10 @@ def write_all(root: Path, files: dict[str, str]) -> None:
         ({"tox.ini": TOX_INI, "setup.cfg": SETUP_CFG}, "tox.ini", ("gamma_*.py",)),
         ({"setup.cfg": SETUP_CFG}, "setup.cfg", ("delta_*.py",)),
         (
+            # pytest.ini wins by existing, even without a [pytest] section.
             {"pytest.ini": PYTEST_INI_NO_SECTION, "pyproject.toml": PYPROJECT_TOML},
-            "pyproject.toml",
-            ("beta_*.py",),
+            "pytest.ini",
+            DEFAULT_PYTHON_FILES,
         ),
         (
             {"pyproject.toml": PYPROJECT_NO_SECTION, "tox.ini": TOX_INI},

@@ -2,8 +2,8 @@
 
 Mirrors pytest's own precedence without importing pytest: pytest.ini beats
 pyproject.toml [tool.pytest.ini_options] beats tox.ini [pytest] beats
-setup.cfg [tool:pytest]. A file only counts as the config source when it
-actually contains its pytest section.
+setup.cfg [tool:pytest]. pytest.ini wins by existing, matching pytest;
+every other file only counts when it contains its pytest section.
 """
 
 import configparser
@@ -145,6 +145,10 @@ def load_pytest_config(repo_root: Path) -> PytestConfig:
             raw = _read_toml_section(path)
         else:
             raw = _read_ini_section(path, section)
+        if raw is None and filename == "pytest.ini":
+            # pytest treats a pytest.ini as authoritative even without a
+            # [pytest] section; other candidates need their section present.
+            raw = {}
         if raw is not None:
             return _build_config(filename, raw)
     return _build_config(None, {})
