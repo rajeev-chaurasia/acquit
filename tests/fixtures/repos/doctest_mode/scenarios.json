@@ -1,0 +1,9 @@
+[
+  {
+    "name": "any_change_runs_all",
+    "changed": ["mathy.py"],
+    "expect_mode": "run-all",
+    "expect_rules": ["R015"],
+    "expect_skipped": []
+  }
+]

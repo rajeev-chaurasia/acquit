@@ -1,0 +1,91 @@
+{
+  "edges": [
+    [
+      "conftest.py",
+      "ext:pytest",
+      "imports"
+    ],
+    [
+      "tests/sub/conftest.py",
+      "ext:pytest",
+      "imports"
+    ],
+    [
+      "tests/sub/conftest.py",
+      "tower_helpers.py",
+      "imports"
+    ],
+    [
+      "tests/sub/test_deep.py",
+      "conftest.py",
+      "conftest-scope"
+    ],
+    [
+      "tests/sub/test_deep.py",
+      "tests/sub/conftest.py",
+      "conftest-scope"
+    ],
+    [
+      "tests/test_app.py",
+      "appmod.py",
+      "imports"
+    ],
+    [
+      "tests/test_app.py",
+      "conftest.py",
+      "conftest-scope"
+    ],
+    [
+      "tests/test_top.py",
+      "conftest.py",
+      "conftest-scope"
+    ]
+  ],
+  "nodes": [
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "appmod.py",
+      "tainted": false
+    },
+    {
+      "kind": "conftest",
+      "path": "conftest.py",
+      "tainted": false
+    },
+    {
+      "kind": "external",
+      "path": "ext:pytest",
+      "tainted": false
+    },
+    {
+      "kind": "conftest",
+      "path": "tests/sub/conftest.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/sub/test_deep.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_app.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_top.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "tower_helpers.py",
+      "tainted": false
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "edges": [
+    [
+      "ns/beta.py",
+      "ns/alpha.py",
+      "imports"
+    ],
+    [
+      "ns/sub/gamma.py",
+      "ns/beta.py",
+      "imports"
+    ],
+    [
+      "tests/test_alpha.py",
+      "ns/alpha.py",
+      "imports"
+    ],
+    [
+      "tests/test_beta.py",
+      "ns/beta.py",
+      "imports"
+    ],
+    [
+      "tests/test_gamma.py",
+      "ns/sub/gamma.py",
+      "imports"
+    ]
+  ],
+  "nodes": [
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "ns/alpha.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "ns/beta.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "ns/sub/gamma.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_alpha.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_beta.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_gamma.py",
+      "tainted": false
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "name": "change_beta",
+    "changed": ["ns/beta.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["tests/test_beta.py", "tests/test_gamma.py"],
+    "expect_skipped": ["tests/test_alpha.py"]
+  },
+  {
+    "name": "change_gamma",
+    "changed": ["ns/sub/gamma.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["tests/test_gamma.py"],
+    "expect_skipped": ["tests/test_alpha.py", "tests/test_beta.py"]
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "nested_conftest_change",
+    "changed": ["tests/sub/conftest.py"],
+    "expect_mode": "selective",
+    "expect_rules": ["R005", "R014"],
+    "expect_selected_contains": ["tests/sub/test_deep.py"],
+    "expect_skipped": ["tests/test_app.py", "tests/test_top.py"],
+    "expect_always_run": {}
+  },
+  {
+    "name": "root_conftest_change",
+    "changed": ["conftest.py"],
+    "expect_mode": "run-all",
+    "expect_rules": ["R003", "R014"],
+    "expect_skipped": []
+  },
+  {
+    "name": "change_appmod",
+    "changed": ["appmod.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["tests/test_app.py"],
+    "expect_skipped": ["tests/sub/test_deep.py", "tests/test_top.py"]
+  }
+]

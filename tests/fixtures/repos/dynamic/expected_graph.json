@@ -1,0 +1,126 @@
+{
+  "edges": [
+    [
+      "dynloader.py",
+      "ext:importlib",
+      "imports"
+    ],
+    [
+      "lazy.py",
+      "lazy_target.py",
+      "imports"
+    ],
+    [
+      "tests/test_clean.py",
+      "clean.py",
+      "imports"
+    ],
+    [
+      "tests/test_dyn.py",
+      "dynloader.py",
+      "imports"
+    ],
+    [
+      "tests/test_exec.py",
+      "execmod.py",
+      "imports"
+    ],
+    [
+      "tests/test_exec.py",
+      "ext:sys",
+      "imports"
+    ],
+    [
+      "tests/test_lazy.py",
+      "lazy.py",
+      "imports"
+    ],
+    [
+      "tests/test_other.py",
+      "other.py",
+      "imports"
+    ]
+  ],
+  "nodes": [
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "clean.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "dynloader.py",
+      "tainted": true
+    },
+    {
+      "kind": "module",
+      "path": "exec_target.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "execmod.py",
+      "tainted": true
+    },
+    {
+      "kind": "external",
+      "path": "ext:importlib",
+      "tainted": false
+    },
+    {
+      "kind": "external",
+      "path": "ext:sys",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "lazy.py",
+      "tainted": true
+    },
+    {
+      "kind": "module",
+      "path": "lazy_target.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "other.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "plugins_extra.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_clean.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_dyn.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_exec.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_lazy.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_other.py",
+      "tainted": false
+    }
+  ]
+}

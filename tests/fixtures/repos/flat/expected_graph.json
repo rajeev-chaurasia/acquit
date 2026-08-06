@@ -1,0 +1,41 @@
+{
+  "edges": [
+    [
+      "test_calc.py",
+      "calc.py",
+      "imports"
+    ],
+    [
+      "test_textutil.py",
+      "textutil.py",
+      "imports"
+    ]
+  ],
+  "nodes": [
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "calc.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "test_calc.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "test_textutil.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "textutil.py",
+      "tainted": false
+    }
+  ]
+}

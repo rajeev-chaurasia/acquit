@@ -1,0 +1,18 @@
+[
+  {
+    "name": "change_calc",
+    "changed": ["calc.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_calc.py"],
+    "expect_skipped": ["test_textutil.py"]
+  },
+  {
+    "name": "change_test_file",
+    "changed": ["test_calc.py"],
+    "expect_mode": "selective",
+    "expect_rules": ["R014"],
+    "expect_selected_contains": ["test_calc.py"],
+    "expect_skipped": ["test_textutil.py"]
+  }
+]

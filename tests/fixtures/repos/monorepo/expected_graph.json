@@ -1,0 +1,91 @@
+{
+  "edges": [
+    [
+      "libb/client.py",
+      "liba/__init__.py",
+      "imports"
+    ],
+    [
+      "libb/client.py",
+      "liba/api.py",
+      "imports"
+    ],
+    [
+      "tests_a/test_api.py",
+      "liba/__init__.py",
+      "imports"
+    ],
+    [
+      "tests_a/test_api.py",
+      "liba/api.py",
+      "imports"
+    ],
+    [
+      "tests_b/test_client.py",
+      "libb/__init__.py",
+      "imports"
+    ],
+    [
+      "tests_b/test_client.py",
+      "libb/client.py",
+      "imports"
+    ],
+    [
+      "tests_b/test_util.py",
+      "libb/__init__.py",
+      "imports"
+    ],
+    [
+      "tests_b/test_util.py",
+      "libb/util.py",
+      "imports"
+    ]
+  ],
+  "nodes": [
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "liba/__init__.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "liba/api.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "libb/__init__.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "libb/client.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "libb/util.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests_a/test_api.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests_b/test_client.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests_b/test_util.py",
+      "tainted": false
+    }
+  ]
+}

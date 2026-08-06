@@ -1,0 +1,17 @@
+[
+  {
+    "name": "change_core",
+    "changed": ["src/pkg/core.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["tests/test_util.py"],
+    "expect_skipped": ["tests/test_textops.py"]
+  },
+  {
+    "name": "manifest_trap",
+    "changed": ["pyproject.toml"],
+    "expect_mode": "run-all",
+    "expect_rules": ["R002"],
+    "expect_skipped": []
+  }
+]

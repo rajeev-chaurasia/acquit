@@ -1,0 +1,26 @@
+[
+  {
+    "name": "cross_package_impact",
+    "changed": ["liba/api.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["tests_a/test_api.py", "tests_b/test_client.py"],
+    "expect_skipped": ["tests_b/test_util.py"]
+  },
+  {
+    "name": "change_libb_util",
+    "changed": ["libb/util.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["tests_b/test_util.py"],
+    "expect_skipped": ["tests_a/test_api.py", "tests_b/test_client.py"]
+  },
+  {
+    "name": "delete_util_and_its_test",
+    "changed": ["delete:libb/util.py", "delete:tests_b/test_util.py"],
+    "expect_mode": "selective",
+    "expect_rules": ["R014"],
+    "expect_selected_contains": [],
+    "expect_skipped": ["tests_a/test_api.py", "tests_b/test_client.py"]
+  }
+]

@@ -1,0 +1,76 @@
+{
+  "edges": [
+    [
+      "src/pkg/util.py",
+      "src/pkg/__init__.py",
+      "imports"
+    ],
+    [
+      "src/pkg/util.py",
+      "src/pkg/core.py",
+      "imports"
+    ],
+    [
+      "tests/test_textops.py",
+      "src/pkg/__init__.py",
+      "imports"
+    ],
+    [
+      "tests/test_textops.py",
+      "src/pkg/textops.py",
+      "imports"
+    ],
+    [
+      "tests/test_util.py",
+      "src/pkg/__init__.py",
+      "imports"
+    ],
+    [
+      "tests/test_util.py",
+      "src/pkg/util.py",
+      "imports"
+    ]
+  ],
+  "nodes": [
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "tainted": false
+    },
+    {
+      "kind": "config",
+      "path": "pyproject.toml",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "src/pkg/__init__.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "src/pkg/core.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "src/pkg/textops.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "src/pkg/util.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_textops.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_util.py",
+      "tainted": false
+    }
+  ]
+}

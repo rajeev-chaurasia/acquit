@@ -1,0 +1,31 @@
+{
+  "edges": [
+    [
+      "test_mathy.py",
+      "mathy.py",
+      "imports"
+    ]
+  ],
+  "nodes": [
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "mathy.py",
+      "tainted": false
+    },
+    {
+      "kind": "config",
+      "path": "pytest.ini",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "test_mathy.py",
+      "tainted": false
+    }
+  ]
+}
