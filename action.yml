@@ -1,0 +1,56 @@
+name: "Acquit"
+description: "Provably skip unaffected pytest tests on every PR. Static analysis, fail-closed, with evidence for every skip."
+branding:
+  icon: "fast-forward"
+  color: "blue"
+
+inputs:
+  base-ref:
+    description: "Base ref to diff against. Defaults to the PR base."
+    default: ""
+  acquit-version:
+    description: "Version of the acquit package to run."
+    default: "0.0.1"
+  working-directory:
+    description: "Directory containing the project to analyze."
+    default: "."
+
+outputs:
+  mode:
+    description: "Selection mode: run-all or selective."
+    value: ${{ steps.select.outputs.mode }}
+  report-file:
+    description: "Path to the report JSON."
+    value: ${{ steps.select.outputs.report }}
+  selection-file:
+    description: "Path to the selection JSON consumed by the pytest plugin."
+    value: ${{ steps.select.outputs.selection }}
+
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@v6
+
+    - id: select
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        BASE_REF: ${{ inputs.base-ref != '' && inputs.base-ref || github.base_ref }}
+      run: |
+        set -u
+        REPORT="$PWD/acquit-report.json"
+        SELECTION="$PWD/acquit-selection.json"
+        if ! uvx --from "acquit==${{ inputs.acquit-version }}" acquit select \
+            --base "origin/${BASE_REF:-main}" \
+            --report "$REPORT" --selection "$SELECTION"; then
+          # Fail closed: a broken tool must never reduce the test run.
+          printf '{"schema":"acquit/selection-v1","mode":"run-all","skip":[],"graph_hash":null}\n' > "$SELECTION"
+          printf '{"schema":"acquit/report-v1","decision":{"mode":"run-all"}}\n' > "$REPORT"
+        fi
+        MODE=$(python -c "import json;print(json.load(open('$SELECTION'))['mode'])" 2>/dev/null || echo run-all)
+        echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+        echo "report=$REPORT" >> "$GITHUB_OUTPUT"
+        echo "selection=$SELECTION" >> "$GITHUB_OUTPUT"
+        echo "ACQUIT_SELECTION_FILE=$SELECTION" >> "$GITHUB_ENV"
+        echo "### Acquit" >> "$GITHUB_STEP_SUMMARY"
+        echo "Selection mode: \`$MODE\`" >> "$GITHUB_STEP_SUMMARY"

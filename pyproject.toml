@@ -1,0 +1,62 @@
+[project]
+name = "acquit"
+version = "0.0.1"
+description = "Provably skip unaffected pytest tests on every PR. Static analysis, fail-closed, with evidence for every skip."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Rajeev Chaurasia", email = "Rajeevchaurasia.dev@gmail.com" }]
+keywords = ["testing", "pytest", "ci", "test-impact-analysis", "test-selection", "github-actions"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Pytest",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Testing",
+    "Typing :: Typed",
+]
+dependencies = ["rustworkx>=0.15"]
+
+[project.urls]
+Repository = "https://github.com/rajeev-chaurasia/acquit"
+
+[project.scripts]
+acquit = "acquit.cli:main"
+
+[project.entry-points.pytest11]
+acquit = "acquit.plugin"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "hypothesis>=6.100",
+    "mypy>=1.13",
+    "ruff>=0.8",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+files = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["acquit"]
+branch = true
