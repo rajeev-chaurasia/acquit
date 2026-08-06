@@ -171,15 +171,26 @@ def _venv_python(venv: Path) -> Path:
     return venv / "bin" / "python"
 
 
-def make_venv(worktree: Path, python_version: str, constraints: Path | None) -> Path:
-    """Build the suite venv: the project itself plus pytest, optionally pinned."""
+def install_args(python: Path, suite_deps: Sequence[str], constraints: Path | None) -> list[str]:
+    """Assemble the uv pip install command for one suite venv.
+
+    suite_deps come from the manifest: extra requirements the target's test
+    suite needs just to collect, part of the frozen recipe.
+    """
+    args = ["uv", "pip", "install", "--python", str(python), "-e", ".", "pytest", *suite_deps]
+    if constraints is not None:
+        args += ["--constraints", str(constraints)]
+    return args
+
+
+def make_venv(
+    worktree: Path, python_version: str, suite_deps: Sequence[str], constraints: Path | None
+) -> Path:
+    """Build the suite venv: the project, pytest, and suite deps, optionally pinned."""
     venv = worktree / ".study-venv"
     _checked("venv", ["uv", "venv", "--python", python_version, str(venv)], cwd=worktree)
     python = _venv_python(venv)
-    install = ["uv", "pip", "install", "--python", str(python), "-e", ".", "pytest"]
-    if constraints is not None:
-        install += ["--constraints", str(constraints)]
-    _checked("install", install, cwd=worktree)
+    _checked("install", install_args(python, suite_deps, constraints), cwd=worktree)
     return python
 
 
@@ -356,10 +367,14 @@ def replay_pr(
     head_tree = settings.workdir / f"wt-{pr.number}-head"
     try:
         add_worktree(mirror, pr.base_sha, base_tree)
-        base_python = make_venv(base_tree, manifest.python_version, settings.constraints)
+        base_python = make_venv(
+            base_tree, manifest.python_version, manifest.suite_deps, settings.constraints
+        )
         base_run = run_suite("base-suite", base_tree, base_python, settings.workdir)
         add_worktree(mirror, pr.head_sha, head_tree)
-        head_python = make_venv(head_tree, manifest.python_version, settings.constraints)
+        head_python = make_venv(
+            head_tree, manifest.python_version, manifest.suite_deps, settings.constraints
+        )
         head_run = run_suite("head-suite", head_tree, head_python, settings.workdir)
         select_run = run_acquit(head_tree, pr, settings)
     finally:

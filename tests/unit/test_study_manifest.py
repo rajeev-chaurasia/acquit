@@ -45,6 +45,7 @@ def _manifest() -> Manifest:
         window_months=18,
         prs=tuple(_record(number) for number in (30, 26, 12)),
         excluded=(Exclusion(number=12, reason="base-suite: pytest exited with 2"),),
+        suite_deps=("pytest<9", "attrs"),
     )
 
 
@@ -59,6 +60,33 @@ def test_round_trip_preserves_pr_order() -> None:
     manifest = _manifest()
     rebuilt = manifest_from_dict(json.loads(json.dumps(manifest_to_dict(manifest))))
     assert [pr.number for pr in rebuilt.prs] == [30, 26, 12]
+
+
+def test_round_trip_preserves_suite_deps() -> None:
+    manifest = _manifest()
+    rebuilt = manifest_from_dict(json.loads(json.dumps(manifest_to_dict(manifest))))
+    assert rebuilt.suite_deps == ("pytest<9", "attrs")
+
+
+def test_missing_suite_deps_defaults_to_empty() -> None:
+    # Manifests written before the field existed must still load.
+    data = manifest_to_dict(_manifest())
+    del data["suite_deps"]
+    assert manifest_from_dict(data).suite_deps == ()
+
+
+def test_manifest_rejects_non_list_suite_deps() -> None:
+    data = manifest_to_dict(_manifest())
+    data["suite_deps"] = "pytest<9"
+    with pytest.raises(AcquitError):
+        manifest_from_dict(data)
+
+
+def test_manifest_rejects_non_string_suite_dep_entry() -> None:
+    data = manifest_to_dict(_manifest())
+    data["suite_deps"] = ["attrs", 5]
+    with pytest.raises(AcquitError):
+        manifest_from_dict(data)
 
 
 def test_manifest_rejects_wrong_schema() -> None:

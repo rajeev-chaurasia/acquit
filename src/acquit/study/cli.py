@@ -36,6 +36,13 @@ def _build_parser() -> argparse.ArgumentParser:
     sample.add_argument("--out", required=True, help="manifest output path")
     sample.add_argument("--python-version", default="3.12", help="interpreter for suite venvs")
     sample.add_argument("--constraints", help="constraints file to fingerprint into the manifest")
+    sample.add_argument(
+        "--suite-dep",
+        action="append",
+        dest="suite_deps",
+        metavar="SPEC",
+        help="extra pip requirement the suite needs to collect; repeatable",
+    )
 
     run = subcommands.add_parser("run", help="replay manifest PRs and record per-PR results")
     run.add_argument("--manifest", required=True, help="manifest json path")
@@ -75,6 +82,7 @@ def _run_sample(args: argparse.Namespace) -> int:
         window_months=args.window_months,
         prs=result.prs,
         excluded=(),
+        suite_deps=tuple(str(dep) for dep in args.suite_deps or ()),
     )
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)

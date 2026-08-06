@@ -9,9 +9,9 @@ console script. The study is itself a test: an unsafe skip fails the run.
 ## How one PR is replayed
 
 For each PR in a manifest, the runner checks out the base sha, builds a venv
-(`uv venv` plus `uv pip install -e . pytest`, optionally pinned by a
-constraints file), and runs the full pytest suite with a deterministic
-environment, capturing junit xml. It repeats that at the head sha, then runs
+(`uv venv` plus `uv pip install -e . pytest` plus the manifest's
+`suite_deps`, optionally pinned by a constraints file), and runs the full
+pytest suite with a deterministic environment, capturing junit xml. It repeats that at the head sha, then runs
 `acquit select --base BASE --head HEAD` and `acquit replay` from the current
 acquit installation, capturing the report, selection, and witness documents.
 Outcomes are normalized (parametrize ids stripped, class chains kept) and
@@ -29,6 +29,12 @@ Set GITHUB_TOKEN (or GH_TOKEN) to avoid API rate limits. Sampling lists
 merged PRs newest-first, skips PRs with more than 2000 changed files, and
 never runs anything. All timestamps come from API payloads, so re-sampling
 against unchanged history is stable.
+
+Repeat `--suite-dep` for every extra pip requirement the target's suite
+needs just to collect (for example `--suite-dep "pytest<9"` for a repo
+whose tests import a private API removed in pytest 9, or `--suite-dep trio`
+for a pyproject whose filterwarnings reference it). The deps are recorded
+in the manifest as `suite_deps` and installed into every suite venv.
 
 ## Run one PR locally
 
@@ -74,8 +80,11 @@ nonzero if any PR recorded an unsafe skip or a skipped new test.
 ## Reproducibility contract
 
 - Manifests are committed. They pin the repo, the PR list (numbers and
-  shas), the python version, and the sha256 of the constraints file used.
-  The runner refuses a constraints file whose hash does not match.
+  shas), the python version, the extra `suite_deps` the suites need to
+  collect, and the sha256 of the constraints file used. The runner refuses
+  a constraints file whose hash does not match. `suite_deps` are part of
+  the frozen manifest: changing them changes what every suite venv
+  installs, so a change must come with re-frozen constraints.
 - Constraints (`study/constraints/{repo}.txt`) freeze the dependency set the
   suites run under, so a dependency release cannot change outcomes between
   study runs.

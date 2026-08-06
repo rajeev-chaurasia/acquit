@@ -68,6 +68,9 @@ class Manifest:
     window_months: int
     prs: tuple[PrRecord, ...]
     excluded: tuple[Exclusion, ...]
+    # Extra pip requirements the target's suite needs just to collect, part
+    # of the frozen recipe alongside the constraints file.
+    suite_deps: tuple[str, ...] = ()
 
 
 def sha256_of_file(path: Path) -> str:
@@ -82,6 +85,7 @@ def manifest_to_dict(manifest: Manifest) -> dict[str, Any]:
         "python_version": manifest.python_version,
         "constraints_sha256": manifest.constraints_sha256,
         "window_months": manifest.window_months,
+        "suite_deps": list(manifest.suite_deps),
         "prs": [
             {
                 "number": pr.number,
@@ -147,6 +151,15 @@ def manifest_from_dict(data: Mapping[str, Any]) -> Manifest:
                 reason=_field_str(entry, "reason", where),
             )
         )
+    # Older manifests predate suite_deps; a missing key means none are needed.
+    deps_raw = data.get("suite_deps", [])
+    if not isinstance(deps_raw, list):
+        raise AcquitError("manifest: suite_deps must be a list")
+    suite_deps: list[str] = []
+    for dep in deps_raw:
+        if not isinstance(dep, str):
+            raise AcquitError("manifest: every suite_deps entry must be a string")
+        suite_deps.append(dep)
     constraints_raw = data.get("constraints_sha256")
     return Manifest(
         repo_url=_field_str(data, "repo_url", "manifest"),
@@ -156,6 +169,7 @@ def manifest_from_dict(data: Mapping[str, Any]) -> Manifest:
         window_months=_field_int(data, "window_months", "manifest"),
         prs=tuple(prs),
         excluded=tuple(excluded),
+        suite_deps=tuple(suite_deps),
     )
 
 
