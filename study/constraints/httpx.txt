@@ -1,0 +1,14 @@
+# frozen from httpx@63e8853, the newest manifest head sha
+# regenerate per the acquit-study docs in study/README.md
+anyio==4.14.2
+certifi==2026.7.22
+colorama==0.4.6
+h11==0.16.0
+httpcore==1.0.9
+idna==3.18
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+pygments==2.20.0
+pytest==9.1.1
+typing-extensions==4.16.0
