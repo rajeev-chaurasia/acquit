@@ -1,0 +1,25 @@
+# Publishes to PyPI via trusted publishing (OIDC): no tokens exist anywhere.
+# The workflow filename and the release environment are part of the PyPI
+# trusted-publisher registration; renaming either breaks publishing.
+
+name: release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v9.0.0
+      - run: uv build
+      - uses: pypa/gh-action-pypi-publish@release/v1

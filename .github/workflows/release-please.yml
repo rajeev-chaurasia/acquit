@@ -1,0 +1,21 @@
+# Maintains a running release PR from conventional commits. Merging that PR
+# bumps the version, updates the changelog, tags, and creates the GitHub
+# release, which triggers release.yml to publish to PyPI.
+
+name: release-please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          release-type: python
