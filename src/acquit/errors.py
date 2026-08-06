@@ -32,3 +32,7 @@ class PolicyError(AcquitError):
 
 class VcsError(AcquitError):
     """Git information (refs, diffs, blobs) could not be obtained."""
+
+
+class ParseFailure(GraphError):
+    """A source file could not be parsed into an AST."""
