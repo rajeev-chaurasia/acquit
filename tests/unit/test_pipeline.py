@@ -119,6 +119,34 @@ def test_select_working_tree_head_has_no_head_sha(repo_builder: RepoBuilder) -> 
     assert skipped_paths(result.decision) == {"tests/test_other.py"}
 
 
+def test_untracked_files_are_added_changes_in_working_tree_mode(
+    repo_builder: RepoBuilder,
+) -> None:
+    repo_builder.write(
+        {
+            "mod.py": "X = 1\n",
+            "tests/test_mod.py": module_test_source("mod"),
+        }
+    )
+    base = repo_builder.commit("base")
+    repo_builder.write(
+        {
+            "helper.py": "H = 1\n",
+            "tests/test_new.py": module_test_source("helper"),
+        }
+    )
+
+    result = run_select(base, None, repo_builder.path)
+
+    statuses = {change.path: change.status for change in result.changed}
+    assert statuses == {
+        "helper.py": vcs.ChangeStatus.ADDED,
+        "tests/test_new.py": vcs.ChangeStatus.ADDED,
+    }
+    assert selected_paths(result.decision) == {"tests/test_new.py"}
+    assert skipped_paths(result.decision) == {"tests/test_mod.py"}
+
+
 def test_snapshot_of_clean_working_tree_matches_head_snapshot(
     scenario_repo: ScenarioRepo,
 ) -> None:

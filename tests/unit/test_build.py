@@ -181,6 +181,24 @@ def test_conftest_plugin_edges() -> None:
     }
 
 
+def test_test_module_plugin_edges() -> None:
+    declaration = "pytest_plugins = ['app.plug', 'app.nope', 'celery.contrib.pytest']\n"
+    sources = dict(SOURCES) | {"tests/test_plugged.py": declaration}
+    files = sorted([*FILES, "tests/test_plugged.py"])
+    graph = assemble(files=files, sources=sources)
+    from_test = {
+        (src, dst)
+        for src, dst, kind in edge_set(graph)
+        if kind is EdgeKind.PLUGIN and src == "tests/test_plugged.py"
+    }
+    # Resolvable first-party entries become edges; the rest is R006's job.
+    assert from_test == {
+        ("tests/test_plugged.py", "src/app/__init__.py"),
+        ("tests/test_plugged.py", "src/app/plug.py"),
+    }
+    assert "ext:celery" not in graph.nodes
+
+
 def test_extra_plugins_edges_from_every_test() -> None:
     baseline = edge_set(assemble())
     edges = edge_set(assemble(extra_plugins=("app.plug",)))

@@ -16,7 +16,7 @@ from acquit.constants import PARSE_CACHE_DIR
 from acquit.errors import ParseFailure
 from acquit.graph.build import assemble_graph
 from acquit.graph.cache import ParseCache
-from acquit.graph.index import ModuleIndex, build_index, detect_roots
+from acquit.graph.index import ModuleIndex, build_index, detect_roots, pytest_sys_path_roots
 from acquit.graph.model import BuiltGraph, NodeKind
 from acquit.graph.parse import ModuleFacts, parse_module_facts
 from acquit.policy.engine import PolicyContext, PolicyOutcome, evaluate
@@ -131,7 +131,10 @@ def snapshot_tree(
 
     tests = frozenset(discover_test_files(files, pytest_config))
     kinds = {path: classify_file(path, pytest_config, tests) for path in files}
-    index = build_index(py_files, detect_roots(files, acquit_config.roots or None))
+    # Runtime roots come after the configured ones; build_index dedupes.
+    roots = detect_roots(files, acquit_config.roots or None)
+    runtime_roots = pytest_sys_path_roots(files, tests, pytest_config.pythonpath)
+    index = build_index(py_files, (*roots, *runtime_roots))
 
     conftest_facts: dict[str, ConftestFacts] = {}
     for path in files:
@@ -186,6 +189,22 @@ def _classify_changed(
     return out
 
 
+def _with_untracked_additions(
+    changed: tuple[ChangedFile, ...],
+    head_files: tuple[str, ...],
+    base_files: frozenset[str],
+) -> tuple[ChangedFile, ...]:
+    # git diff never mentions untracked files, but the working-tree listing
+    # includes them; anything present at head and absent at base is an add.
+    known = {change.path for change in changed}
+    extra = tuple(
+        ChangedFile(path=path, status=ChangeStatus.ADDED)
+        for path in head_files
+        if path not in base_files and path not in known
+    )
+    return changed + extra
+
+
 def run_select(base: str, head: str | None, cwd: Path) -> SelectResult:
     """Run the full selection pipeline for one diff and return its outcome."""
     repo = vcs.repo_root(cwd)
@@ -194,6 +213,9 @@ def run_select(base: str, head: str | None, cwd: Path) -> SelectResult:
     changed = vcs.changed_files(base, head, repo)
     cache = ParseCache(repo / PARSE_CACHE_DIR)
     head_snapshot = snapshot_tree(head, repo, acquit_config, pytest_config, cache)
+    if head is None:
+        base_files = frozenset(vcs.list_files(base, repo))
+        changed = _with_untracked_additions(changed, head_snapshot.files, base_files)
 
     ctx = PolicyContext(
         changed=changed,

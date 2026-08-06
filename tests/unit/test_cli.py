@@ -220,7 +220,8 @@ def test_analyze_prints_graph_health(
     assert health["edges"] == 4
     assert health["tests"] == 4
     assert health["tainted"] == 0
-    assert health["roots"] == [""]
+    # "" is detected; the test basedirs are pytest's runtime sys.path inserts.
+    assert health["roots"] == ["", "tests", "tests/pkg"]
     assert len(health["graph_hash"]) == 64
 
 

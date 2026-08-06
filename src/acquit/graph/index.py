@@ -6,7 +6,7 @@ collide; every candidate is kept, and the resolver treats each one as a real
 dependency.
 """
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 
 _SRC = "src"
@@ -36,6 +36,37 @@ def detect_roots(files: Sequence[str], explicit: Sequence[str] | None = None) ->
     if any(not path.startswith(_SRC + "/") for path in files) or not roots:
         roots.append("")
     return tuple(roots)
+
+
+def pytest_sys_path_roots(
+    files: Sequence[str], test_files: Iterable[str], pythonpath: Sequence[str]
+) -> tuple[str, ...]:
+    """Import roots pytest itself creates at runtime.
+
+    The default import mode prepends each collected test file's basedir (its
+    first ancestor directory without an __init__.py) to sys.path, so names in
+    those directories are importable bare. The pythonpath ini option prepends
+    its entries too; an entry only counts when the listing shows it exists.
+    """
+    present = frozenset(files)
+    roots = {_pytest_basedir(test, present) for test in test_files}
+    for entry in pythonpath:
+        (clean,) = _normalize_roots((entry,))
+        if clean == "" or any(path.startswith(clean + "/") for path in present):
+            roots.add(clean)
+    return tuple(sorted(roots))
+
+
+def _pytest_basedir(path: str, present: frozenset[str]) -> str:
+    directory = _dirname(path)
+    while directory and f"{directory}/{_INIT}" in present:
+        directory = _dirname(directory)
+    return directory
+
+
+def _dirname(path: str) -> str:
+    head, _, _ = path.rpartition("/")
+    return head
 
 
 def build_index(files: Sequence[str], roots: Sequence[str]) -> ModuleIndex:

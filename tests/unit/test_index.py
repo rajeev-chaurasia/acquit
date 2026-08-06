@@ -1,6 +1,6 @@
 """Unit tests for the dotted-name index and root detection."""
 
-from acquit.graph.index import build_index, detect_roots
+from acquit.graph.index import build_index, detect_roots, pytest_sys_path_roots
 
 
 def test_src_layout_dotted_names() -> None:
@@ -83,3 +83,24 @@ def test_detect_roots_flat_layout() -> None:
 
 def test_detect_roots_no_files() -> None:
     assert detect_roots([]) == ("",)
+
+
+def test_pytest_sys_path_roots_adds_rootless_test_basedirs() -> None:
+    files = ["pkg/__init__.py", "tests/helper.py", "tests/test_a.py", "tests/sub/test_b.py"]
+    roots = pytest_sys_path_roots(files, ["tests/test_a.py", "tests/sub/test_b.py"], ())
+    assert roots == ("tests", "tests/sub")
+
+
+def test_pytest_sys_path_roots_walks_past_init_packages() -> None:
+    files = ["tests/__init__.py", "tests/sub/__init__.py", "tests/sub/test_b.py"]
+    assert pytest_sys_path_roots(files, ["tests/sub/test_b.py"], ()) == ("",)
+
+
+def test_pytest_sys_path_roots_root_level_test() -> None:
+    assert pytest_sys_path_roots(["test_a.py"], ["test_a.py"], ()) == ("",)
+
+
+def test_pytest_sys_path_roots_pythonpath_entries() -> None:
+    files = ["lib/helper.py", "tests/test_a.py"]
+    roots = pytest_sys_path_roots(files, (), ("lib", "./lib/", "missing", "."))
+    assert roots == ("", "lib")

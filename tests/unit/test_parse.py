@@ -84,6 +84,41 @@ def test_dynamic_import_literal_bare_import_module() -> None:
     assert result.dyn_literal_imports == ("y",)
 
 
+def test_dynamic_import_relative_with_literal_package_resolves() -> None:
+    result = facts("import importlib\nimportlib.import_module('.helper', 'pkg')")
+    assert result.dyn_literal_imports == ("pkg.helper",)
+    assert result.suspects == ()
+
+
+def test_dynamic_import_relative_with_package_keyword_resolves() -> None:
+    result = facts("import importlib\nimportlib.import_module('..x', package='pkg.sub')")
+    assert result.dyn_literal_imports == ("pkg.x",)
+    assert result.suspects == ()
+
+
+def test_dynamic_import_relative_without_package_is_suspect() -> None:
+    result = facts("import importlib\nimportlib.import_module('.helper')")
+    assert result.dyn_literal_imports == ()
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
+
+
+def test_dynamic_import_relative_with_non_literal_package_is_suspect() -> None:
+    result = facts("import importlib\nimportlib.import_module('.helper', anchor)")
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
+
+
+def test_dynamic_import_relative_beyond_package_is_suspect() -> None:
+    result = facts("import importlib\nimportlib.import_module('..x', 'pkg')")
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
+
+
+def test_dunder_import_relative_is_suspect() -> None:
+    # __import__'s second argument is globals, never a package anchor.
+    result = facts("__import__('.helper', {'__package__': 'pkg'})")
+    assert result.dyn_literal_imports == ()
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=1),)
+
+
 def test_dynamic_import_non_literal_is_suspect() -> None:
     result = facts("import importlib\nname = compute()\nimportlib.import_module(name)")
     assert result.dyn_literal_imports == ()
@@ -185,6 +220,12 @@ def test_sys_modules_literal_subscript_is_a_literal_dynamic_import() -> None:
 
 def test_sys_modules_non_literal_subscript_is_a_suspect() -> None:
     result = facts("import sys\nmod = sys.modules[name]")
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
+
+
+def test_sys_modules_relative_key_is_a_suspect() -> None:
+    result = facts("import sys\nmod = sys.modules['.helper']")
+    assert result.dyn_literal_imports == ()
     assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
 
 

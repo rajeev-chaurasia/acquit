@@ -14,6 +14,7 @@ from enum import StrEnum
 from acquit.errors import ParseFailure
 
 _DYNAMIC_IMPORT_CALLEES = frozenset({"__import__", "import_module"})
+_IMPORT_MODULE = "import_module"
 _SYS_PATH_METHODS = frozenset({"append", "insert", "extend"})
 _EXEC_EVAL_NAMES = frozenset({"exec", "eval", "compile"})
 _SITE_PATH_CALLEES = frozenset({"addsitedir", "extend_path"})
@@ -57,6 +58,7 @@ class ModuleFacts:
 
     path: str
     imports: tuple[ImportStmt, ...]
+    # Absolute dotted names only; relative literals resolve here or taint.
     dyn_literal_imports: tuple[str, ...]
     suspects: tuple[Suspect, ...]
     defines_module_getattr: bool
@@ -124,6 +126,29 @@ def _string_literals(node: ast.expr | None) -> tuple[str, ...]:
     return ()
 
 
+def _package_argument(node: ast.Call) -> str | None:
+    # import_module(name, package): the anchor a relative name resolves against.
+    value: ast.expr | None = node.args[1] if len(node.args) > 1 else None
+    for keyword in node.keywords:
+        if keyword.arg == "package":
+            value = keyword.value
+    if isinstance(value, ast.Constant) and isinstance(value.value, str):
+        return value.value
+    return None
+
+
+def _resolve_relative_target(name: str, package: str | None) -> str | None:
+    # Mirrors importlib's _resolve_name for fully literal arguments.
+    if not package:
+        return None
+    level = len(name) - len(name.lstrip("."))
+    remainder = name[level:]
+    bits = package.rsplit(".", level - 1)
+    if len(bits) < level:
+        return None
+    return f"{bits[0]}.{remainder}" if remainder else bits[0]
+
+
 def _is_mutation_target(target: ast.expr) -> bool:
     if isinstance(target, ast.Name):
         return target.id == "__path__"
@@ -173,13 +198,15 @@ class _FactsVisitor(ast.NodeVisitor):
         callee = _dotted_name(node.func)
         last = callee.rsplit(".", 1)[-1] if callee is not None else None
         if last in _DYNAMIC_IMPORT_CALLEES:
-            self._record_dynamic_import(node)
+            # Only import_module takes a package anchor for relative names.
+            package = _package_argument(node) if last == _IMPORT_MODULE else None
+            self._record_dynamic_import(node, package)
         elif self._is_sys_path_call(node) or last in _SITE_PATH_CALLEES:
             self._suspect(SuspectKind.SYS_PATH_MUTATION, node)
         elif isinstance(node.func, ast.Name) and node.func.id in _EXEC_EVAL_NAMES:
             self._suspect(SuspectKind.EXEC_EVAL, node)
         elif self._is_sys_modules_access(node):
-            self._record_dynamic_import(node)
+            self._record_dynamic_import(node, None)
         self.generic_visit(node)
 
     @staticmethod
@@ -194,18 +221,32 @@ class _FactsVisitor(ast.NodeVisitor):
     def visit_Subscript(self, node: ast.Subscript) -> None:
         # Reading sys.modules acquires a module just like a dynamic import does.
         if _is_sys_modules(node.value):
-            if isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, str):
-                self.dyn_literal_imports.append(node.slice.value)
+            key = node.slice
+            if (
+                isinstance(key, ast.Constant)
+                and isinstance(key.value, str)
+                and not key.value.startswith(".")
+            ):
+                self.dyn_literal_imports.append(key.value)
             else:
                 self._suspect(SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, node)
         self.generic_visit(node)
 
-    def _record_dynamic_import(self, node: ast.Call) -> None:
+    def _record_dynamic_import(self, node: ast.Call, package: str | None) -> None:
         first = node.args[0] if node.args else None
-        if isinstance(first, ast.Constant) and isinstance(first.value, str):
-            self.dyn_literal_imports.append(first.value)
-        else:
+        if not (isinstance(first, ast.Constant) and isinstance(first.value, str)):
             self._suspect(SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, node)
+            return
+        target = first.value
+        if target.startswith("."):
+            # A relative name resolves against runtime package state unless
+            # the package anchor is itself a usable literal.
+            resolved = _resolve_relative_target(target, package)
+            if resolved is None:
+                self._suspect(SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, node)
+                return
+            target = resolved
+        self.dyn_literal_imports.append(target)
 
     @staticmethod
     def _is_sys_path_call(node: ast.Call) -> bool:

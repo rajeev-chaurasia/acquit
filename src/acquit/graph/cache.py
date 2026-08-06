@@ -18,7 +18,7 @@ from acquit.graph.parse import ImportStmt, ModuleFacts, Suspect, SuspectKind
 
 # Bump whenever parser semantics change: cached ModuleFacts for an unchanged
 # blob must never outlive the rules that produced them.
-CACHE_FORMAT_VERSION: Final = 2
+CACHE_FORMAT_VERSION: Final = 3
 
 
 def facts_to_dict(facts: ModuleFacts) -> dict[str, Any]:

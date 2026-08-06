@@ -157,6 +157,28 @@ def changed_conftest(ctx: PolicyContext) -> Iterator[Finding]:
         )
 
 
+def _unresolved_first_party_plugins(entries: Iterable[str], index: ModuleIndex) -> Iterator[str]:
+    for entry in entries:
+        # A third-party top level is fine: its code arrives through the
+        # environment, and dependency changes are already caught by R002.
+        if entry.partition(".")[0] not in index.first_party_top_levels:
+            continue
+        if not _resolves(entry, index):
+            yield entry
+
+
+def _unresolved_plugin_finding(path: str, entry: str) -> Finding:
+    return Finding(
+        rule=RuleId.COLLECTION_ALTERING_HOOK,
+        scope=_GLOBAL,
+        subject=path,
+        reason=(
+            f"{path} declares pytest plugin {entry!r}, "
+            "which looks first-party but does not resolve."
+        ),
+    )
+
+
 def collection_altering_hook(ctx: PolicyContext) -> Iterator[Finding]:
     """R006: a conftest that can alter collection makes discovery untrustworthy."""
     for path, facts in ctx.conftest_facts.items():
@@ -175,22 +197,14 @@ def collection_altering_hook(ctx: PolicyContext) -> Iterator[Finding]:
                 subject=path,
                 reason=f"{path} defines {names}, which can change which tests pytest collects.",
             )
-        for entry in facts.pytest_plugins:
-            # A third-party top level is fine: its code arrives through the
-            # environment, and dependency changes are already caught by R002.
-            if entry.partition(".")[0] not in ctx.index.first_party_top_levels:
-                continue
-            if _resolves(entry, ctx.index):
-                continue
-            yield Finding(
-                rule=RuleId.COLLECTION_ALTERING_HOOK,
-                scope=_GLOBAL,
-                subject=path,
-                reason=(
-                    f"{path} declares pytest plugin {entry!r}, "
-                    "which looks first-party but does not resolve."
-                ),
-            )
+        for entry in _unresolved_first_party_plugins(facts.pytest_plugins, ctx.index):
+            yield _unresolved_plugin_finding(path, entry)
+    # pytest_plugins in a test module loads plugins for the whole process.
+    for path, module in ctx.facts.items():
+        if ctx.kinds.get(path) is not NodeKind.TEST:
+            continue
+        for entry in _unresolved_first_party_plugins(module.pytest_plugins_decl, ctx.index):
+            yield _unresolved_plugin_finding(path, entry)
 
 
 def _tainting_suspects(
@@ -217,26 +231,21 @@ def non_literal_dynamic_import(ctx: PolicyContext) -> Iterator[Finding]:
     )
 
 
-def _sys_path_scope(path: str) -> Scope:
-    # A conftest runs before every test below it, so the mutation leaks to
-    # its whole subtree; from the root conftest it leaks everywhere.
-    if path == _CONFTEST:
-        return _GLOBAL
-    if _basename(path) == _CONFTEST:
-        return Scope(ScopeKind.SUBTREE, _dirname(path))
-    return Scope(ScopeKind.CLOSURE_TAINT, path)
-
-
 def sys_path_mutation(ctx: PolicyContext) -> Iterator[Finding]:
-    """R008: mutating sys.path changes how every later import resolves."""
+    """R008: mutating sys.path changes how every later import resolves.
+
+    The scope is global no matter where the mutation lives: one import of the
+    mutating module rewrites sys.path for every later import in the process,
+    including tests that never import it themselves.
+    """
     for path, facts in ctx.facts.items():
         if not any(suspect.kind is SuspectKind.SYS_PATH_MUTATION for suspect in facts.suspects):
             continue
         yield Finding(
             rule=RuleId.SYS_PATH_MUTATION,
-            scope=_sys_path_scope(path),
+            scope=_GLOBAL,
             subject=path,
-            reason=f"{path} mutates sys.path, so import resolution around it cannot be trusted.",
+            reason=f"{path} mutates sys.path, and the mutation is visible process-wide.",
         )
 
 

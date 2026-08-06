@@ -30,7 +30,7 @@ short-circuits, so reports list every reason. Scopes:
 | R005 | changed non-root conftest.py | subtree |
 | R006 | conftest with collection-altering hooks or unresolvable first-party pytest_plugins | global |
 | R007 | non-literal dynamic import (importlib, __import__, non-literal sys.modules access) | closure-taint |
-| R008 | sys.path mutation (escalates to subtree in a conftest, global in the root conftest) | closure-taint |
+| R008 | sys.path mutation | global: the mutation is visible process-wide |
 | R009 | exec, eval, or compile | closure-taint |
 | R010 | file that fails to parse | closure-taint |
 | R011 | import that looks first-party but does not resolve | closure-taint |

@@ -2,21 +2,15 @@
 
 Each reproduction builds a repository where the victim test passes at base and
 fails at head, asserts that ground truth with a real pytest run against the
-head working tree, then asserts the victim was not skipped. The strict xfails
-document open soundness holes: a fix turns them into xpasses, flagging the
-marker for removal.
+head working tree, then asserts the victim was not skipped. Every hole found
+this way (ADV-1 through ADV-6) is fixed; these now guard the fixes.
 """
-
-import pytest
 
 from acquit.pipeline import run_select
 from adversarial.conftest import AdvRepo, buckets
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-1: pytest inserts the test file's directory into sys.path, the index does not",
-)
+# ADV-1: pytest inserts a rootless test file's directory into sys.path.
 def test_import_from_test_directory_without_init(adv_repo: AdvRepo) -> None:
     adv_repo.write(
         {
@@ -36,10 +30,7 @@ def test_import_from_test_directory_without_init(adv_repo: AdvRepo) -> None:
     assert "tests/test_a.py" not in skipped
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-2: the pythonpath ini option is parsed but never becomes an import root",
-)
+# ADV-2: the pythonpath ini option becomes an import root.
 def test_import_through_pythonpath_ini(adv_repo: AdvRepo) -> None:
     adv_repo.write(
         {
@@ -61,10 +52,7 @@ def test_import_through_pythonpath_ini(adv_repo: AdvRepo) -> None:
     assert "tests/test_helper.py" not in skipped
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-3: working-tree diffs miss untracked files that the head snapshot includes",
-)
+# ADV-3: working-tree diffs include untracked files as additions.
 def test_untracked_conftest_invisible_to_working_tree_diff(adv_repo: AdvRepo) -> None:
     adv_repo.write(
         {
@@ -93,10 +81,7 @@ def test_untracked_conftest_invisible_to_working_tree_diff(adv_repo: AdvRepo) ->
     assert "tests/test_alpha.py" not in skipped
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-4: pytest_plugins declared in a test module never becomes a plugin edge",
-)
+# ADV-4: pytest_plugins declared in a test module becomes a plugin edge.
 def test_pytest_plugins_declared_in_test_module(adv_repo: AdvRepo) -> None:
     adv_repo.write(
         {
@@ -123,10 +108,7 @@ def test_pytest_plugins_declared_in_test_module(adv_repo: AdvRepo) -> None:
     assert "test_plug.py" not in skipped
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-5: a literal relative dynamic import resolves to external '' with no taint",
-)
+# ADV-5: a literal relative dynamic import resolves through its package anchor.
 def test_relative_dynamic_import_literal(adv_repo: AdvRepo) -> None:
     adv_repo.write(
         {
@@ -151,10 +133,7 @@ def test_relative_dynamic_import_literal(adv_repo: AdvRepo) -> None:
     assert "test_dyn.py" not in skipped
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-6: a sys.path mutation taints only its importers but leaks process-wide",
-)
+# ADV-6: a sys.path mutation is scoped globally, matching its process-wide leak.
 def test_sys_path_mutation_leaks_across_tests(adv_repo: AdvRepo) -> None:
     adv_repo.write(
         {

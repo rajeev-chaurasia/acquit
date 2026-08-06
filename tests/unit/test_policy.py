@@ -280,6 +280,36 @@ def test_r006_pytest_plugins_resolution(entry: str, files: tuple[str, ...], fire
     assert (RuleId.COLLECTION_ALTERING_HOOK in fired_rules(evaluate(ctx))) is fires
 
 
+@pytest.mark.parametrize(
+    ("entry", "files", "fires"),
+    [
+        ("celery.contrib.pytest", ("mypkg/__init__.py",), False),
+        ("mypkg.plugins", ("mypkg/__init__.py", "mypkg/plugins.py"), False),
+        ("mypkg.plugins", ("mypkg/__init__.py",), True),
+    ],
+)
+def test_r006_pytest_plugins_in_test_module(
+    entry: str, files: tuple[str, ...], fires: bool
+) -> None:
+    path = "tests/test_x.py"
+    ctx = make_ctx(
+        kinds={path: NodeKind.TEST},
+        facts={path: facts_for(path, f"pytest_plugins = [{entry!r}]\n")},
+        files=files,
+    )
+    assert (RuleId.COLLECTION_ALTERING_HOOK in fired_rules(evaluate(ctx))) is fires
+
+
+def test_r006_pytest_plugins_in_plain_module_is_silent() -> None:
+    path = "pkg/mod.py"
+    ctx = make_ctx(
+        kinds={path: NodeKind.MODULE},
+        facts={path: facts_for(path, "pytest_plugins = ['mypkg.plugins']\n")},
+        files=("mypkg/__init__.py",),
+    )
+    assert RuleId.COLLECTION_ALTERING_HOOK not in fired_rules(evaluate(ctx))
+
+
 # R007 NON_LITERAL_DYNAMIC_IMPORT
 
 
@@ -299,19 +329,17 @@ def test_r007_literal_dynamic_import_is_silent() -> None:
 # R008 SYS_PATH_MUTATION
 
 
+# The mutation leaks process-wide however it is imported, so every location
+# gets the global scope: conftests and plain modules alike.
 @pytest.mark.parametrize(
-    ("path", "expected_scope"),
-    [
-        ("conftest.py", Scope(ScopeKind.GLOBAL)),
-        ("tests/unit/conftest.py", Scope(ScopeKind.SUBTREE, "tests/unit")),
-        ("pkg/paths.py", Scope(ScopeKind.CLOSURE_TAINT, "pkg/paths.py")),
-    ],
+    "path",
+    ["conftest.py", "tests/unit/conftest.py", "pkg/paths.py"],
 )
-def test_r008_scope_escalates_for_conftests(path: str, expected_scope: Scope) -> None:
+def test_r008_scope_is_global_everywhere(path: str) -> None:
     source = "import sys\n\nsys.path.append('vendored')\n"
     ctx = make_ctx(facts={path: facts_for(path, source)})
     (finding,) = findings_for(evaluate(ctx), RuleId.SYS_PATH_MUTATION)
-    assert finding.scope == expected_scope
+    assert finding.scope == Scope(ScopeKind.GLOBAL)
     assert finding.subject == path
 
 

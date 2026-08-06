@@ -32,6 +32,15 @@ verified is a bug in acquit, not a judgment call.
   Skipping test A can, in principle, change coupled test B's outcome. Suites
   that violate A4 are already at the mercy of pytest ordering and xdist.
 
+## Known limitations
+
+- The head commit vouches for itself through acquit's own configuration.
+  assume_inert globs and waivers are read from .acquit.toml (or
+  [tool.acquit] in pyproject.toml) at head, so a PR can add a waiver or an
+  assume_inert entry in the same diff as the change it excuses, and acquit
+  honors it. Reviewers should treat .acquit.toml diffs as security-relevant,
+  the same way they treat CI workflow changes.
+
 ## What this is not
 
 - The graph over-approximates on purpose: conditional imports, TYPE_CHECKING

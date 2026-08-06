@@ -74,6 +74,14 @@ def assemble_graph(
         for plugin in conftest.pytest_plugins:
             for target in _plugin_targets(plugin, index):
                 acc.edges.add(Edge(src=conftest.path, dst=target, kind=EdgeKind.PLUGIN))
+    # pytest honors pytest_plugins declared in test modules too.
+    for test in tests:
+        test_facts = facts.get(test)
+        if test_facts is None:
+            continue
+        for plugin in test_facts.pytest_plugins_decl:
+            for target in _plugin_targets(plugin, index):
+                acc.edges.add(Edge(src=test, dst=target, kind=EdgeKind.PLUGIN))
     for plugin in pytest_config.extra_plugins:
         for target in _plugin_targets(plugin, index):
             for test in tests:
