@@ -1,0 +1,16 @@
+# frozen from flask@5ce121d, the newest manifest head sha
+# regenerate per the acquit-study docs in study/README.md
+blinker==1.9.0
+click==8.4.2
+colorama==0.4.6
+iniconfig==2.3.0
+itsdangerous==2.2.0
+jinja2==3.1.6
+markupsafe==3.0.3
+packaging==26.3
+pluggy==1.6.0
+pygments==2.20.0
+# pytest 9 removed the private _pytest.monkeypatch notset API; flask shas
+# before PR 6095 fail collection, absorbed by the study exclusion accounting
+pytest==9.1.1
+werkzeug==3.1.8
