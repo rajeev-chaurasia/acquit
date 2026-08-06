@@ -21,6 +21,8 @@ from acquit.constants import (
 )
 from acquit.errors import AcquitError, ExitCode
 from acquit.explain import explain_lines
+from acquit.gh.comment import run_comment
+from acquit.gh.outputs import run_ci_outputs
 from acquit.graph.model import NodeKind
 from acquit.pipeline import SelectResult, run_select, snapshot_working_tree
 from acquit.policy.model import Finding, RuleId, Scope, ScopeKind
@@ -61,6 +63,20 @@ def _build_parser() -> argparse.ArgumentParser:
     replay.add_argument("report", help="path to an acquit report file")
     replay.add_argument("--witnesses", default=DEFAULT_WITNESSES_FILE, help="witnesses file path")
     replay.add_argument("--selection", help="selection file to cross-check against the report")
+
+    comment = subcommands.add_parser(
+        "comment", help="post or update the sticky PR comment for a report; never fails CI"
+    )
+    comment.add_argument("report", help="path to an acquit report file")
+    comment.add_argument("--pr", type=int, help="pull request number; otherwise from GITHUB_REF")
+
+    # A separate subcommand rather than a comment flag: the action calls it on
+    # every run, comment or not, and its contract (runner files) is different.
+    ci_outputs = subcommands.add_parser(
+        "ci-outputs", help="write GitHub action outputs and a step summary; never fails CI"
+    )
+    ci_outputs.add_argument("report", help="path to an acquit report file")
+    ci_outputs.add_argument("selection", help="path to the selection file pytest will obey")
     return parser
 
 
@@ -203,8 +219,16 @@ def main(argv: list[str] | None = None) -> int:
             return _run_analyze()
         if args.command == "explain":
             return _run_explain(args)
+        if args.command == "comment":
+            return run_comment(Path(args.report), args.pr)
+        if args.command == "ci-outputs":
+            return run_ci_outputs(Path(args.report), Path(args.selection))
         return _run_replay(args)
     except Exception as error:  # fail closed on anything unexpected
+        if args.command in ("comment", "ci-outputs"):
+            # Delivery must never fail CI, even if its own guard rails break.
+            print(f"acquit: warning: {args.command} skipped: {error}", file=sys.stderr)
+            return ExitCode.OK
         print(f"acquit: internal error, run all tests: {error}", file=sys.stderr)
         if args.command == "select":
             _write_failure_docs(args, error)

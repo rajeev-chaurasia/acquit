@@ -1,0 +1,41 @@
+# Acquit running on its own pull requests: the public demo.
+#
+# Report mode by default: the action analyzes the diff, replays the evidence,
+# posts the sticky PR comment, and sets outputs, but pytest still runs the
+# full suite. Set the repository variable ACQUIT_ENFORCE to 'true' to let the
+# plugin honor the verified selection and actually skip tests.
+
+name: acquit-selfhost
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  acquit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - id: acquit
+        uses: ./
+        with:
+          mode: report
+          acquit-source: local
+
+      - uses: astral-sh/setup-uv@v9.0.0
+
+      - name: Run the full suite (report mode)
+        if: ${{ vars.ACQUIT_ENFORCE != 'true' }}
+        run: uv run pytest
+
+      - name: Run the selected suite (enforce)
+        if: ${{ vars.ACQUIT_ENFORCE == 'true' }}
+        env:
+          ACQUIT_SELECTION_FILE: ${{ steps.acquit.outputs.selection-file }}
+        run: uv run pytest

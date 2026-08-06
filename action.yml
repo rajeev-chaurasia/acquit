@@ -11,9 +11,24 @@ inputs:
   acquit-version:
     description: "Version of the acquit package to run."
     default: "0.0.1"
+  acquit-source:
+    description: >-
+      Where acquit itself is installed from. pypi (default) pins
+      acquit==acquit-version; local installs from the working-directory
+      checkout, which is how acquit dogfoods unreleased code on its own PRs.
+    default: "pypi"
   working-directory:
     description: "Directory containing the project to analyze."
     default: "."
+  mode:
+    description: >-
+      report: analyze, verify, comment, and set outputs, but never skip a test.
+      enforce: additionally export ACQUIT_SELECTION_FILE so the pytest plugin
+      honors the verified selection. Anything unrecognized means report.
+    default: "report"
+  comment:
+    description: "Post a sticky PR comment with the decision (true|false)."
+    default: "true"
 
 outputs:
   mode:
@@ -25,6 +40,18 @@ outputs:
   selection-file:
     description: "Path to the selection JSON consumed by the pytest plugin."
     value: ${{ steps.select.outputs.selection }}
+  skipped-count:
+    description: "Number of test files provably unaffected."
+    value: ${{ steps.ci-outputs.outputs.skipped }}
+  selected-count:
+    description: "Number of test files selected by impact."
+    value: ${{ steps.ci-outputs.outputs.selected }}
+  always-run-count:
+    description: "Number of test files forced to run by a policy finding."
+    value: ${{ steps.ci-outputs.outputs.always-run }}
+  total-count:
+    description: "Total number of test files considered."
+    value: ${{ steps.ci-outputs.outputs.total }}
 
 runs:
   using: composite
@@ -35,7 +62,9 @@ runs:
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       env:
+        ACQUIT_FROM: ${{ inputs.acquit-source == 'local' && '.' || format('acquit=={0}', inputs.acquit-version) }}
         BASE_REF: ${{ inputs.base-ref != '' && inputs.base-ref || github.base_ref }}
+        ACQUIT_MODE: ${{ inputs.mode }}
       run: |
         set -u
         RUN_ALL_DOC='{"schema":"acquit/selection-v2","mode":"run-all","graph_hash":null,"tree":{"head_sha":null,"fingerprint":null},"skip":[]}'
@@ -49,7 +78,7 @@ runs:
           REPORT="$OUT_DIR/acquit-report.json"
           SELECTION="$OUT_DIR/acquit-selection.json"
           WITNESSES="$OUT_DIR/acquit-witnesses.json"
-          if ! uvx --from "acquit==${{ inputs.acquit-version }}" acquit select \
+          if ! uvx --from "$ACQUIT_FROM" acquit select \
               --base "origin/${BASE_REF:-main}" --head HEAD \
               --report "$REPORT" --selection "$SELECTION" --witnesses "$WITNESSES"; then
             # Fail closed: a broken tool must never reduce the test run.
@@ -70,7 +99,11 @@ runs:
         printf 'report<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$REPORT" >> "$GITHUB_OUTPUT"
         printf 'selection<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$SELECTION" >> "$GITHUB_OUTPUT"
         printf 'witnesses<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$WITNESSES" >> "$GITHUB_OUTPUT"
-        printf 'ACQUIT_SELECTION_FILE<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$SELECTION" >> "$GITHUB_ENV"
+        # Only enforce mode hooks the pytest plugin; report mode observes and
+        # never touches the test run, and an unrecognized mode means report.
+        if [ "${ACQUIT_MODE:-report}" = "enforce" ]; then
+          printf 'ACQUIT_SELECTION_FILE<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$SELECTION" >> "$GITHUB_ENV"
+        fi
         echo "### Acquit" >> "$GITHUB_STEP_SUMMARY"
         echo "Selection mode: \`$MODE\`" >> "$GITHUB_STEP_SUMMARY"
 
@@ -78,6 +111,7 @@ runs:
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       env:
+        ACQUIT_FROM: ${{ inputs.acquit-source == 'local' && '.' || format('acquit=={0}', inputs.acquit-version) }}
         MODE: ${{ steps.select.outputs.mode }}
         REPORT: ${{ steps.select.outputs.report }}
         SELECTION: ${{ steps.select.outputs.selection }}
@@ -89,7 +123,7 @@ runs:
         if [ "$FINAL" = "selective" ]; then
           # Replay the evidence before any skip is honored; an unverifiable
           # selection is rewritten to run-all, not merely reported as such.
-          if ! uvx --from "acquit==${{ inputs.acquit-version }}" acquit replay "$REPORT" \
+          if ! uvx --from "$ACQUIT_FROM" acquit replay "$REPORT" \
               --witnesses "$WITNESSES" --selection "$SELECTION"; then
             FINAL=run-all
             if ! printf '%s\n' "$RUN_ALL_DOC" > "$SELECTION"; then
@@ -100,3 +134,33 @@ runs:
         fi
         printf 'mode<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$FINAL" >> "$GITHUB_OUTPUT"
         echo "Verified mode: \`$FINAL\`" >> "$GITHUB_STEP_SUMMARY"
+
+    - id: ci-outputs
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        ACQUIT_FROM: ${{ inputs.acquit-source == 'local' && '.' || format('acquit=={0}', inputs.acquit-version) }}
+        REPORT: ${{ steps.select.outputs.report }}
+        SELECTION: ${{ steps.select.outputs.selection }}
+      run: |
+        set -u
+        # Informational plumbing: broken outputs must never break the build,
+        # and steps reading empty outputs fail closed on their own.
+        if [ -n "${REPORT:-}" ] && [ -f "$REPORT" ] && [ -n "${SELECTION:-}" ] && [ -f "$SELECTION" ]; then
+          uvx --from "$ACQUIT_FROM" acquit ci-outputs "$REPORT" "$SELECTION" || true
+        fi
+
+    - id: comment
+      if: ${{ inputs.comment == 'true' && (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        ACQUIT_FROM: ${{ inputs.acquit-source == 'local' && '.' || format('acquit=={0}', inputs.acquit-version) }}
+        REPORT: ${{ steps.select.outputs.report }}
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        set -u
+        # Best effort by design: a lost comment must never fail CI.
+        if [ -n "${REPORT:-}" ] && [ -f "$REPORT" ]; then
+          uvx --from "$ACQUIT_FROM" acquit comment "$REPORT" || true
+        fi

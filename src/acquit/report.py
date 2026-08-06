@@ -198,3 +198,47 @@ def build_run_all_selection() -> dict[str, Any]:
 
 def to_canonical_json(document: dict[str, Any]) -> str:
     return json.dumps(document, sort_keys=True, indent=2) + "\n"
+
+
+@dataclass(frozen=True, slots=True)
+class ReportDigest:
+    """Headline numbers of a report document, for markdown renderers."""
+
+    mode: str
+    selected: int
+    skipped: int
+    always_run: int
+    total: int
+    estimated_seconds_saved: float | None
+
+
+def _stat_count(stats: Mapping[str, Any], key: str) -> int:
+    value = stats.get(key)
+    return value if isinstance(value, int) and not isinstance(value, bool) else 0
+
+
+def digest_report(report: Mapping[str, Any]) -> ReportDigest:
+    """Extract headline numbers from a report document, however minimal.
+
+    Fail-closed fallback reports carry only a decision mode; every missing or
+    malformed field degrades to zero (or None), and any mode other than a
+    literal "selective" reads as run-all, mirroring the action's own sniffing.
+    """
+    decision = report.get("decision")
+    mode_raw = decision.get("mode") if isinstance(decision, Mapping) else None
+    selective = mode_raw == str(SelectionMode.SELECTIVE)
+    mode = str(SelectionMode.SELECTIVE) if selective else str(SelectionMode.RUN_ALL)
+    stats_raw = report.get("stats")
+    stats: Mapping[str, Any] = stats_raw if isinstance(stats_raw, Mapping) else {}
+    saved_raw = stats.get("estimated_seconds_saved")
+    saved: float | None = None
+    if isinstance(saved_raw, int | float) and not isinstance(saved_raw, bool):
+        saved = float(saved_raw)
+    return ReportDigest(
+        mode=mode,
+        selected=_stat_count(stats, "selected"),
+        skipped=_stat_count(stats, "skipped"),
+        always_run=_stat_count(stats, "always_run"),
+        total=_stat_count(stats, "total"),
+        estimated_seconds_saved=saved,
+    )

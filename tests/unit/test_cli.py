@@ -261,6 +261,58 @@ def test_analyze_prints_graph_health(
     assert len(health["graph_hash"]) == 64
 
 
+def test_comment_with_a_missing_report_warns_and_exits_ok(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    exit_code = main(["comment", str(tmp_path / "absent.json")])
+
+    assert exit_code == ExitCode.OK
+    assert "warning" in capsys.readouterr().err
+
+
+def test_comment_without_a_token_warns_and_exits_ok(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    report = tmp_path / "report.json"
+    report.write_text(json.dumps({"decision": {"mode": "run-all"}}), encoding="utf-8")
+
+    exit_code = main(["comment", str(report), "--pr", "3"])
+
+    assert exit_code == ExitCode.OK
+    assert "GITHUB_TOKEN" in capsys.readouterr().err
+
+
+def test_ci_outputs_writes_the_runner_files(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    report = tmp_path / "report.json"
+    selection = tmp_path / "selection.json"
+    report.write_text(json.dumps({"decision": {"mode": "run-all"}}), encoding="utf-8")
+    selection.write_text(json.dumps({"mode": "run-all"}), encoding="utf-8")
+    output_file = tmp_path / "outputs.txt"
+    output_file.write_text("", encoding="utf-8")
+    monkeypatch.setenv("GITHUB_OUTPUT", str(output_file))
+    monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
+
+    exit_code = main(["ci-outputs", str(report), str(selection)])
+
+    assert exit_code == ExitCode.OK
+    text = output_file.read_text(encoding="utf-8")
+    assert "mode<<EOF_ACQUIT_c9d41e\nrun-all\nEOF_ACQUIT_c9d41e" in text
+
+
+def test_ci_outputs_never_fails_ci(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.delenv("GITHUB_OUTPUT", raising=False)
+
+    exit_code = main(["ci-outputs", str(tmp_path / "nope.json"), str(tmp_path / "nada.json")])
+
+    assert exit_code == ExitCode.OK
+    assert "warning" in capsys.readouterr().err
+
+
 def test_version_flag_exits_zero() -> None:
     try:
         main(["--version"])

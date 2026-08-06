@@ -76,9 +76,17 @@ def _entries(path: Path) -> dict[str, str]:
 
 
 def run_action(
-    tmp_path: Path, uvx: str, python: str = PYTHON_WORKS, base_ref: str = ""
+    tmp_path: Path,
+    uvx: str,
+    python: str = PYTHON_WORKS,
+    base_ref: str = "",
+    mode: str | None = "report",
 ) -> ActionRun:
-    """Run the shipped select step with stubbed uvx and python."""
+    """Run the shipped select step with stubbed uvx and python.
+
+    mode mirrors the action's mode input (the runner always sets ACQUIT_MODE
+    from it); None leaves the variable unset entirely.
+    """
     workspace = tmp_path / "workspace"
     workspace.mkdir(parents=True, exist_ok=True)
     bash = bash_for(workspace)
@@ -101,7 +109,12 @@ def run_action(
         "BASE_REF": base_ref,
         "UVX_ARGV_LOG": (tmp_path / "uvx-argv.txt").as_posix(),
         "ACQUIT_TEST_PYTHON": Path(sys.executable).as_posix(),
+        # The runner injects this from the acquit-source input; the stub uvx
+        # ignores it, the script only needs it defined under set -u.
+        "ACQUIT_FROM": "acquit==0.0.1",
     }
+    if mode is not None:
+        env["ACQUIT_MODE"] = mode
     completed = subprocess.run(
         [bash, script.as_posix()],
         cwd=workspace,
@@ -116,7 +129,7 @@ def run_action(
 
 
 def test_fallback_document_is_a_valid_run_all_selection(tmp_path: Path) -> None:
-    run = run_action(tmp_path, UVX_FAILS)
+    run = run_action(tmp_path, UVX_FAILS, mode="enforce")
 
     document = read_json(run.selection)
     assert document == {
@@ -160,7 +173,7 @@ def test_provided_base_ref_reaches_the_cli(tmp_path: Path) -> None:
 
 def test_mode_output_never_contradicts_the_exported_selection(tmp_path: Path) -> None:
     """ADV-FC-10: the mode is read from the document itself, no probe involved."""
-    run = run_action(tmp_path, UVX_WRITES_SELECTIVE, python=PYTHON_MISSING)
+    run = run_action(tmp_path, UVX_WRITES_SELECTIVE, python=PYTHON_MISSING, mode="enforce")
 
     assert read_json(run.selection)["mode"] == "selective"
     assert run.exported["ACQUIT_SELECTION_FILE"] == run.outputs["selection"]
@@ -172,6 +185,34 @@ def test_mode_output_follows_the_document(tmp_path: Path) -> None:
 
     assert run.outputs["mode"] == "selective"
     assert read_json(run.selection)["skip"] == [{"path": "tests/test_a.py", "witness": "w-000001"}]
+
+
+def test_enforce_mode_exports_the_selection(tmp_path: Path) -> None:
+    run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode="enforce")
+
+    assert run.exported["ACQUIT_SELECTION_FILE"] == run.outputs["selection"]
+
+
+def test_report_mode_never_exports_the_selection(tmp_path: Path) -> None:
+    """Report mode observes: docs and outputs exist, but the plugin stays unhooked."""
+    run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode="report")
+
+    assert "ACQUIT_SELECTION_FILE" not in run.exported
+    assert run.outputs["mode"] == "selective"
+    assert read_json(run.selection)["mode"] == "selective"
+
+
+def test_unrecognized_mode_is_treated_as_report(tmp_path: Path) -> None:
+    """Only a literal enforce may hook the plugin; anything else fails safe."""
+    run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode="Enforce")
+
+    assert "ACQUIT_SELECTION_FILE" not in run.exported
+
+
+def test_missing_mode_env_is_treated_as_report(tmp_path: Path) -> None:
+    run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode=None)
+
+    assert "ACQUIT_SELECTION_FILE" not in run.exported
 
 
 def test_github_env_export_cannot_define_extra_variables(tmp_path: Path) -> None:
