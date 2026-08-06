@@ -39,8 +39,10 @@ pytestmark = [
     pytest.mark.skipif(shutil.which("git") is None, reason="git is not available"),
 ]
 
-_DYNAMIC_TAINTED = frozenset({"dynloader.py", "execmod.py", "lazy.py"})
-_DYNAMIC_REACHERS = frozenset({"tests/test_dyn.py", "tests/test_exec.py", "tests/test_lazy.py"})
+_DYNAMIC_TAINTED = frozenset({"dynloader.py", "execmod.py", "lazy_attach.py"})
+_DYNAMIC_REACHERS = frozenset(
+    {"tests/test_dyn.py", "tests/test_exec.py", "tests/test_lazy_attach.py"}
+)
 
 
 @pytest.fixture(scope="module")

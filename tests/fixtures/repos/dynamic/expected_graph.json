@@ -36,6 +36,11 @@
       "imports"
     ],
     [
+      "tests/test_lazy_attach.py",
+      "lazy_attach.py",
+      "imports"
+    ],
+    [
       "tests/test_other.py",
       "other.py",
       "imports"
@@ -80,6 +85,11 @@
     {
       "kind": "module",
       "path": "lazy.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "lazy_attach.py",
       "tainted": true
     },
     {
@@ -115,6 +125,11 @@
     {
       "kind": "test",
       "path": "tests/test_lazy.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_lazy_attach.py",
       "tainted": false
     },
     {

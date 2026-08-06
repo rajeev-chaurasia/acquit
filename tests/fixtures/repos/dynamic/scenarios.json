@@ -5,11 +5,11 @@
     "expect_mode": "selective",
     "expect_rules": ["R007", "R009", "R012"],
     "expect_selected_contains": ["tests/test_clean.py"],
-    "expect_skipped": ["tests/test_other.py"],
+    "expect_skipped": ["tests/test_lazy.py", "tests/test_other.py"],
     "expect_always_run": {
       "tests/test_dyn.py": "R007:dynloader.py",
       "tests/test_exec.py": "R009:execmod.py",
-      "tests/test_lazy.py": "R012:lazy.py"
+      "tests/test_lazy_attach.py": "R012:lazy_attach.py"
     }
   },
   {
@@ -18,11 +18,24 @@
     "expect_mode": "selective",
     "expect_rules": ["R007", "R009", "R012"],
     "expect_selected_contains": [],
+    "expect_skipped": ["tests/test_clean.py", "tests/test_lazy.py", "tests/test_other.py"],
+    "expect_always_run": {
+      "tests/test_dyn.py": "R007:dynloader.py",
+      "tests/test_exec.py": "R009:execmod.py",
+      "tests/test_lazy_attach.py": "R012:lazy_attach.py"
+    }
+  },
+  {
+    "name": "change_lazy_target_selects_through_getattr_import",
+    "changed": ["lazy_target.py"],
+    "expect_mode": "selective",
+    "expect_rules": ["R007", "R009", "R012"],
+    "expect_selected_contains": ["tests/test_lazy.py"],
     "expect_skipped": ["tests/test_clean.py", "tests/test_other.py"],
     "expect_always_run": {
       "tests/test_dyn.py": "R007:dynloader.py",
       "tests/test_exec.py": "R009:execmod.py",
-      "tests/test_lazy.py": "R012:lazy.py"
+      "tests/test_lazy_attach.py": "R012:lazy_attach.py"
     }
   }
 ]

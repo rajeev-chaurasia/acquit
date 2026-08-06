@@ -17,6 +17,7 @@ _DYNAMIC_IMPORT_CALLEES = frozenset({"__import__", "import_module"})
 _SYS_PATH_METHODS = frozenset({"append", "insert", "extend"})
 _EXEC_EVAL_NAMES = frozenset({"exec", "eval", "compile"})
 _SITE_PATH_CALLEES = frozenset({"addsitedir", "extend_path"})
+_SYS_MODULES_METHODS = frozenset({"get", "setdefault", "pop"})
 
 
 class SuspectKind(StrEnum):
@@ -96,6 +97,11 @@ def _is_sys_path(node: ast.expr) -> bool:
     return dotted is not None and (dotted == "sys.path" or dotted.endswith(".sys.path"))
 
 
+def _is_sys_modules(node: ast.expr) -> bool:
+    dotted = _dotted_name(node)
+    return dotted is not None and (dotted == "sys.modules" or dotted.endswith(".sys.modules"))
+
+
 def _flat_targets(target: ast.expr) -> Iterator[ast.expr]:
     if isinstance(target, ast.Tuple | ast.List):
         for element in target.elts:
@@ -172,6 +178,26 @@ class _FactsVisitor(ast.NodeVisitor):
             self._suspect(SuspectKind.SYS_PATH_MUTATION, node)
         elif isinstance(node.func, ast.Name) and node.func.id in _EXEC_EVAL_NAMES:
             self._suspect(SuspectKind.EXEC_EVAL, node)
+        elif self._is_sys_modules_access(node):
+            self._record_dynamic_import(node)
+        self.generic_visit(node)
+
+    @staticmethod
+    def _is_sys_modules_access(node: ast.Call) -> bool:
+        func = node.func
+        return (
+            isinstance(func, ast.Attribute)
+            and func.attr in _SYS_MODULES_METHODS
+            and _is_sys_modules(func.value)
+        )
+
+    def visit_Subscript(self, node: ast.Subscript) -> None:
+        # Reading sys.modules acquires a module just like a dynamic import does.
+        if _is_sys_modules(node.value):
+            if isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, str):
+                self.dyn_literal_imports.append(node.slice.value)
+            else:
+                self._suspect(SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, node)
         self.generic_visit(node)
 
     def _record_dynamic_import(self, node: ast.Call) -> None:
@@ -224,9 +250,12 @@ class _FactsVisitor(ast.NodeVisitor):
         self._enter_definition(node)
 
     def _enter_definition(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
+        # A def-form PEP 562 hook is not a suspect by itself: its body is visited
+        # like any other code, so static imports become edges and only genuinely
+        # dynamic constructs inside it taint. The opaque assignment form stays a
+        # suspect because there is no body to inspect.
         if self._scope_depth == 0 and node.name == "__getattr__":
             self.defines_module_getattr = True
-            self._suspect(SuspectKind.LAZY_MODULE_GETATTR, node)
         self._descend(node)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:

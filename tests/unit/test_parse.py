@@ -153,16 +153,44 @@ def test_suspects_collected_inside_functions() -> None:
     assert result.suspects == (Suspect(kind=SuspectKind.EXEC_EVAL, lineno=2),)
 
 
-def test_module_getattr_def() -> None:
-    result = facts("def __getattr__(name):\n    return lazy(name)")
+def test_module_getattr_def_with_static_body_is_not_a_suspect() -> None:
+    source = "def __getattr__(name):\n    from pkg.core import thing\n    return thing"
+    result = facts(source)
     assert result.defines_module_getattr is True
-    assert result.suspects == (Suspect(kind=SuspectKind.LAZY_MODULE_GETATTR, lineno=1),)
+    assert result.suspects == ()
+    assert result.imports == (
+        ImportStmt(module="pkg.core", names=("thing",), level=0, is_star=False),
+    )
+
+
+def test_module_getattr_def_with_dynamic_body_taints_via_the_body() -> None:
+    source = "import importlib\n\ndef __getattr__(name):\n    return importlib.import_module(name)"
+    result = facts(source)
+    assert result.defines_module_getattr is True
+    kinds = {suspect.kind for suspect in result.suspects}
+    assert kinds == {SuspectKind.NON_LITERAL_DYNAMIC_IMPORT}
 
 
 def test_module_getattr_assignment() -> None:
     result = facts("__getattr__ = make_lazy_hook()")
     assert result.defines_module_getattr is True
     assert result.suspects == (Suspect(kind=SuspectKind.LAZY_MODULE_GETATTR, lineno=1),)
+
+
+def test_sys_modules_literal_subscript_is_a_literal_dynamic_import() -> None:
+    result = facts("import sys\nmod = sys.modules['pkg.core']")
+    assert result.dyn_literal_imports == ("pkg.core",)
+    assert result.suspects == ()
+
+
+def test_sys_modules_non_literal_subscript_is_a_suspect() -> None:
+    result = facts("import sys\nmod = sys.modules[name]")
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
+
+
+def test_sys_modules_get_with_variable_is_a_suspect() -> None:
+    result = facts("import sys\nmod = sys.modules.get(name)")
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
 
 
 def test_nested_getattr_is_not_module_level() -> None:

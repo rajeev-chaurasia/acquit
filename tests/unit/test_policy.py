@@ -402,11 +402,17 @@ def test_r011_resolvable_first_party_import_is_silent() -> None:
 # R012 LAZY_MODULE_GETATTR
 
 
-def test_r012_module_getattr_taints_the_module() -> None:
-    source = "def __getattr__(name):\n    raise AttributeError(name)\n"
+def test_r012_opaque_getattr_assignment_taints_the_module() -> None:
+    source = "__getattr__ = make_lazy_hook()\n"
     ctx = make_ctx(facts={"pkg/lazy.py": facts_for("pkg/lazy.py", source)})
     (finding,) = findings_for(evaluate(ctx), RuleId.LAZY_MODULE_GETATTR)
     assert finding.scope == Scope(ScopeKind.CLOSURE_TAINT, "pkg/lazy.py")
+
+
+def test_r012_def_getattr_with_static_body_is_silent() -> None:
+    source = "def __getattr__(name):\n    from pkg.core import thing\n    return thing\n"
+    ctx = make_ctx(facts={"pkg/lazy.py": facts_for("pkg/lazy.py", source)})
+    assert RuleId.LAZY_MODULE_GETATTR not in fired_rules(evaluate(ctx))
 
 
 def test_r012_class_getattr_is_silent() -> None:
@@ -553,7 +559,7 @@ def _rich_ctx(seed: int) -> PolicyContext:
         "pkg/dyn.py": facts_for("pkg/dyn.py", loader),
         "conftest.py": facts_for("conftest.py", "import sys\n\nsys.path.append('vendored')\n"),
         "pkg/sh.py": facts_for("pkg/sh.py", "eval('1 + 1')\n"),
-        "pkg/lazy.py": facts_for("pkg/lazy.py", "def __getattr__(name):\n    return None\n"),
+        "pkg/lazy.py": facts_for("pkg/lazy.py", "__getattr__ = make_lazy_hook()\n"),
     }
     conftest_facts = {
         "tests/conftest.py": ConftestFacts(

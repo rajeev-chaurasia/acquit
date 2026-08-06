@@ -16,7 +16,9 @@ from typing import Any, Final
 from acquit.errors import GraphError
 from acquit.graph.parse import ImportStmt, ModuleFacts, Suspect, SuspectKind
 
-CACHE_FORMAT_VERSION: Final = 1
+# Bump whenever parser semantics change: cached ModuleFacts for an unchanged
+# blob must never outlive the rules that produced them.
+CACHE_FORMAT_VERSION: Final = 2
 
 
 def facts_to_dict(facts: ModuleFacts) -> dict[str, Any]:
