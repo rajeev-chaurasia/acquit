@@ -1,0 +1,10 @@
+{
+  "graph_hash": "8c094ced54da1ffff81b5f340da7a56f25cf3b872ab20ff8c3f272333e0102e5",
+  "mode": "run-all",
+  "schema": "acquit/selection-v2",
+  "skip": [],
+  "tree": {
+    "fingerprint": "ff629b0c48bcdbabf58c41faa046f3946739b310ebc061da2017a321ee84ae30",
+    "head_sha": "0c9e836c7c22f72492e82c448d1981b59a20795e"
+  }
+}

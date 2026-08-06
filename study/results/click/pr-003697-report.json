@@ -1,0 +1,141 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGES.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/arguments.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/documentation.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/option-decorators.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/shell-completion.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/utils.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/click/_compat.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/click/core.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/click/shell_completion.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/click/termui.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/click/utils.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGES.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGES.md"
+      },
+      {
+        "reason": "docs/arguments.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/arguments.md"
+      },
+      {
+        "reason": "docs/documentation.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/documentation.md"
+      },
+      {
+        "reason": "docs/option-decorators.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/option-decorators.md"
+      },
+      {
+        "reason": "docs/shell-completion.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/shell-completion.md"
+      },
+      {
+        "reason": "docs/utils.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/utils.md"
+      },
+      {
+        "reason": "examples/complex/complex/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "examples/complex/complex/cli.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 487,
+    "hash": "8c094ced54da1ffff81b5f340da7a56f25cf3b872ab20ff8c3f272333e0102e5",
+    "nodes": 228,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "5aa8ac43527f91c4c801a50b485c09576715d340",
+    "created_at": "2026-08-06T10:09:38+00:00",
+    "head_sha": "0f4738df88e3ea47c40a4a442103596a61cfee79"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "analysis_seconds": {
+    "p50": 6.1754999999999995,
+    "p95": 7.231149999999998
+  },
+  "fail_closed_rules": {
+    "R001": 6,
+    "R002": 1,
+    "R003": 1
+  },
+  "new_test_violations": 0,
+  "prs": {
+    "analyzed": 10,
+    "excluded": 0,
+    "exclusion_stages": {}
+  },
+  "replay": {
+    "selective": 2,
+    "selective_verified": 2
+  },
+  "schema": "acquit/study-summary-v1",
+  "selective": {
+    "count": 2,
+    "share": 0.2
+  },
+  "skip_rate_count_weighted": {
+    "median": 0.9701426024955437,
+    "p25": 0.9699197860962567,
+    "p75": 0.9703654188948306
+  },
+  "skip_rate_duration_weighted": {
+    "median": 0.9964618879112663,
+    "p25": 0.9962674095937819,
+    "p75": 0.9966563662287509
+  },
+  "unsafe_skips_total": 0
+}

@@ -1,0 +1,139 @@
+{
+  "graph_hash": "a80d3f72cbd197c39893ab2d5e90ef0c04a05738845c35966a8061a165200d5f",
+  "mode": "selective",
+  "schema": "acquit/selection-v2",
+  "skip": [
+    {
+      "path": "tests/test_arguments.py",
+      "witness": "w-000001"
+    },
+    {
+      "path": "tests/test_basic.py",
+      "witness": "w-000002"
+    },
+    {
+      "path": "tests/test_chain.py",
+      "witness": "w-000003"
+    },
+    {
+      "path": "tests/test_command_decorators.py",
+      "witness": "w-000004"
+    },
+    {
+      "path": "tests/test_commands.py",
+      "witness": "w-000005"
+    },
+    {
+      "path": "tests/test_compat.py",
+      "witness": "w-000006"
+    },
+    {
+      "path": "tests/test_context.py",
+      "witness": "w-000007"
+    },
+    {
+      "path": "tests/test_custom_classes.py",
+      "witness": "w-000008"
+    },
+    {
+      "path": "tests/test_defaults.py",
+      "witness": "w-000009"
+    },
+    {
+      "path": "tests/test_formatting.py",
+      "witness": "w-000010"
+    },
+    {
+      "path": "tests/test_imports.py",
+      "witness": "w-000011"
+    },
+    {
+      "path": "tests/test_info_dict.py",
+      "witness": "w-000012"
+    },
+    {
+      "path": "tests/test_normalization.py",
+      "witness": "w-000013"
+    },
+    {
+      "path": "tests/test_options.py",
+      "witness": "w-000014"
+    },
+    {
+      "path": "tests/test_parser.py",
+      "witness": "w-000015"
+    },
+    {
+      "path": "tests/test_shell_completion.py",
+      "witness": "w-000016"
+    },
+    {
+      "path": "tests/test_stream_lifecycle.py",
+      "witness": "w-000017"
+    },
+    {
+      "path": "tests/test_termui.py",
+      "witness": "w-000018"
+    },
+    {
+      "path": "tests/test_testing.py",
+      "witness": "w-000019"
+    },
+    {
+      "path": "tests/test_types.py",
+      "witness": "w-000020"
+    },
+    {
+      "path": "tests/test_utils/test_KeepOpenFile.py",
+      "witness": "w-000021"
+    },
+    {
+      "path": "tests/test_utils/test_LazyFile.py",
+      "witness": "w-000022"
+    },
+    {
+      "path": "tests/test_utils/test__detect_program_name.py",
+      "witness": "w-000023"
+    },
+    {
+      "path": "tests/test_utils/test__expand_args.py",
+      "witness": "w-000024"
+    },
+    {
+      "path": "tests/test_utils/test_confirm.py",
+      "witness": "w-000025"
+    },
+    {
+      "path": "tests/test_utils/test_echo_via_pager.py",
+      "witness": "w-000026"
+    },
+    {
+      "path": "tests/test_utils/test_format_filename.py",
+      "witness": "w-000027"
+    },
+    {
+      "path": "tests/test_utils/test_make_default_short_help.py",
+      "witness": "w-000028"
+    },
+    {
+      "path": "tests/test_utils/test_open_file.py",
+      "witness": "w-000029"
+    },
+    {
+      "path": "tests/test_utils/test_prompt.py",
+      "witness": "w-000030"
+    },
+    {
+      "path": "tests/test_utils/test_sentinel.py",
+      "witness": "w-000031"
+    },
+    {
+      "path": "tests/test_utils/test_style.py",
+      "witness": "w-000032"
+    }
+  ],
+  "tree": {
+    "fingerprint": "d380cad9d42b1b5e9956c7674c52e122336db0315885a9f14018f10fb8cca825",
+    "head_sha": "c52f43c8ba734545b222af36ac35d87579031870"
+  }
+}

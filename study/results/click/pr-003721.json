@@ -1,0 +1,99 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 5.323,
+  "base_sha": "398f9154317f6c54bf98fe3359672ad5cb851585",
+  "base_suite_seconds": 16.302,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": ".github/workflows/lock.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/lock.yaml"
+    },
+    {
+      "reason": ".github/workflows/nightly.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/nightly.yaml"
+    },
+    {
+      "reason": ".github/workflows/pre-commit.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/pre-commit.yaml"
+    },
+    {
+      "reason": ".github/workflows/publish.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/publish.yaml"
+    },
+    {
+      "reason": ".github/workflows/tests.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/tests.yaml"
+    },
+    {
+      "reason": ".github/workflows/zizmor.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/zizmor.yaml"
+    },
+    {
+      "reason": "examples/complex/complex/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "examples/complex/complex/cli.py"
+    }
+  ],
+  "head_sha": "0c9e836c7c22f72492e82c448d1981b59a20795e",
+  "head_suite_seconds": 11.226,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 3721,
+  "per_file_durations": {
+    "tests/test_arguments.py": 0.206,
+    "tests/test_basic.py": 0.205,
+    "tests/test_chain.py": 0.02,
+    "tests/test_command_decorators.py": 0.014,
+    "tests/test_commands.py": 0.152,
+    "tests/test_compat.py": 0.133,
+    "tests/test_context.py": 0.036,
+    "tests/test_custom_classes.py": 0.009,
+    "tests/test_defaults.py": 0.056,
+    "tests/test_deprecations.py": 0.021,
+    "tests/test_formatting.py": 0.044,
+    "tests/test_imports.py": 0.234,
+    "tests/test_info_dict.py": 0.025,
+    "tests/test_normalization.py": 0.005,
+    "tests/test_options.py": 0.939,
+    "tests/test_parser.py": 0.007,
+    "tests/test_shell_completion.py": 0.09,
+    "tests/test_stream_lifecycle.py": 0.318,
+    "tests/test_termui.py": 0.571,
+    "tests/test_testing.py": 0.124,
+    "tests/test_types.py": 0.402,
+    "tests/test_utils/test_KeepOpenFile.py": 0.029,
+    "tests/test_utils/test_LazyFile.py": 0.01,
+    "tests/test_utils/test__detect_program_name.py": 0.003,
+    "tests/test_utils/test__expand_args.py": 0.01,
+    "tests/test_utils/test_confirm.py": 0.003,
+    "tests/test_utils/test_echo.py": 0.014,
+    "tests/test_utils/test_echo_via_pager.py": 0.004,
+    "tests/test_utils/test_format_filename.py": 0.0,
+    "tests/test_utils/test_make_default_short_help.py": 0.014,
+    "tests/test_utils/test_open_file.py": 0.089,
+    "tests/test_utils/test_prompt.py": 0.027,
+    "tests/test_utils/test_sentinel.py": 0.001,
+    "tests/test_utils/test_style.py": 0.036
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

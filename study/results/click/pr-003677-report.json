@@ -1,0 +1,77 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGES.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/click/termui.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_utils/test_style.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGES.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGES.md"
+      },
+      {
+        "reason": "examples/complex/complex/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "examples/complex/complex/cli.py"
+      },
+      {
+        "reason": "tests/test_utils/test_style.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_utils/test_style.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 469,
+    "hash": "a80d3f72cbd197c39893ab2d5e90ef0c04a05738845c35966a8061a165200d5f",
+    "nodes": 226,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "7925a3410d7098c28cfca3b2baa6c852666bbd14",
+    "created_at": "2026-08-06T10:15:08+00:00",
+    "head_sha": "07c909f23f0f83b5ca137c167b9a134d66201f67"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

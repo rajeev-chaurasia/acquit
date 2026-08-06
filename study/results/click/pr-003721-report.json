@@ -1,0 +1,116 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": ".github/workflows/lock.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/nightly.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/pre-commit.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/publish.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/tests.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/zizmor.yaml",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".github/workflows/lock.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/lock.yaml"
+      },
+      {
+        "reason": ".github/workflows/nightly.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/nightly.yaml"
+      },
+      {
+        "reason": ".github/workflows/pre-commit.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/pre-commit.yaml"
+      },
+      {
+        "reason": ".github/workflows/publish.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/publish.yaml"
+      },
+      {
+        "reason": ".github/workflows/tests.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/tests.yaml"
+      },
+      {
+        "reason": ".github/workflows/zizmor.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/zizmor.yaml"
+      },
+      {
+        "reason": "examples/complex/complex/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "examples/complex/complex/cli.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 487,
+    "hash": "8c094ced54da1ffff81b5f340da7a56f25cf3b872ab20ff8c3f272333e0102e5",
+    "nodes": 228,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "398f9154317f6c54bf98fe3359672ad5cb851585",
+    "created_at": "2026-08-06T10:10:29+00:00",
+    "head_sha": "0c9e836c7c22f72492e82c448d1981b59a20795e"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

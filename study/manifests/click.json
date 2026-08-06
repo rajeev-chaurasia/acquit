@@ -1,0 +1,81 @@
+{
+  "constraints_sha256": null,
+  "excluded": [],
+  "prs": [
+    {
+      "base_sha": "5aa8ac43527f91c4c801a50b485c09576715d340",
+      "head_sha": "0f4738df88e3ea47c40a4a442103596a61cfee79",
+      "merge_sha": "00e592cea702e0b2caa0dee42489fdb1c22cd845",
+      "number": 3697,
+      "title": "Pre-8.5.0 release changelog and doc fixes"
+    },
+    {
+      "base_sha": "398f9154317f6c54bf98fe3359672ad5cb851585",
+      "head_sha": "0c9e836c7c22f72492e82c448d1981b59a20795e",
+      "merge_sha": "5aa8ac43527f91c4c801a50b485c09576715d340",
+      "number": 3721,
+      "title": "Update all GitHub actions"
+    },
+    {
+      "base_sha": "b67832c2167e5b0ff6764a8c04a0a9087e697b5a",
+      "head_sha": "b3a191bf58db2a4bd13706981af78d41b7b5a056",
+      "merge_sha": "42235de05e38e3b9c9346662a3c6b6a36901b8a1",
+      "number": 3685,
+      "title": "Fix `sdist` include to ship `CHANGES.md` after changelog rename"
+    },
+    {
+      "base_sha": "cfa01eeb7894a408af70b29d28c0b24f8680f9fb",
+      "head_sha": "10b43c211b825181cb81ef383e8091fd41750150",
+      "merge_sha": "398f9154317f6c54bf98fe3359672ad5cb851585",
+      "number": 3715,
+      "title": "Parametrize deprecation tests and check targets"
+    },
+    {
+      "base_sha": "333c28d79cd982990ee98eef61ec20ab1a4f38ba",
+      "head_sha": "c2ed41490baa08002714ab79afa4a41f2d67c02c",
+      "merge_sha": "cfa01eeb7894a408af70b29d28c0b24f8680f9fb",
+      "number": 3704,
+      "title": "Deprecate `isolated_filesystem` and document its limits"
+    },
+    {
+      "base_sha": "b551fe85714c906565303fae98136d7c72b252ea",
+      "head_sha": "051725fa7e0c69effc9107066d8791c5b99242c3",
+      "merge_sha": "333c28d79cd982990ee98eef61ec20ab1a4f38ba",
+      "number": 3695,
+      "title": "Mark clearly functions private status. Deprecated Python 2 utilities."
+    },
+    {
+      "base_sha": "8c1a0a7abbc1c36f70d1f65f3604acc46c5ce6ab",
+      "head_sha": "a28d839d3e68bb81b77bcd862fb29e35dcf894f9",
+      "merge_sha": "b67832c2167e5b0ff6764a8c04a0a9087e697b5a",
+      "number": 3678,
+      "title": "Fix parsing when a parameter is named `help`"
+    },
+    {
+      "base_sha": "8a4ce842564ae94ab050062db8525196ad476c19",
+      "head_sha": "71f2bafa541e7f798834e74076786ff4281ac83e",
+      "merge_sha": "8c1a0a7abbc1c36f70d1f65f3604acc46c5ce6ab",
+      "number": 3681,
+      "title": "Strip all ANSI sequences"
+    },
+    {
+      "base_sha": "7925a3410d7098c28cfca3b2baa6c852666bbd14",
+      "head_sha": "07c909f23f0f83b5ca137c167b9a134d66201f67",
+      "merge_sha": "8a4ce842564ae94ab050062db8525196ad476c19",
+      "number": 3677,
+      "title": "Validate `style()` color arguments"
+    },
+    {
+      "base_sha": "7925a3410d7098c28cfca3b2baa6c852666bbd14",
+      "head_sha": "c52f43c8ba734545b222af36ac35d87579031870",
+      "merge_sha": "8dd4d60eb5ad4532abdd9b2809a7d9e2aa679b87",
+      "number": 3676,
+      "title": "Restore `test_echo_color_flag` from #3505"
+    }
+  ],
+  "python_version": "3.12",
+  "repo_slug": "pallets/click",
+  "repo_url": "https://github.com/pallets/click.git",
+  "schema": "acquit/study-manifest-v1",
+  "window_months": 18
+}

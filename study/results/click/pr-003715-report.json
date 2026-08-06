@@ -1,0 +1,202 @@
+{
+  "changed": [
+    {
+      "kind": "test",
+      "path": "tests/test_deprecations.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "examples/complex/complex/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "examples/complex/complex/cli.py"
+      },
+      {
+        "reason": "tests/test_deprecations.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_deprecations.py"
+      }
+    ],
+    "mode": "selective",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 485,
+    "hash": "68b125b380108dd6119f6e48edc35490892a06d7faedf3a44ef64f4418ad2aed",
+    "nodes": 227,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "cfa01eeb7894a408af70b29d28c0b24f8680f9fb",
+    "created_at": "2026-08-06T10:11:51+00:00",
+    "head_sha": "10b43c211b825181cb81ef383e8091fd41750150"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 1,
+    "skipped": 33,
+    "total": 34
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/test_deprecations.py",
+        "reasons": [
+          "reachable-from:tests/test_deprecations.py",
+          "rule:R014"
+        ]
+      }
+    ],
+    "skipped": [
+      {
+        "path": "tests/test_arguments.py",
+        "witness": "w-000001"
+      },
+      {
+        "path": "tests/test_basic.py",
+        "witness": "w-000002"
+      },
+      {
+        "path": "tests/test_chain.py",
+        "witness": "w-000003"
+      },
+      {
+        "path": "tests/test_command_decorators.py",
+        "witness": "w-000004"
+      },
+      {
+        "path": "tests/test_commands.py",
+        "witness": "w-000005"
+      },
+      {
+        "path": "tests/test_compat.py",
+        "witness": "w-000006"
+      },
+      {
+        "path": "tests/test_context.py",
+        "witness": "w-000007"
+      },
+      {
+        "path": "tests/test_custom_classes.py",
+        "witness": "w-000008"
+      },
+      {
+        "path": "tests/test_defaults.py",
+        "witness": "w-000009"
+      },
+      {
+        "path": "tests/test_formatting.py",
+        "witness": "w-000010"
+      },
+      {
+        "path": "tests/test_imports.py",
+        "witness": "w-000011"
+      },
+      {
+        "path": "tests/test_info_dict.py",
+        "witness": "w-000012"
+      },
+      {
+        "path": "tests/test_normalization.py",
+        "witness": "w-000013"
+      },
+      {
+        "path": "tests/test_options.py",
+        "witness": "w-000014"
+      },
+      {
+        "path": "tests/test_parser.py",
+        "witness": "w-000015"
+      },
+      {
+        "path": "tests/test_shell_completion.py",
+        "witness": "w-000016"
+      },
+      {
+        "path": "tests/test_stream_lifecycle.py",
+        "witness": "w-000017"
+      },
+      {
+        "path": "tests/test_termui.py",
+        "witness": "w-000018"
+      },
+      {
+        "path": "tests/test_testing.py",
+        "witness": "w-000019"
+      },
+      {
+        "path": "tests/test_types.py",
+        "witness": "w-000020"
+      },
+      {
+        "path": "tests/test_utils/test_KeepOpenFile.py",
+        "witness": "w-000021"
+      },
+      {
+        "path": "tests/test_utils/test_LazyFile.py",
+        "witness": "w-000022"
+      },
+      {
+        "path": "tests/test_utils/test__detect_program_name.py",
+        "witness": "w-000023"
+      },
+      {
+        "path": "tests/test_utils/test__expand_args.py",
+        "witness": "w-000024"
+      },
+      {
+        "path": "tests/test_utils/test_confirm.py",
+        "witness": "w-000025"
+      },
+      {
+        "path": "tests/test_utils/test_echo.py",
+        "witness": "w-000026"
+      },
+      {
+        "path": "tests/test_utils/test_echo_via_pager.py",
+        "witness": "w-000027"
+      },
+      {
+        "path": "tests/test_utils/test_format_filename.py",
+        "witness": "w-000028"
+      },
+      {
+        "path": "tests/test_utils/test_make_default_short_help.py",
+        "witness": "w-000029"
+      },
+      {
+        "path": "tests/test_utils/test_open_file.py",
+        "witness": "w-000030"
+      },
+      {
+        "path": "tests/test_utils/test_prompt.py",
+        "witness": "w-000031"
+      },
+      {
+        "path": "tests/test_utils/test_sentinel.py",
+        "witness": "w-000032"
+      },
+      {
+        "path": "tests/test_utils/test_style.py",
+        "witness": "w-000033"
+      }
+    ]
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

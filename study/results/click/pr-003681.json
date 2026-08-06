@@ -1,0 +1,97 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 6.088,
+  "base_sha": "8a4ce842564ae94ab050062db8525196ad476c19",
+  "base_suite_seconds": 10.247,
+  "changed_outcomes": [
+    "tests/test_compat.py::test_ansi_re_matches_whole_sequence",
+    "tests/test_compat.py::test_strip_ansi_is_idempotent",
+    "tests/test_compat.py::test_strip_ansi_is_superset_of_legacy",
+    "tests/test_compat.py::test_strip_ansi_leaves_incomplete_sequences",
+    "tests/test_compat.py::test_strip_ansi_leaves_plain_text",
+    "tests/test_compat.py::test_strip_ansi_mixed_content",
+    "tests/test_compat.py::test_strip_ansi_removes_full_sequence",
+    "tests/test_compat.py::test_strip_ansi_stops_at_final_byte",
+    "tests/test_compat.py::test_term_len",
+    "tests/test_compat.py::test_truncate_visible"
+  ],
+  "findings": [
+    {
+      "reason": "CHANGES.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "CHANGES.md"
+    },
+    {
+      "reason": "examples/complex/complex/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "examples/complex/complex/cli.py"
+    },
+    {
+      "reason": "tests/test_compat.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_compat.py"
+    },
+    {
+      "reason": "tests/test_formatting.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_formatting.py"
+    },
+    {
+      "reason": "tests/test_utils/test_style.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_utils/test_style.py"
+    }
+  ],
+  "head_sha": "71f2bafa541e7f798834e74076786ff4281ac83e",
+  "head_suite_seconds": 11.046,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 3681,
+  "per_file_durations": {
+    "tests/test_arguments.py": 0.173,
+    "tests/test_basic.py": 0.183,
+    "tests/test_chain.py": 0.023,
+    "tests/test_command_decorators.py": 0.006,
+    "tests/test_commands.py": 0.112,
+    "tests/test_compat.py": 0.162,
+    "tests/test_context.py": 0.03,
+    "tests/test_custom_classes.py": 0.006,
+    "tests/test_defaults.py": 0.05,
+    "tests/test_formatting.py": 0.039,
+    "tests/test_imports.py": 0.263,
+    "tests/test_info_dict.py": 0.016,
+    "tests/test_normalization.py": 0.005,
+    "tests/test_options.py": 0.876,
+    "tests/test_parser.py": 0.005,
+    "tests/test_shell_completion.py": 0.108,
+    "tests/test_stream_lifecycle.py": 0.382,
+    "tests/test_termui.py": 0.46,
+    "tests/test_testing.py": 0.033,
+    "tests/test_types.py": 0.292,
+    "tests/test_utils/test_KeepOpenFile.py": 0.01,
+    "tests/test_utils/test_LazyFile.py": 0.013,
+    "tests/test_utils/test__detect_program_name.py": 0.004,
+    "tests/test_utils/test__expand_args.py": 0.017,
+    "tests/test_utils/test_confirm.py": 0.004,
+    "tests/test_utils/test_echo.py": 0.013,
+    "tests/test_utils/test_echo_via_pager.py": 0.015,
+    "tests/test_utils/test_format_filename.py": 0.001,
+    "tests/test_utils/test_make_default_short_help.py": 0.017,
+    "tests/test_utils/test_open_file.py": 0.055,
+    "tests/test_utils/test_prompt.py": 0.015,
+    "tests/test_utils/test_sentinel.py": 0.001,
+    "tests/test_utils/test_style.py": 0.076
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

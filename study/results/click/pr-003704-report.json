@@ -1,0 +1,154 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGES.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/testing.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/upgrade-guides.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/click/testing.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_arguments.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_basic.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_deprecations.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_shell_completion.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_testing.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_utils/test_open_file.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGES.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGES.md"
+      },
+      {
+        "reason": "docs/testing.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/testing.md"
+      },
+      {
+        "reason": "docs/upgrade-guides.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/upgrade-guides.md"
+      },
+      {
+        "reason": "examples/complex/complex/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "examples/complex/complex/cli.py"
+      },
+      {
+        "reason": "tests/test_arguments.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_arguments.py"
+      },
+      {
+        "reason": "tests/test_basic.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_basic.py"
+      },
+      {
+        "reason": "tests/test_deprecations.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_deprecations.py"
+      },
+      {
+        "reason": "tests/test_shell_completion.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_shell_completion.py"
+      },
+      {
+        "reason": "tests/test_testing.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_testing.py"
+      },
+      {
+        "reason": "tests/test_utils/test_open_file.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_utils/test_open_file.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 480,
+    "hash": "b3d03082c66a275ae69cc0029bea69981a677db2a4758d2550ccfa86ed96966a",
+    "nodes": 227,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "333c28d79cd982990ee98eef61ec20ab1a4f38ba",
+    "created_at": "2026-08-06T10:12:31+00:00",
+    "head_sha": "c2ed41490baa08002714ab79afa4a41f2d67c02c"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}
