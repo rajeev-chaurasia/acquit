@@ -1,12 +1,27 @@
-from acquit.constants import REPORT_SCHEMA, SELECTION_SCHEMA
+from collections.abc import Sequence
+
+import rustworkx as rx
+
+from acquit.config import Waiver
+from acquit.constants import REPORT_SCHEMA, SELECTION_SCHEMA, WITNESSES_SCHEMA
+from acquit.graph.index import ModuleIndex
+from acquit.graph.model import BuiltGraph, EdgeKind, Node, NodeKind
+from acquit.pipeline import SelectResult, Snapshot
+from acquit.policy.engine import PolicyOutcome, WaivedFinding
 from acquit.policy.model import Finding, RuleId, Scope, ScopeKind
 from acquit.report import (
     RunInfo,
     SelectionMode,
+    build_report,
     build_run_all_report,
     build_selection,
+    build_selection_doc,
+    build_witnesses_doc,
     to_canonical_json,
 )
+from acquit.select import decide
+from acquit.vcs import ChangedFile, ChangeStatus
+from acquit.witness import closure_hash
 
 FINDING = Finding(
     rule=RuleId.INTERNAL_ERROR,
@@ -14,6 +29,135 @@ FINDING = Finding(
     subject="acquit",
     reason="test reason",
 )
+
+
+def _graph(nodes: Sequence[Node], edges: Sequence[tuple[str, str]]) -> BuiltGraph:
+    digraph: rx.PyDiGraph[Node, EdgeKind] = rx.PyDiGraph()
+    index_of = {node.path: digraph.add_node(node) for node in nodes}
+    for src, dst in edges:
+        digraph.add_edge(index_of[src], index_of[dst], EdgeKind.IMPORTS)
+    return BuiltGraph(
+        digraph=digraph,
+        index_of=index_of,
+        nodes={node.path: node for node in nodes},
+        graph_hash="hand-built",
+    )
+
+
+def _result() -> SelectResult:
+    graph = _graph(
+        [
+            Node(path="tests/test_a.py", kind=NodeKind.TEST),
+            Node(path="tests/test_b.py", kind=NodeKind.TEST),
+            Node(path="src/a.py", kind=NodeKind.MODULE),
+            Node(path="src/b.py", kind=NodeKind.MODULE),
+        ],
+        [("tests/test_a.py", "src/a.py"), ("tests/test_b.py", "src/b.py")],
+    )
+    changed = (ChangedFile(path="src/a.py", status=ChangeStatus.MODIFIED),)
+    decision = decide(graph, None, changed, ())
+    waived = WaivedFinding(
+        finding=Finding(
+            rule=RuleId.CHANGED_RESOURCE,
+            scope=Scope(kind=ScopeKind.GLOBAL),
+            subject="data.csv",
+            reason="data.csv is a resource file",
+        ),
+        waiver=Waiver(rule="R001", glob="data.*", justification="fixture data"),
+    )
+    snapshot = Snapshot(
+        ref="feature",
+        files=("src/a.py", "src/b.py", "tests/test_a.py", "tests/test_b.py"),
+        kinds={
+            "src/a.py": NodeKind.MODULE,
+            "src/b.py": NodeKind.MODULE,
+            "tests/test_a.py": NodeKind.TEST,
+            "tests/test_b.py": NodeKind.TEST,
+        },
+        facts={},
+        unparseable=(),
+        index=ModuleIndex(roots=("",), by_dotted={}, first_party_top_levels=frozenset()),
+        conftest_facts={},
+        graph=graph,
+    )
+    return SelectResult(
+        decision=decision,
+        outcome=PolicyOutcome(findings=(), waived=(waived,)),
+        head=snapshot,
+        changed=changed,
+        changed_kinds={"src/a.py": NodeKind.MODULE},
+        base_sha="b" * 40,
+        head_sha="h" * 40,
+    )
+
+
+def test_build_report_full_shape() -> None:
+    report = build_report(_result(), created_at="2026-01-01T00:00:00+00:00", durations=None)
+
+    assert report["schema"] == REPORT_SCHEMA
+    assert report["tool"]["name"] == "acquit"
+    assert report["tool"]["graph_schema"] == 1
+    assert report["run"] == {
+        "base_sha": "b" * 40,
+        "head_sha": "h" * 40,
+        "created_at": "2026-01-01T00:00:00+00:00",
+    }
+    assert report["graph"] == {"hash": "hand-built", "nodes": 4, "edges": 2, "roots": [""]}
+    assert report["changed"] == [{"path": "src/a.py", "kind": "module", "status": "modified"}]
+    assert report["decision"]["mode"] == "selective"
+    assert report["decision"]["findings"] == []
+    assert report["decision"]["waivers"] == [
+        {"rule": "R001", "glob": "data.*", "justification": "fixture data", "subject": "data.csv"}
+    ]
+    assert report["tests"]["selected"] == [
+        {"path": "tests/test_a.py", "reasons": ["reachable-from:src/a.py"]}
+    ]
+    assert report["tests"]["skipped"] == [{"path": "tests/test_b.py", "witness": "w-000001"}]
+    assert report["tests"]["always_run"] == []
+    assert report["stats"] == {
+        "selected": 1,
+        "skipped": 1,
+        "always_run": 0,
+        "total": 2,
+        "estimated_seconds_saved": None,
+        "durations_source": None,
+    }
+
+
+def test_build_report_sums_durations_over_skipped_tests() -> None:
+    durations = {"tests/test_a.py": 9.0, "tests/test_b.py": 2.5}
+    report = build_report(_result(), created_at="2026-01-01T00:00:00+00:00", durations=durations)
+
+    assert report["stats"]["estimated_seconds_saved"] == 2.5
+    assert report["stats"]["durations_source"] == "durations-file"
+
+
+def test_build_witnesses_doc_shape() -> None:
+    result = _result()
+    document = build_witnesses_doc(result.decision, "hand-built")
+
+    assert document["schema"] == WITNESSES_SCHEMA
+    assert document["graph_hash"] == "hand-built"
+    (witness,) = document["witnesses"]
+    expected_closure = ["src/b.py", "tests/test_b.py"]
+    assert witness == {
+        "id": "w-000001",
+        "test": "tests/test_b.py",
+        "closure": closure_hash(expected_closure),
+        "changed": ["src/a.py"],
+        "claim": "closure(test) does not intersect changed set",
+    }
+    assert document["closures"] == {closure_hash(expected_closure): expected_closure}
+
+
+def test_build_selection_doc_lists_skipped_paths() -> None:
+    result = _result()
+    document = build_selection_doc(result.decision, "hand-built")
+
+    assert document["schema"] == SELECTION_SCHEMA
+    assert document["mode"] == "selective"
+    assert document["skip"] == ["tests/test_b.py"]
+    assert document["graph_hash"] == "hand-built"
 
 
 def test_run_all_report_shape() -> None:
@@ -24,7 +168,10 @@ def test_run_all_report_shape() -> None:
     assert report["decision"]["mode"] == "run-all"
     assert report["decision"]["findings"][0]["rule"] == "R018"
     assert report["tests"]["skipped"] == []
+    assert report["graph"] == {"hash": None, "nodes": 0, "edges": 0, "roots": []}
+    assert report["changed"] == []
     assert report["stats"]["total"] == 0
+    assert report["stats"]["estimated_seconds_saved"] is None
 
 
 def test_selection_sorts_skip_list() -> None:
