@@ -1,0 +1,592 @@
+{
+  "constraints_sha256": null,
+  "excluded": [],
+  "prs": [
+    {
+      "base_sha": "ae1b9f66238f75ced3ced5e4485408435de10768",
+      "head_sha": "63e885394a629d194b0aa867e8fbf475cdec6521",
+      "merge_sha": "b5addb64f0161ff6bfe94c124ef76f6a1fba5254",
+      "number": 3773,
+      "title": "Adapt test_response_decode_text_using_autodetect for chardet 6.0"
+    },
+    {
+      "base_sha": "ae25e86f5ca5625d5bffd13865b458ba5fadf50d",
+      "head_sha": "d664166bdae02fd6f1bb71833bb7bbfef2ab7b3d",
+      "merge_sha": "fd474b4050dcc21a4ca315ef0544be6633d7b765",
+      "number": 3730,
+      "title": "3.11+"
+    },
+    {
+      "base_sha": "ca097c96f97d8d2a5da09b8ca736c7e78a2467f6",
+      "head_sha": "4b9f63e507c4ea75fa59f6bbdfb103e2f014a6f9",
+      "merge_sha": "ae1b9f66238f75ced3ced5e4485408435de10768",
+      "number": 3699,
+      "title": "Expose `FunctionAuth` in `__all__`"
+    },
+    {
+      "base_sha": "def4778d622e8bf49a9fea4dda78cca4cf666d8a",
+      "head_sha": "ae1ddc99af52472c08803fb9d4d3f8ce20a0e2e0",
+      "merge_sha": "ca097c96f97d8d2a5da09b8ca736c7e78a2467f6",
+      "number": 3703,
+      "title": "docs/ssl: fix typo"
+    },
+    {
+      "base_sha": "435e1dac899adeb0c156c00721ecbb1124d75842",
+      "head_sha": "d8668ce618f40b9125af53c0c280011d0af4156b",
+      "merge_sha": "def4778d622e8bf49a9fea4dda78cca4cf666d8a",
+      "number": 3692,
+      "title": "Fixed a syntax error in the file upload example"
+    },
+    {
+      "base_sha": "20380490fd0bd13c68704080754c1385bff96d69",
+      "head_sha": "350221558d4f079fc4ab3673d81a4bc730fbb9c3",
+      "merge_sha": "ae25e86f5ca5625d5bffd13865b458ba5fadf50d",
+      "number": 3690,
+      "title": "Add `.wait_ready` to parser for clean server disconnects"
+    },
+    {
+      "base_sha": "4b23574cf83307ce27d3b14b4a425dc58c57d28d",
+      "head_sha": "b4d5094df53c98146c17069216e316ef5006ddb1",
+      "merge_sha": "435e1dac899adeb0c156c00721ecbb1124d75842",
+      "number": 3677,
+      "title": "Bump actions/setup-python from 5 to 6"
+    },
+    {
+      "base_sha": "68989ae47d9fd10381a3859619a3880014d187f6",
+      "head_sha": "a711667febc881914bd117d6e86dfbf0b91c9f47",
+      "merge_sha": "20380490fd0bd13c68704080754c1385bff96d69",
+      "number": 3673,
+      "title": "Connection resets"
+    },
+    {
+      "base_sha": "4acf5c2c37714cc63b5cf71b3e284fca83c90311",
+      "head_sha": "a711667febc881914bd117d6e86dfbf0b91c9f47",
+      "merge_sha": "68989ae47d9fd10381a3859619a3880014d187f6",
+      "number": 3672,
+      "title": "Server connection handling."
+    },
+    {
+      "base_sha": "f9d5e1204978c0c66666fa169edada1bf719f8ba",
+      "head_sha": "6ee7a36f3462107f618712c6ba198662b3b2c168",
+      "merge_sha": "4acf5c2c37714cc63b5cf71b3e284fca83c90311",
+      "number": 3670,
+      "title": "Update FileStream API"
+    },
+    {
+      "base_sha": "7b03e3def040983fb29fe82d9fd3d4ce9b058284",
+      "head_sha": "1ced861ee82e0e71c09da48882d0983e0ba6377f",
+      "merge_sha": "f9d5e1204978c0c66666fa169edada1bf719f8ba",
+      "number": 3668,
+      "title": "Test suite for v1."
+    },
+    {
+      "base_sha": "77589cc6f7b0b395f29df49c767cda6d144812bc",
+      "head_sha": "6a5bb5a4e4f5f5503e76f93fe9d635824acb52c9",
+      "merge_sha": "7b03e3def040983fb29fe82d9fd3d4ce9b058284",
+      "number": 3667,
+      "title": "Update README"
+    },
+    {
+      "base_sha": "652f051feaf1ab2828e1812eb0c48f9046a8b5ce",
+      "head_sha": "d082efc0ac60a244540a2cfcd22a5d8f4d008300",
+      "merge_sha": "4b23574cf83307ce27d3b14b4a425dc58c57d28d",
+      "number": 3665,
+      "title": "Update dependencies"
+    },
+    {
+      "base_sha": "3fee27838e9fd0cb528861e41f3ff98164081a4b",
+      "head_sha": "abfbc104fdd49e90282d8831bd0393566826736b",
+      "merge_sha": "652f051feaf1ab2828e1812eb0c48f9046a8b5ce",
+      "number": 3579,
+      "title": "docs: re-add documentation for SSL_CERT_FILE and SSL_CERT_DIR"
+    },
+    {
+      "base_sha": "bc00d2bd9f715b3b848925e0c259887409bceabc",
+      "head_sha": "d5cd7feb1f39358aec1df05ed12de6e0aa8aa375",
+      "merge_sha": "3fee27838e9fd0cb528861e41f3ff98164081a4b",
+      "number": 3589,
+      "title": "[docs] Remove load_ssl_context & load_verify_locations DEBUG log"
+    },
+    {
+      "base_sha": "767cf6baa608a56d03f8fe438a39c2013904f0ae",
+      "head_sha": "cdad1a69b689294727fd85d5441c06058b429950",
+      "merge_sha": "bc00d2bd9f715b3b848925e0c259887409bceabc",
+      "number": 3649,
+      "title": "Update compatibility.md with documentation of exceptions differences"
+    },
+    {
+      "base_sha": "b55d4635701d9dc22928ee647880c76b078ba3f2",
+      "head_sha": "5a5ae1486d825f7fe6b98371618471dd71f3c68d",
+      "merge_sha": "767cf6baa608a56d03f8fe438a39c2013904f0ae",
+      "number": 3658,
+      "title": "Bump the python-packages group across 1 directory with 10 updates"
+    },
+    {
+      "base_sha": "15e9759e656654b44307fbee685e032c7bb4aede",
+      "head_sha": "c070473cda466f1f4cbbed2c23dcc8afc8b9ebbe",
+      "merge_sha": "b55d4635701d9dc22928ee647880c76b078ba3f2",
+      "number": 3654,
+      "title": "Upgrade Python type checker mypy"
+    },
+    {
+      "base_sha": "364697efcafe39290358745da8be451a40a3eab2",
+      "head_sha": "23100fddf17c999d3fa2b91b5d409e4388400248",
+      "merge_sha": "15e9759e656654b44307fbee685e032c7bb4aede",
+      "number": 3629,
+      "title": "Add `httpx-secure` to third party packages"
+    },
+    {
+      "base_sha": "89102021fcb44f6c3fab6304e5f951692723c908",
+      "head_sha": "927b5ac58942eb0f6dfdc3e0b90cac0d3bc9ae8e",
+      "merge_sha": "364697efcafe39290358745da8be451a40a3eab2",
+      "number": 3651,
+      "title": "Upgrade Python formatter ruff"
+    },
+    {
+      "base_sha": "4fb9528c2f5ac000441c3634d297e77da23067cd",
+      "head_sha": "8613b071f846f9a027c034eb2f5d91e62910d87f",
+      "merge_sha": "89102021fcb44f6c3fab6304e5f951692723c908",
+      "number": 3620,
+      "title": "chore: update sponsorship graphic"
+    },
+    {
+      "base_sha": "336204f0121a9aefdebac5cacd81f912bafe8057",
+      "head_sha": "3fa326b2b0ab737274709334fe771d1aceb99101",
+      "merge_sha": "4fb9528c2f5ac000441c3634d297e77da23067cd",
+      "number": 3592,
+      "title": "Drop Python 3.8 support"
+    },
+    {
+      "base_sha": "6c7af967734bafd011164f2a1653abc87905a62b",
+      "head_sha": "f7a257fa28e12a3611725b9d0f7f4766a30ad1e6",
+      "merge_sha": "336204f0121a9aefdebac5cacd81f912bafe8057",
+      "number": 3571,
+      "title": "Display proxy protocol scheme on error"
+    },
+    {
+      "base_sha": "9e8ab40369bd3ec2cc8bff37ab79bf5769c8b00f",
+      "head_sha": "8ccabf08526ba73f38a9027450ec35a7cca38de4",
+      "merge_sha": "6c7af967734bafd011164f2a1653abc87905a62b",
+      "number": 3552,
+      "title": "Add httpx-retries to third party packages docs"
+    },
+    {
+      "base_sha": "ce7a6e91fbcaae8b8e5d8df5865a95a9b75acb64",
+      "head_sha": "0ebebab9d9f8e6ec421212014b13a338e76fa61c",
+      "merge_sha": "9e8ab40369bd3ec2cc8bff37ab79bf5769c8b00f",
+      "number": 3512,
+      "title": "Docs: Add `httpx.Proxy` to api.md"
+    },
+    {
+      "base_sha": "4189b7f051c6c51ce74c3bee1a5f269f9c50c6b2",
+      "head_sha": "39f16b227aabc0aa0a70f647a13da57ca5c7562c",
+      "merge_sha": "ce7a6e91fbcaae8b8e5d8df5865a95a9b75acb64",
+      "number": 3327,
+      "title": "Add `httpdbg` to third party packages."
+    },
+    {
+      "base_sha": "e70d0b08c929e5140e38aa92a419de0c6d494148",
+      "head_sha": "ac3408fc0f3d4074e8a49db66f0e9296fe5f93f6",
+      "merge_sha": "4189b7f051c6c51ce74c3bee1a5f269f9c50c6b2",
+      "number": 3519,
+      "title": "fix typo"
+    },
+    {
+      "base_sha": "b395e6626b45dc2122c04c6e080fc7fb908cc9af",
+      "head_sha": "6f5ee812112f56be87a368c3823230b75b3463be",
+      "merge_sha": "e70d0b08c929e5140e38aa92a419de0c6d494148",
+      "number": 3448,
+      "title": "Sharper CHANGELOG entry."
+    },
+    {
+      "base_sha": "10b7295922741b91a15751029e6ad3e8e5efb9f3",
+      "head_sha": "0c447f54c33742fd2020b6f5dd46d0b45f6b3ff3",
+      "merge_sha": "b395e6626b45dc2122c04c6e080fc7fb908cc9af",
+      "number": 3499,
+      "title": "Bump cryptography from 44.0.0 to 44.0.1"
+    },
+    {
+      "base_sha": "c7c13f18a5af4c64c649881b2fe8dbd72a519c32",
+      "head_sha": "669e05325d0b120398f308ae2c173bb2380703d1",
+      "merge_sha": "10b7295922741b91a15751029e6ad3e8e5efb9f3",
+      "number": 3478,
+      "title": "docs: Use `with` to open files in multipart examples"
+    },
+    {
+      "base_sha": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "head_sha": "55c92476a0eb10b9dd3bde4dbd4c96278551f5a2",
+      "merge_sha": "c7c13f18a5af4c64c649881b2fe8dbd72a519c32",
+      "number": 3460,
+      "title": "Add support for Python 3.13"
+    },
+    {
+      "base_sha": "89599a9541af14bcf906fc4ed58ccbdf403802ba",
+      "head_sha": "c2a5f81ce5335211e3b765f00366e9023c642c2d",
+      "merge_sha": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "number": 3445,
+      "title": "Version 0.28.1"
+    },
+    {
+      "base_sha": "8ecb86f0d74ffc52d4663214fae9526bee89358d",
+      "head_sha": "9d5e7341458f37044853b627a80e768826ebdaa1",
+      "merge_sha": "89599a9541af14bcf906fc4ed58ccbdf403802ba",
+      "number": 3442,
+      "title": "Fix `verify=False`, `cert=...` case."
+    },
+    {
+      "base_sha": "0cb7e5a2e736628e2f506d259fcf0d48cd2bde82",
+      "head_sha": "6e69e620024eb99b72e85eb24acc532f7bc20143",
+      "merge_sha": "8ecb86f0d74ffc52d4663214fae9526bee89358d",
+      "number": 3440,
+      "title": "Add test for request params behavior changes (#3364)"
+    },
+    {
+      "base_sha": "15e21e9ea3cad4f06e22a7e704aabefdf43d2e29",
+      "head_sha": "bb070b52e62ca1d95427f1aab67d8d79f46f5411",
+      "merge_sha": "0cb7e5a2e736628e2f506d259fcf0d48cd2bde82",
+      "number": 3434,
+      "title": "Bump the python-packages group with 11 updates"
+    },
+    {
+      "base_sha": "80960fa31918d7663c3f4c3ad61661cf0e80628f",
+      "head_sha": "3bf53fafce78da819086f5c193228ef6d7f1589f",
+      "merge_sha": "15e21e9ea3cad4f06e22a7e704aabefdf43d2e29",
+      "number": 3426,
+      "title": "Updating deprecated docstring Client() class"
+    },
+    {
+      "base_sha": "a33c87852b8a0dddc65e5f739af1e0a6fca4b91f",
+      "head_sha": "5f8107b3d78305a35e3a409722f82ef9c76a77f9",
+      "merge_sha": "80960fa31918d7663c3f4c3ad61661cf0e80628f",
+      "number": 3419,
+      "title": "Version 0.28.0."
+    },
+    {
+      "base_sha": "ce7e14da27abba6574be9b3ea7cd5990556a9343",
+      "head_sha": "fdd2e91ef3b4d88786526a06f5ff1d42ed963300",
+      "merge_sha": "a33c87852b8a0dddc65e5f739af1e0a6fca4b91f",
+      "number": 3380,
+      "title": "Fix `extensions` type annotation."
+    },
+    {
+      "base_sha": "47f4a96ffaaaa07dca1614409549b5d7a6e7af49",
+      "head_sha": "8a40ebc44fa32b90edfb45ba3ba57d85ddfc7756",
+      "merge_sha": "ce7e14da27abba6574be9b3ea7cd5990556a9343",
+      "number": 3418,
+      "title": "Error on verify as str."
+    },
+    {
+      "base_sha": "189fc4bcbe5f314128775dec66a616ac9a31ad48",
+      "head_sha": "3b9b2b325e5ee5f510e047c6a8775b7b45ee5a17",
+      "merge_sha": "47f4a96ffaaaa07dca1614409549b5d7a6e7af49",
+      "number": 3412,
+      "title": "Handle empty zstd responses"
+    },
+    {
+      "base_sha": "b47d94c90445921dc74f42c8390a474892c3f097",
+      "head_sha": "433684fc8a10937117fbe2dcc2f653b2a8ba2901",
+      "merge_sha": "7b19cd5f4b749064c6452892a5e58a3758da1d1b",
+      "number": 3389,
+      "title": "Move utility functions from _utils.py to _client.py"
+    },
+    {
+      "base_sha": "2ea2286db4da3ba6d318e617ac03217225e9f962",
+      "head_sha": "d686e43ea1e52c9fa283b592c7423498631c62b8",
+      "merge_sha": "b47d94c90445921dc74f42c8390a474892c3f097",
+      "number": 3403,
+      "title": "Avoid private imports in test cases."
+    },
+    {
+      "base_sha": "1805ee0d22f96e2b29f0500dd3076e10020004bf",
+      "head_sha": "9acb535fd5c3df1511eeea45ef8a8f348dfd870f",
+      "merge_sha": "2ea2286db4da3ba6d318e617ac03217225e9f962",
+      "number": 3401,
+      "title": "Import ssl on demand"
+    },
+    {
+      "base_sha": "41597adffa9d34171a63f7511fc0f702558dd08c",
+      "head_sha": "0f9cd3fdf3c73e217b9f78c304aa266163245da8",
+      "merge_sha": "1805ee0d22f96e2b29f0500dd3076e10020004bf",
+      "number": 3394,
+      "title": "Graceful upgrade path for 0.28."
+    },
+    {
+      "base_sha": "6212e8fa3bf90154b891c7721f6d29737caac861",
+      "head_sha": "81bb8d117a80ae88bf8061c9f58877b83774f13d",
+      "merge_sha": "41597adffa9d34171a63f7511fc0f702558dd08c",
+      "number": 3387,
+      "title": "Move remaining utility functions from _utils.py to _models.py "
+    },
+    {
+      "base_sha": "83a85189c79708b732d04e7b906e388fb0fbde94",
+      "head_sha": "d51b76ada7d6177e599443d5eef692012e57372c",
+      "merge_sha": "6212e8fa3bf90154b891c7721f6d29737caac861",
+      "number": 3388,
+      "title": "Move utility functions from _utils.py to _multipart.py"
+    },
+    {
+      "base_sha": "66225539796d819b5114ead2fd5e4d61865ab708",
+      "head_sha": "967cc4ea12e206adb71ee00e29f8498922d63ed2",
+      "merge_sha": "83a85189c79708b732d04e7b906e388fb0fbde94",
+      "number": 3382,
+      "title": "Move normalize header functions from _utils.py to _models.py"
+    },
+    {
+      "base_sha": "12be5c44caa7a34bfe19f82eace5150ddeba2612",
+      "head_sha": "86efecb3baf715c26d6a5c50b5b5a13df855661f",
+      "merge_sha": "66225539796d819b5114ead2fd5e4d61865ab708",
+      "number": 3378,
+      "title": "Cleanup `Request` method parameter."
+    },
+    {
+      "base_sha": "e9cabc8e1deb6548c5c5e2f453e343d39a2a5321",
+      "head_sha": "8b07286d060bf9c2980fc5003e0778bed82a4f4a",
+      "merge_sha": "12be5c44caa7a34bfe19f82eace5150ddeba2612",
+      "number": 3178,
+      "title": "add socks5h proxy support"
+    },
+    {
+      "base_sha": "eeb5e3c2a3ff2403ec47b5926715ecd61143d92d",
+      "head_sha": "4169d10ccca7cb458873dea29fc2114d5284d0ca",
+      "merge_sha": "e9cabc8e1deb6548c5c5e2f453e343d39a2a5321",
+      "number": 3377,
+      "title": "made dependencies on certifi and httpcore only load when required"
+    },
+    {
+      "base_sha": "544038155382473ce87b17ef2238c96e48dee700",
+      "head_sha": "53b132f86dc5bf7606687533768c1f288088a1ab",
+      "merge_sha": "eeb5e3c2a3ff2403ec47b5926715ecd61143d92d",
+      "number": 3375,
+      "title": "Cleanup unneccessary test case"
+    },
+    {
+      "base_sha": "544038155382473ce87b17ef2238c96e48dee700",
+      "head_sha": "68c18e383ce93b9e4fbe2923b80a834fe3e06923",
+      "merge_sha": "5dda2aa30692e8529555f57efa7bcd203a7d5ac1",
+      "number": 3376,
+      "title": "Just use default `safe=...` characters for `urlescape`"
+    },
+    {
+      "base_sha": "ba2e51215e4e619540f2a24282b84ed8a738e6fd",
+      "head_sha": "6a197350bc0b300610e5b7ed17d296dd17d716a2",
+      "merge_sha": "544038155382473ce87b17ef2238c96e48dee700",
+      "number": 3374,
+      "title": "Update CHANGELOG.md"
+    },
+    {
+      "base_sha": "d293374b6603816420a2bb8e7f4fe5a5f09cbfcc",
+      "head_sha": "2221e5ab2628b04ce8dbec0aeaff859e18c59ea8",
+      "merge_sha": "ba2e51215e4e619540f2a24282b84ed8a738e6fd",
+      "number": 3373,
+      "title": "Review urlescape percent-safe set, and use + behavior for form spaces."
+    },
+    {
+      "base_sha": "489fef48ba8619c7604376165c7e8007398e1b5d",
+      "head_sha": "798954ec928bfaeee7ef8ed69a86f9d91892ddcd",
+      "merge_sha": "d293374b6603816420a2bb8e7f4fe5a5f09cbfcc",
+      "number": 3371,
+      "title": "Review URL percent escaping sets, from whatwg."
+    },
+    {
+      "base_sha": "9fd6f0ca6616d0310a3ee0b0c6ef509a97995797",
+      "head_sha": "f4874fe3855d83e1d88309b62e292eaf079e9ceb",
+      "merge_sha": "489fef48ba8619c7604376165c7e8007398e1b5d",
+      "number": 3372,
+      "title": "Update CHANGELOG.md"
+    },
+    {
+      "base_sha": "8e36f2bc685dfbe43cd7503bc1c422a6ed6e05a5",
+      "head_sha": "fa17a052f90af8b3cc90ffa4589adf17f5c4a663",
+      "merge_sha": "9fd6f0ca6616d0310a3ee0b0c6ef509a97995797",
+      "number": 3367,
+      "title": "Ensure JSON representation is compact. #3363"
+    },
+    {
+      "base_sha": "3f76571d3429497c4ee4ecf5d8bc034b6f765957",
+      "head_sha": "e83069830fa016b509377dcc4af713615fe44f4f",
+      "merge_sha": "8e36f2bc685dfbe43cd7503bc1c422a6ed6e05a5",
+      "number": 3319,
+      "title": "Introduce new `SSLContext` API & escalate deprecations."
+    },
+    {
+      "base_sha": "ffbddc1b006d4781b2f77427a340c6164600f3c0",
+      "head_sha": "b6666617bc39aca8a7af53cd2cc15c28e66aa761",
+      "merge_sha": "1d93ad80872499d0914424e797730e0c2a991d85",
+      "number": 3370,
+      "title": "Version 0.28."
+    },
+    {
+      "base_sha": "9a0561eed7236c1fe5daeaf64bc9682aea424d16",
+      "head_sha": "8b9897b93cd285d24d7954fae2afdb7451cd319e",
+      "merge_sha": "ce270b9f3459c68372628a6011d1f3177dc2b3ee",
+      "number": 3366,
+      "title": "Allow deprecated `verify=<...>` and `cert=<...>`."
+    },
+    {
+      "base_sha": "6f9b50990dad9645a6f9dc0e1eb90af0a6474c3b",
+      "head_sha": "bf5758388619afdc957722ca8a9a4ff255df6866",
+      "merge_sha": "3f76571d3429497c4ee4ecf5d8bc034b6f765957",
+      "number": 3364,
+      "title": "Concise URL instantiation."
+    },
+    {
+      "base_sha": "d0e29b50c561dbc6769120d0ff22a8fc4e726b18",
+      "head_sha": "55ce231430722865e674b975b86e99977b256fea",
+      "merge_sha": "03600d3e08d8814a5fe58847c4687faa72003e2c",
+      "number": 3361,
+      "title": "Docs minor fix"
+    },
+    {
+      "base_sha": "1bf1fc0ea8417c8e539914aeafdb48f15591ba75",
+      "head_sha": "cccc734100dc2b3f1d7761de1fe939320468af3a",
+      "merge_sha": "6f9b50990dad9645a6f9dc0e1eb90af0a6474c3b",
+      "number": 3359,
+      "title": "typo: Reading a response expose response text, not request text"
+    },
+    {
+      "base_sha": "cf042b62eeb0b1ad474a093101bd04e7d2d977cc",
+      "head_sha": "26eacce5ef6a5129ce65f790b7cd99e19b6f9e02",
+      "merge_sha": "8bceb606b3492aaa1dd670ebc141bdaa524a81c4",
+      "number": 3136,
+      "title": "Warn with `stacklevel=2` to show caller of deprecation"
+    },
+    {
+      "base_sha": "1aa0a14ec1fc744f6b362277d600955feee025e1",
+      "head_sha": "27b15155e9a0f0c263fc71d7f8816d0809d91f52",
+      "merge_sha": "cf042b62eeb0b1ad474a093101bd04e7d2d977cc",
+      "number": 3345,
+      "title": "Cleanup `response.elapsed` implementation."
+    },
+    {
+      "base_sha": "1aa0a14ec1fc744f6b362277d600955feee025e1",
+      "head_sha": "e286481b9026a404397b5947cb47e80f8d547af7",
+      "merge_sha": "69b0f557c71c59f209fbceb50a8b494608ffc881",
+      "number": 3343,
+      "title": "Drop `_compat.py` module."
+    },
+    {
+      "base_sha": "2763690e1b2c0f72505397f34fc3c7dc2971955a",
+      "head_sha": "ff94a9985a9f1695bee54de7762d956ee3b53ecd",
+      "merge_sha": "1aa0a14ec1fc744f6b362277d600955feee025e1",
+      "number": 3335,
+      "title": "Drop overloaded usage of 'verify' and 'cert'."
+    },
+    {
+      "base_sha": "5766bf58e20548f106e13e95d7064635a9b06941",
+      "head_sha": "cb71af3c28f30e08e874de367921091d5b4ba66d",
+      "merge_sha": "2763690e1b2c0f72505397f34fc3c7dc2971955a",
+      "number": 3022,
+      "title": "Add `httpx.SSLContext` configuration."
+    },
+    {
+      "base_sha": "95a9527ed6a8b9a8e53ddee2f61447fb1a37e2a9",
+      "head_sha": "add5227036f3cf45471126b7568ba8ec99258953",
+      "merge_sha": "1bf1fc0ea8417c8e539914aeafdb48f15591ba75",
+      "number": 3329,
+      "title": "Bump the python-packages group with 5 updates"
+    },
+    {
+      "base_sha": "3849e1518f342dd8cd08f8c0537b565d54e6d2a2",
+      "head_sha": "4483df5b353a82379f4cf50cb9592e160ba6b185",
+      "merge_sha": "95a9527ed6a8b9a8e53ddee2f61447fb1a37e2a9",
+      "number": 3325,
+      "title": "Add `httpx-ws` to third party packages."
+    },
+    {
+      "base_sha": "49d74a2e7f773f88a84dd4af900d7a8543636ae2",
+      "head_sha": "a177a5ca32e1b8162d7e5e91d42026a44ba3f606",
+      "merge_sha": "3849e1518f342dd8cd08f8c0537b565d54e6d2a2",
+      "number": 3326,
+      "title": "Add `httpx-socks` to third party packages."
+    },
+    {
+      "base_sha": "5766bf58e20548f106e13e95d7064635a9b06941",
+      "head_sha": "4515254ffc0f955acfcf7d31b2a4b4515716e3cc",
+      "merge_sha": "7a046618f748c24ab05bd2adf683b8c24a72887b",
+      "number": 3323,
+      "title": "Drop `sniffio` requirement."
+    },
+    {
+      "base_sha": "2e01aa0075327c5c30632207e8b7a1961dda5303",
+      "head_sha": "86a258262fc0b0c20feb1daf0735b4d007c8d3b1",
+      "merge_sha": "49d74a2e7f773f88a84dd4af900d7a8543636ae2",
+      "number": 3312,
+      "title": "Clarified error when header value is None"
+    },
+    {
+      "base_sha": "34e1110a9b3f8ff875fd2f61e1721cf68e18e564",
+      "head_sha": "3bba871cc8bdeac096ab27702b6743be3e869542",
+      "merge_sha": "dece72d8cddde56060a3493843abc9ba7c85df81",
+      "number": 3314,
+      "title": "Remove deprecated 'proxies' parameter."
+    },
+    {
+      "base_sha": "a18f79610141500cf540b2cf4783559731109d7d",
+      "head_sha": "4d0cb0ce9d8b2696285f98dbedefffbd1829f569",
+      "merge_sha": "34e1110a9b3f8ff875fd2f61e1721cf68e18e564",
+      "number": 3315,
+      "title": "Remove deprecated 'app' parameter."
+    },
+    {
+      "base_sha": "f06171fd5a86cf89387f4ee860ea0da207160418",
+      "head_sha": "c362e199368862a8bb8c52729a975a7babc9df28",
+      "merge_sha": "a18f79610141500cf540b2cf4783559731109d7d",
+      "number": 3317,
+      "title": "Drop unneccessary 'URL.raw' property"
+    },
+    {
+      "base_sha": "f06171fd5a86cf89387f4ee860ea0da207160418",
+      "head_sha": "e77aea577e470ee186cb84c860f90fd1e3ad6726",
+      "merge_sha": "2e01aa0075327c5c30632207e8b7a1961dda5303",
+      "number": 3318,
+      "title": "Enable TestSuite for PRs to version branches."
+    },
+    {
+      "base_sha": "d4961b9f8e7f00b654dbdbf200562bd273f598c7",
+      "head_sha": "f42f73b436c790ca93ac73340eb4e476956dc0b5",
+      "merge_sha": "f06171fd5a86cf89387f4ee860ea0da207160418",
+      "number": 3192,
+      "title": "Revert \"Removed leading $ from cli code blocks\""
+    },
+    {
+      "base_sha": "0aa20e449e742f81fbc518ce793878015226652d",
+      "head_sha": "da256f267e0302b62d09aa60501db6ff1c98b037",
+      "merge_sha": "d4961b9f8e7f00b654dbdbf200562bd273f598c7",
+      "number": 3305,
+      "title": "Add speakeasy sponsorship"
+    },
+    {
+      "base_sha": "d46fa57a6a5163e39af9eda6e026c60ca646f573",
+      "head_sha": "4ed3f3f3cd9f80559adec41f5b70d95447a99833",
+      "merge_sha": "0aa20e449e742f81fbc518ce793878015226652d",
+      "number": 3295,
+      "title": "Bump cryptography from 43.0.0 to 43.0.1"
+    },
+    {
+      "base_sha": "609df7ecc0f7cb10a1c998aa9c269bba77337c5f",
+      "head_sha": "b9ddb838781750f1a8e6da8ed381c7df63db67ae",
+      "merge_sha": "d46fa57a6a5163e39af9eda6e026c60ca646f573",
+      "number": 3292,
+      "title": "Bump the python-packages group across 1 directory with 8 updates"
+    },
+    {
+      "base_sha": "1d6b6634331686c0701c75b6ff4830925269f23d",
+      "head_sha": "fb6be03e1030207aa9806c095010aeba1d03f5b8",
+      "merge_sha": "609df7ecc0f7cb10a1c998aa9c269bba77337c5f",
+      "number": 3288,
+      "title": "Version 0.27.2."
+    },
+    {
+      "base_sha": "1bf1ba51242e6433f6a4cfa45a9338eb85bd7559",
+      "head_sha": "b73eda600919f888739556a8540e227fe2009418",
+      "merge_sha": "1d6b6634331686c0701c75b6ff4830925269f23d",
+      "number": 3285,
+      "title": "Update CHANGELOG for 0.27.1 release date."
+    }
+  ],
+  "python_version": "3.12",
+  "repo_slug": "encode/httpx",
+  "repo_url": "https://github.com/encode/httpx.git",
+  "schema": "acquit/study-manifest-v1",
+  "window_months": 18
+}

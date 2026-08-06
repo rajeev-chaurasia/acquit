@@ -1,0 +1,298 @@
+{
+  "constraints_sha256": null,
+  "excluded": [],
+  "prs": [
+    {
+      "base_sha": "8285adf5a4f572dbf7a0a3b8f3a96ca0b19c50a4",
+      "head_sha": "5ce121dd841e2dc2594d0ed3954278f4101d3521",
+      "merge_sha": "548994ea0c61465574cbfdd636a894a692f54b94",
+      "number": 6095,
+      "title": "Replace the use of private `monkeypatch` fixture API"
+    },
+    {
+      "base_sha": "06ea505ce2b2042af26e96d35ebf159af7c0869d",
+      "head_sha": "9368fb3f3c52d74534d14c1bef03c79c103356cd",
+      "merge_sha": "dcbede0cb00df32e7f1895e19e37d5f40a75d1f6",
+      "number": 6013,
+      "title": "autoescape selection uses case-insensitive comparison"
+    },
+    {
+      "base_sha": "4cae5d8e411b1e69949d8fae669afeacbd3e5908",
+      "head_sha": "91c6b3fecf36b1f04554e57cc4060ccb737a445d",
+      "merge_sha": "7ef2946fb5151b745df30201b8c27790cac53875",
+      "number": 5962,
+      "title": "remove unicode host test"
+    },
+    {
+      "base_sha": "a29f88ce6f2f9843bd6fcbbfce1390a2071965d6",
+      "head_sha": "560c119e3dc33b35b9c57172fae521d99c2a1421",
+      "merge_sha": "4774385abdc04d3b0d02dcbed6543bc100f23f6e",
+      "number": 5945,
+      "title": "add zizmor to scan workflows"
+    },
+    {
+      "base_sha": "7b0088693ece1bd3a9238a6fdf56ed8df7a4d43b",
+      "head_sha": "fbb6f0bc4c60a0bada0e03c3480d0ccf30a3c1df",
+      "merge_sha": "c34d6e81fd8e405e6d4178bf24b364918811ef17",
+      "number": 5928,
+      "title": "all teardown callbacks are called despite errors"
+    },
+    {
+      "base_sha": "089cb86dd22bff589a4eafb7ab8e42dc357623b4",
+      "head_sha": "22d924701a6ae2e4cd01e9a15bbaf3946094af65",
+      "merge_sha": "f00ad424ee3b050d382cc5b4aabb18afbb5e4ae7",
+      "number": 5924,
+      "title": "release version 3.1.3"
+    },
+    {
+      "base_sha": "d3b78fd18a8d9e224cb9ef58a23cec9b1ffc9ce9",
+      "head_sha": "e82db2ca3a22c9614c1987392c9cfaa8c6ce99ad",
+      "merge_sha": "12e95c93b488725f80753f34b2e0d24838ca4646",
+      "number": 5917,
+      "title": "fix provide_automatic_options override"
+    },
+    {
+      "base_sha": "407eb76b27884848383a37c7274654f0271e4bc4",
+      "head_sha": "3d03098a97ddc6a908aa4a50c2ef7381f8297d0a",
+      "merge_sha": "4e652d3f68b90d50aa2301d3b7e68c3fafd9251d",
+      "number": 5903,
+      "title": "Abort if the instance folder cannot be created"
+    },
+    {
+      "base_sha": "4f79d5b59a56bc4356a97f2e81a35f98cb18d7b3",
+      "head_sha": "ac5664d2281533eacafd64f5cc7d5edcdaccab60",
+      "merge_sha": "407eb76b27884848383a37c7274654f0271e4bc4",
+      "number": 5900,
+      "title": "document using gevent for async"
+    },
+    {
+      "base_sha": "9b74a90dd3c47f792734823e8793ac36f38bc4dd",
+      "head_sha": "c77a5203438fe772d41f6a47303ad3f57a4efe6d",
+      "merge_sha": "4b8bde97d4fa3486e18dce21c3c5f75570d50164",
+      "number": 5899,
+      "title": "deprecate `should_ignore_error`"
+    },
+    {
+      "base_sha": "5559ef42b5334075cbde82b2870ca725ac606fa4",
+      "head_sha": "fe3b215d3ade4db68262dae1a3cdc464a1fc524f",
+      "merge_sha": "4f79d5b59a56bc4356a97f2e81a35f98cb18d7b3",
+      "number": 5865,
+      "title": "Increase required flit_core version to 3.11"
+    },
+    {
+      "base_sha": "30da640ffe23b6e461fa91d387ffea6b9d9fa847",
+      "head_sha": "3709c4a9a87e6ce8c26dc4a951e1df52ac9ecad0",
+      "merge_sha": "5559ef42b5334075cbde82b2870ca725ac606fa4",
+      "number": 5844,
+      "title": "pre-commit: Add codespell"
+    },
+    {
+      "base_sha": "25642fd1fd65985fc98f95e64bc2c7ff353d6c2b",
+      "head_sha": "3962683c5bd9477182d980a1081f5effb46c8ed2",
+      "merge_sha": "30da640ffe23b6e461fa91d387ffea6b9d9fa847",
+      "number": 5827,
+      "title": "clarify 415 vs 400 errors for request.json"
+    },
+    {
+      "base_sha": "85793d6c223dd845e8f218403a5ced83041d37e1",
+      "head_sha": "dbd4c2882593f6118103120aa96fa9acdf7deedb",
+      "merge_sha": "25642fd1fd65985fc98f95e64bc2c7ff353d6c2b",
+      "number": 5808,
+      "title": "fix annotation for select_jinja_autoescape"
+    },
+    {
+      "base_sha": "eb58d862cc4a8f31a369b6e9ad1724e9e642f13f",
+      "head_sha": "eca5fd1dfdc614c2df876cc32018a7d71f84ea82",
+      "merge_sha": "809d5a8869d4ffe8656680b2438b10f7c8845613",
+      "number": 5898,
+      "title": "redirect defaults to 303"
+    },
+    {
+      "base_sha": "adf363679da2d9a5ddc564bb2da563c7ca083916",
+      "head_sha": "6a64969009bf1898bd302e6a9633f71942523f7f",
+      "merge_sha": "70d04b5a2620705011e65f79ccfd52caa86f5d6a",
+      "number": 5818,
+      "title": "pass context through dispatch methods"
+    },
+    {
+      "base_sha": "adf363679da2d9a5ddc564bb2da563c7ca083916",
+      "head_sha": "5a174abe08a63175d0b7f6c555f93de30afb0661",
+      "merge_sha": "88a65bb374e87a18816a780dbd4ae69d307aa85c",
+      "number": 5829,
+      "title": "Docs typo/markup fixes"
+    },
+    {
+      "base_sha": "330123258e8c3dc391cbe55ab1ed94891ca83af3",
+      "head_sha": "c2705ffd9ce1dc8476cb29eaf5ff5d4c719852d9",
+      "merge_sha": "adf363679da2d9a5ddc564bb2da563c7ca083916",
+      "number": 5812,
+      "title": "merge app and request context"
+    },
+    {
+      "base_sha": "1292419ddfc6a14fc7f85b5ed7efcc2d215f1ad3",
+      "head_sha": "2c1b30d0503cfb064f1cb252e6614a06915a362a",
+      "merge_sha": "85793d6c223dd845e8f218403a5ced83041d37e1",
+      "number": 5800,
+      "title": "release version 3.1.2"
+    },
+    {
+      "base_sha": "55c62556571ee46a94da174643b50ece06edead4",
+      "head_sha": "4dd52ca9c768c9b6d04180f0547d6f4b6e34f211",
+      "merge_sha": "1292419ddfc6a14fc7f85b5ed7efcc2d215f1ad3",
+      "number": 5795,
+      "title": "Update GitHub Actions workflow for artifact handling"
+    },
+    {
+      "base_sha": "85c5d93cbd049c4bd0679c36fd1ddcae8c37b642",
+      "head_sha": "edebd3704437f19b5b137eaffe97130fe817d144",
+      "merge_sha": "ed1c9e953e2d67c0994e32e6c8d878291e36d4f7",
+      "number": 5736,
+      "title": "support call template_filter without parens"
+    },
+    {
+      "base_sha": "49b7e7bc8fb69d605719991d1c0a99fcee689053",
+      "head_sha": "9822a0351574790cb66c652fcc396ad7aa2b09d8",
+      "merge_sha": "38b4c1e19b50494cfcdc9332899e09b7fed34979",
+      "number": 5799,
+      "title": "refactor stream_with_context for async views"
+    },
+    {
+      "base_sha": "ff64079a516c269f171ababf3d92b86886a62ffd",
+      "head_sha": "b228ca3d87745b746d904a2108429617a814ffda",
+      "merge_sha": "49b7e7bc8fb69d605719991d1c0a99fcee689053",
+      "number": 5798,
+      "title": "security docs for TRUSTED_HOSTS"
+    },
+    {
+      "base_sha": "c56c5ec7c41e6ffd02516bf7cb80dd2ba9ba7aa3",
+      "head_sha": "d44f1c65239c3e33509224aa1931631243dbfa7f",
+      "merge_sha": "1dfd7cd5555d9e62a2e198a131c366242e724b35",
+      "number": 5777,
+      "title": "use IO[bytes] instead of BinaryIO for wider compatibility"
+    },
+    {
+      "base_sha": "7fea7cf15688b2a2712b01c45c9e3385ea382e67",
+      "head_sha": "0f83958247e9eab1c7f62903601dfd5fe10c640f",
+      "merge_sha": "c56c5ec7c41e6ffd02516bf7cb80dd2ba9ba7aa3",
+      "number": 5742,
+      "title": "Docs: Fix escaping in HTML escaping example"
+    },
+    {
+      "base_sha": "a42c4d54a3e5cd56c0700479ede75157a748acd6",
+      "head_sha": "7bf3be8dfa5832ef03a3fd8f07f6736e770440e4",
+      "merge_sha": "7fea7cf15688b2a2712b01c45c9e3385ea382e67",
+      "number": 5723,
+      "title": "Update macOS UI reference to \u201cSystem Settings\u201d"
+    },
+    {
+      "base_sha": "5addaf833b2e8c7a616f89dd8ad5a44b07d7c000",
+      "head_sha": "53b8f08218796d95764c5252bccd8a50a173a6fb",
+      "merge_sha": "24824ff666e096c4c07d0b75a889088571afe4a6",
+      "number": 5797,
+      "title": "push preserved contexts in correct order"
+    },
+    {
+      "base_sha": "f04c5e696400badaa52b3450ded53e9091c2078a",
+      "head_sha": "a758915893352f5986c6ee101cdf7e3b7a64fa28",
+      "merge_sha": "a7b67c99f922f26b1071a90994e14261dc0a6df2",
+      "number": 5757,
+      "title": "svg logo"
+    },
+    {
+      "base_sha": "a42c4d54a3e5cd56c0700479ede75157a748acd6",
+      "head_sha": "adeea0070700671230733879846417c80f4e62b1",
+      "merge_sha": "c07b201ce336c3e49ae3b6fa81aaf4fb871d90ba",
+      "number": 5754,
+      "title": "remove slsa provenance"
+    },
+    {
+      "base_sha": "bbaf13333fd00644313488243cfe547b13dcae78",
+      "head_sha": "184ec3c5453e1156372085df35e8d922ce7e3559",
+      "merge_sha": "a42c4d54a3e5cd56c0700479ede75157a748acd6",
+      "number": 5737,
+      "title": "Fix global CONTRIBUTING link"
+    },
+    {
+      "base_sha": "e7e53807766ef1470bce546716a675ded4b08597",
+      "head_sha": "52df9eed45d0b19c588662ed8492d8fbaa0e7098",
+      "merge_sha": "a5f9742398c9429ef84ac8a57b0f3eb418394d9e",
+      "number": 5731,
+      "title": "drop end of life python versions"
+    },
+    {
+      "base_sha": "73d6504063bfa00666a92b07a28aaf906c532f09",
+      "head_sha": "7fff56f5172c48b6f3aedf17ee14ef5c2533dfd1",
+      "merge_sha": "57e72869486e89b45f6fd0a07cdd0adf80f5db1b",
+      "number": 5730,
+      "title": "release version 3.1.1"
+    },
+    {
+      "base_sha": "e7851665071cb93b3c70b1e7103f82d1e6d01f5d",
+      "head_sha": "0109e496f6ca68de29480fe6413e81b1d3f86aa9",
+      "merge_sha": "941efd4a36ed0f27e13758874f95e3aa1d3ee163",
+      "number": 5727,
+      "title": "use uv"
+    },
+    {
+      "base_sha": "bfffe87d4c2ea255b9a51432bebb3d28741245c4",
+      "head_sha": "410e5ab7ed0ef326fa8b5164a633863f137ffff5",
+      "merge_sha": "e7851665071cb93b3c70b1e7103f82d1e6d01f5d",
+      "number": 5659,
+      "title": "Async Iterable Response"
+    },
+    {
+      "base_sha": "2732c4db66763462c2795d2287b61d4f77031342",
+      "head_sha": "41ec5760a2c55a099c3a1733fdd36fbb1258a02b",
+      "merge_sha": "73ce26c3e822cdc2ccf99625619a50c91f163f8d",
+      "number": 5702,
+      "title": "remove tests about deprecated pkgutil.get_loader"
+    },
+    {
+      "base_sha": "315ebc11765ed3b9da8b5271602e89a403376c24",
+      "head_sha": "c94d2a77db0102a7cf8ceec7804f366f180c373f",
+      "merge_sha": "2732c4db66763462c2795d2287b61d4f77031342",
+      "number": 5701,
+      "title": "add endpoint name in favicon example"
+    },
+    {
+      "base_sha": "c7c8dc38ea2890d62b7aaff7e4c016e4b98101b0",
+      "head_sha": "7d5d1874581209f66ad7bcdfb7f85b2b9a7ca471",
+      "merge_sha": "315ebc11765ed3b9da8b5271602e89a403376c24",
+      "number": 5700,
+      "title": "better type checking during deprecation"
+    },
+    {
+      "base_sha": "5ea0ab8ea21b0c11ee6098e6b052463687af602a",
+      "head_sha": "2ae36c8dd5c9d24578d9fca85f8c351290d0de04",
+      "merge_sha": "c7c8dc38ea2890d62b7aaff7e4c016e4b98101b0",
+      "number": 5695,
+      "title": "Remove HTTP Public Key Pinning from docs"
+    },
+    {
+      "base_sha": "08c480b3b31e896698bb773069026a61eb53d158",
+      "head_sha": "da600394865c06a4772c433c1a560453dcf4f868",
+      "merge_sha": "5ea0ab8ea21b0c11ee6098e6b052463687af602a",
+      "number": 5674,
+      "title": "Handle help arg by itself the same as no args"
+    },
+    {
+      "base_sha": "04b070fa26b346b48bd66d317e72de75e001a2e7",
+      "head_sha": "f51a23839aa55aee2f2a9196c344df6eecd854d7",
+      "merge_sha": "08c480b3b31e896698bb773069026a61eb53d158",
+      "number": 5671,
+      "title": "Update app factory docs"
+    },
+    {
+      "base_sha": "165af0a090e229e94ccd93896efc15b9fe0488da",
+      "head_sha": "75a8327cfd6eb912e469a8a613151d7ee50a1c1c",
+      "merge_sha": "04b070fa26b346b48bd66d317e72de75e001a2e7",
+      "number": 5650,
+      "title": "Fix typo in the docs"
+    }
+  ],
+  "python_version": "3.12",
+  "repo_slug": "pallets/flask",
+  "repo_url": "https://github.com/pallets/flask.git",
+  "schema": "acquit/study-manifest-v1",
+  "window_months": 18
+}

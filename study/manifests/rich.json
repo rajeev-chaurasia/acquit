@@ -1,0 +1,459 @@
+{
+  "constraints_sha256": null,
+  "excluded": [],
+  "prs": [
+    {
+      "base_sha": "46cebbb032f920eb096efbaf23cdc6fe9dd541f7",
+      "head_sha": "ce51a2f8bf326878a94a382cb7102c85824f7e04",
+      "merge_sha": "9d8f9a372cc5916fd4781fec207ced7ddac2f08f",
+      "number": 4175,
+      "title": "Update README URLs from master to main branch"
+    },
+    {
+      "base_sha": "ffe2edc5968eac19d5493c2d7b27965031a692e9",
+      "head_sha": "82e06e0d9985fd8cce456dc3977e0d2d9e84b4d8",
+      "merge_sha": "458a9109c8b7da81c17b2270ea8a88f3e8c0465a",
+      "number": 4080,
+      "title": "bump to 15.0.0"
+    },
+    {
+      "base_sha": "19c67b9a3479841e9133bea94607c89ee931d3fc",
+      "head_sha": "cf3b5a16f7a76b2e8c4921d3314021bb72a6c5c1",
+      "merge_sha": "ffe2edc5968eac19d5493c2d7b27965031a692e9",
+      "number": 4079,
+      "title": "Inline table code"
+    },
+    {
+      "base_sha": "58ac15120fe254886c10d6253667733c83604cb4",
+      "head_sha": "494b795031782c694297d2db78bd04fb8c82f590",
+      "merge_sha": "19c67b9a3479841e9133bea94607c89ee931d3fc",
+      "number": 4077,
+      "title": "proxy isatty"
+    },
+    {
+      "base_sha": "9cb198944f8184df92217efc8b20d3fffa4b4fa0",
+      "head_sha": "48293cde887c4f25a7bca022131b56495f370a88",
+      "merge_sha": "58ac15120fe254886c10d6253667733c83604cb4",
+      "number": 4076,
+      "title": "preserve newlines"
+    },
+    {
+      "base_sha": "1fc7cb210ae52eb099df39818ddb9569e5b14c7b",
+      "head_sha": "eccb5945ddb8487d655d2ab54f3443d072ef4247",
+      "merge_sha": "9cb198944f8184df92217efc8b20d3fffa4b4fa0",
+      "number": 4075,
+      "title": "empty with end"
+    },
+    {
+      "base_sha": "c595fa95068dd2c5095d25446b2f0571bc0b3995",
+      "head_sha": "31ce129a915bab47fa7ddc8e15af77480666fefe",
+      "merge_sha": "1fc7cb210ae52eb099df39818ddb9569e5b14c7b",
+      "number": 3941,
+      "title": "Fix typing for save_html, save_text, save_svg to accept PathLike"
+    },
+    {
+      "base_sha": "a86dce09714f4e5195cce8c15fce7a586d7b562a",
+      "head_sha": "f441a326f10af5dc0cd570dadaed16e7f7035fc3",
+      "merge_sha": "ee8378c3bbbd7c75abc2f55c6c19e83b218ae81d",
+      "number": 4073,
+      "title": "bump"
+    },
+    {
+      "base_sha": "fc41075a3206d2a5fd846c6f41c4d2becab814fa",
+      "head_sha": "9ac7e797cc731429603cdebd21c1746e5984c7b6",
+      "merge_sha": "a86dce09714f4e5195cce8c15fce7a586d7b562a",
+      "number": 3845,
+      "title": "Use faster generator for link IDs"
+    },
+    {
+      "base_sha": "fc41075a3206d2a5fd846c6f41c4d2becab814fa",
+      "head_sha": "6729c6f6c4ee24a13a94d825cb7ce66b52206db2",
+      "merge_sha": "7f40063da781f4990d21423f23f7ccb3165ce0bd",
+      "number": 4070,
+      "title": "perf: reduce Console and RichHandler import time by deferring unused imports"
+    },
+    {
+      "base_sha": "42899d8a0a96b121a514516f4be9db44ff7aeaf3",
+      "head_sha": "efe8f619138327dd3e8fe490289d1b0e6da4a0e8",
+      "merge_sha": "fc41075a3206d2a5fd846c6f41c4d2becab814fa",
+      "number": 4026,
+      "title": "Update CONTRIBUTING.md"
+    },
+    {
+      "base_sha": "f54bfe062865187fe3bc733769dcd990a5a0ffe3",
+      "head_sha": "14a47c928241fe5cbf2f1adab0bb61fd1db3472f",
+      "merge_sha": "ce0118819d172d134507bcf5982d3faf82bbc43e",
+      "number": 4008,
+      "title": "bump 14.3.3"
+    },
+    {
+      "base_sha": "7338cb9dafd0d0e916585f191ae505b3e602bb51",
+      "head_sha": "f07a3fc5f5f4d5bfc0152cca4b103369934cd8b6",
+      "merge_sha": "f54bfe062865187fe3bc733769dcd990a5a0ffe3",
+      "number": 4007,
+      "title": "Add regression tests for VS16 after zero-width chars in split_graphemes"
+    },
+    {
+      "base_sha": "27701029082052c6541031b6f139097230253900",
+      "head_sha": "905b397deb6b5ed59dfd80fa499c90e215f309c8",
+      "merge_sha": "7338cb9dafd0d0e916585f191ae505b3e602bb51",
+      "number": 4006,
+      "title": "fix for infinite loop in split_graphemes"
+    },
+    {
+      "base_sha": "0752ff047295131d98f24284e1d949300cd6f4c1",
+      "head_sha": "1568912d6513eea76213a2640cc174e3606a0df0",
+      "merge_sha": "27701029082052c6541031b6f139097230253900",
+      "number": 3972,
+      "title": "Add AI contribution guidelines to AI_POLICY.md"
+    },
+    {
+      "base_sha": "1d402e0c59f8765e420a5a4440eb2fca7465d1ae",
+      "head_sha": "54ae0cfbb8d43ccc8f56bf57019b9a22c252eefa",
+      "merge_sha": "0752ff047295131d98f24284e1d949300cd6f4c1",
+      "number": 3953,
+      "title": "Fix ZWJ and edge cases"
+    },
+    {
+      "base_sha": "36fe3f7ca9becca4777861d5e6e625f5a4a37545",
+      "head_sha": "2e5a5dad304b59d75aa4b4ed6cae031693e3615e",
+      "merge_sha": "f2a1c3b8a8f7edc41b1954cc3fb66bae32293a5e",
+      "number": 3944,
+      "title": "fix fonts"
+    },
+    {
+      "base_sha": "ea9d4db5d84b4e834979304e3053bf757daae322",
+      "head_sha": "21806ce70c67de52ddd2a9785a62dd55f554c3b3",
+      "merge_sha": "9a99acc97d26d7832200a271ed8e95dd59df10c7",
+      "number": 3828,
+      "title": "Fix Two Typos"
+    },
+    {
+      "base_sha": "c595fa95068dd2c5095d25446b2f0571bc0b3995",
+      "head_sha": "97b5beacc3d9c1336d4bc6a3d69fec363bfe5d2c",
+      "merge_sha": "2f56d4d1d22d901b444cfc731230e0f715498256",
+      "number": 3942,
+      "title": "Update to markdown styles"
+    },
+    {
+      "base_sha": "3286095ff8b70e093dbbc4136ff7ba7d51944bec",
+      "head_sha": "624b30c5979ec602291a2fff0be8d222060f86d1",
+      "merge_sha": "fa4c2d5b3a717f6f9c68ae208a58224165119455",
+      "number": 3939,
+      "title": "typing highlighter"
+    },
+    {
+      "base_sha": "05ff970926cbd0b5d0acb6fc18cdbd1fc971e582",
+      "head_sha": "2c247e6da72dfa69dd6148f1a0657e2440d1ebe9",
+      "merge_sha": "3286095ff8b70e093dbbc4136ff7ba7d51944bec",
+      "number": 3938,
+      "title": "fix background style with soft wrap"
+    },
+    {
+      "base_sha": "05a6b9b17a7c778756187f15d6d4bf693db6345f",
+      "head_sha": "4d0cbb74a8cc5c7dd9af3056499a43efbd13355a",
+      "merge_sha": "05ff970926cbd0b5d0acb6fc18cdbd1fc971e582",
+      "number": 3937,
+      "title": "don't strip whitespace when soft_wrap is True"
+    },
+    {
+      "base_sha": "abd5a2afc41ff1196fe4d901b8784bb08acf3140",
+      "head_sha": "5486a958e851aaa58a4618f6a1b8e532f06e5e46",
+      "merge_sha": "1c159fe588351125ae2fc7a6563156f6949cfada",
+      "number": 3879,
+      "title": "DOCS: Add example to Align docstring"
+    },
+    {
+      "base_sha": "4d6d631a3d2deddf8405522d4b8c976a6d35726c",
+      "head_sha": "95fe8ff59249d9ac0534a82af7c746826a5999f4",
+      "merge_sha": "abd5a2afc41ff1196fe4d901b8784bb08acf3140",
+      "number": 3882,
+      "title": "Fix raw markup printed on prompt errors sometimes"
+    },
+    {
+      "base_sha": "4d6d631a3d2deddf8405522d4b8c976a6d35726c",
+      "head_sha": "0c271d5bb67292806b8fea1c2e08f9c5a7e7f928",
+      "merge_sha": "12eeb42c96a7a953865b19da204dea6fe658713b",
+      "number": 3894,
+      "title": "Handle unusual __qualname__ in inspect"
+    },
+    {
+      "base_sha": "fe55a131c2780fa856464ad04d7d6dc8a1079b72",
+      "head_sha": "624664f00bb2b8b7c19f352f0a7a284af4a85412",
+      "merge_sha": "9e18b96652f37293121b04017fb6aa95af21b013",
+      "number": 3935,
+      "title": "fix for padding width"
+    },
+    {
+      "base_sha": "96dd4b60e3a7c647c43a85ad375afa690b3bb85b",
+      "head_sha": "3350a50a1aa38fbe974e869f931103498827b758",
+      "merge_sha": "fe55a131c2780fa856464ad04d7d6dc8a1079b72",
+      "number": 3905,
+      "title": "Update progress.py"
+    },
+    {
+      "base_sha": "7a4a7a614b4893a8197d06800b241c2c28036ad4",
+      "head_sha": "c69f3cc46812036eb0aaf4dd267e0463cbdfe17c",
+      "merge_sha": "96dd4b60e3a7c647c43a85ad375afa690b3bb85b",
+      "number": 3906,
+      "title": "feat: Traceback - Expose more locals rendering options"
+    },
+    {
+      "base_sha": "ad669087b9fe4b48758b57cc80379518bea10ead",
+      "head_sha": "d350701f754db31995cf3d15194977bf30c3027f",
+      "merge_sha": "a4cf860825850fc48a63e9f52b6e805e50fcb4fd",
+      "number": 3915,
+      "title": "Fix IPython silently ignoring console instance passed to `pretty.install`"
+    },
+    {
+      "base_sha": "6764b24739b580c0c32ff5ef0b971ed4cfcf4f75",
+      "head_sha": "b08e00fce2c8bd48a69953c15e2c624ac6cf0ab4",
+      "merge_sha": "e9a5680682e0dbaf9e0f3f0fc2a771612307bc3d",
+      "number": 3934,
+      "title": "empty live"
+    },
+    {
+      "base_sha": "53757bc234cf18977cade41a5b64f3abaccb0b85",
+      "head_sha": "896d2daaf4239b42d800e15355feb4956469a29c",
+      "merge_sha": "6764b24739b580c0c32ff5ef0b971ed4cfcf4f75",
+      "number": 3923,
+      "title": "Improve introduction wording for clarity"
+    },
+    {
+      "base_sha": "53757bc234cf18977cade41a5b64f3abaccb0b85",
+      "head_sha": "cbae9229af4391c0e8aea782956ce9b224cb80c2",
+      "merge_sha": "f000c3149166cc2091b801b63b0a55e806c5d49b",
+      "number": 3930,
+      "title": "Handle graphemes"
+    },
+    {
+      "base_sha": "cd5074f87804aac2f6e5c6143e1cac5e3a0bddc5",
+      "head_sha": "518daaa39c17bad485c970bf229424784fbdf044",
+      "merge_sha": "d476e85a19ea62966a25f6df0e0a287da52ab35f",
+      "number": 3862,
+      "title": "docs(es): sync Spanish README with English (Oct 2025)"
+    },
+    {
+      "base_sha": "ea9d4db5d84b4e834979304e3053bf757daae322",
+      "head_sha": "041406ca9b60af8fcc00cd7fc1b2973ab51eb851",
+      "merge_sha": "cd5074f87804aac2f6e5c6143e1cac5e3a0bddc5",
+      "number": 3861,
+      "title": "bump for Python3.14"
+    },
+    {
+      "base_sha": "a75a9a9838814cffb68cefe3522fc47c8ddce768",
+      "head_sha": "19b6dddd807b887eaaf313174fff3eb2e22cda25",
+      "merge_sha": "2dca1b70359dac61e1bbfb6f14ebe19a5ab79c3d",
+      "number": 3808,
+      "title": "version bump"
+    },
+    {
+      "base_sha": "9c9b011187bba772dca57653c9114005b489f005",
+      "head_sha": "9a08a2d3a983591e2d0d46e4f63558dd8df9e47d",
+      "merge_sha": "a75a9a9838814cffb68cefe3522fc47c8ddce768",
+      "number": 3807,
+      "title": "optimize size"
+    },
+    {
+      "base_sha": "07b738a23005076c75ecaeae1202e3a7772905b6",
+      "head_sha": "56855a6b81befafa6e978cffed4c1fb389a20df0",
+      "merge_sha": "9c9b011187bba772dca57653c9114005b489f005",
+      "number": 3680,
+      "title": "Update bug_report.md"
+    },
+    {
+      "base_sha": "0c6c75644f80530de219dae3e94f0aeb999f9b4c",
+      "head_sha": "a34914be5d1cc9dc298ca92e5c9af757157a0bb7",
+      "merge_sha": "fa9ce3ce70c22ea2bb83dbd1f867fe90d1b3f0c5",
+      "number": 3692,
+      "title": "fix for null tb_offset"
+    },
+    {
+      "base_sha": "21b3800894f6a81d3f68a0e34796be67e3ccd39f",
+      "head_sha": "81b12554b3b15374aa48dae3f6507202bd8fab3e",
+      "merge_sha": "e0c7e96b303e6f3e48818380527129fb21f453f3",
+      "number": 3783,
+      "title": "Self typing"
+    },
+    {
+      "base_sha": "7d36119f8378b36129502c3281a7faffef837e02",
+      "head_sha": "6b8b3fa2819f83b03d9e4e92cfd85a3f6e2248d8",
+      "merge_sha": "21b3800894f6a81d3f68a0e34796be67e3ccd39f",
+      "number": 3718,
+      "title": "fix(panel): fix title missing panel background"
+    },
+    {
+      "base_sha": "8c4d3d1d50047e3aaa4140d0ffc1e0c9f1df5af4",
+      "head_sha": "669b5006b3bbfe6fb023d76cda62c59773141cf5",
+      "merge_sha": "353c03045b7d176d2d82991b360d302931b8cbdf",
+      "number": 3742,
+      "title": "docs(progress): remove reverted IterationSpeedColumn"
+    },
+    {
+      "base_sha": "8c4d3d1d50047e3aaa4140d0ffc1e0c9f1df5af4",
+      "head_sha": "92358a75807831a9aed4668cdf0878720373dddd",
+      "merge_sha": "cd3e1a4c19bd2b5cc219ea5471cc8b41c095fe38",
+      "number": 3738,
+      "title": "docs(readme): update badges in README translations"
+    },
+    {
+      "base_sha": "3b70db5a2997de191f7db3e422dbe4da35ca1c95",
+      "head_sha": "3d7c0141a2490348f8e0189178d55258e1773ad3",
+      "merge_sha": "b6aae7c342b23656e8d4559909c8a2efd3a4d7c1",
+      "number": 3782,
+      "title": "Syntax padding"
+    },
+    {
+      "base_sha": "49117ced6648a432d85951f72dce777038f6ce09",
+      "head_sha": "b46bd78ee5c665172d936adca111a9b54420f675",
+      "merge_sha": "3b70db5a2997de191f7db3e422dbe4da35ca1c95",
+      "number": 3777,
+      "title": "TTY_INTERACTIVE env var"
+    },
+    {
+      "base_sha": "65bb66dfdcdb898330d6e0d19729e63adbc5b0da",
+      "head_sha": "6c48a5c2e3d8daa58d566d14ced2f775f76102a7",
+      "merge_sha": "49117ced6648a432d85951f72dce777038f6ce09",
+      "number": 3776,
+      "title": "Fix small typo in comments"
+    },
+    {
+      "base_sha": "8c4d3d1d50047e3aaa4140d0ffc1e0c9f1df5af4",
+      "head_sha": "eaaebe486050c6f1d3b07c83529c49caeb7fccac",
+      "merge_sha": "65bb66dfdcdb898330d6e0d19729e63adbc5b0da",
+      "number": 3747,
+      "title": "Remove make log"
+    },
+    {
+      "base_sha": "d4a15f081bb12313f31c805fa8228a6a160fa00e",
+      "head_sha": "3813c53b9bcff7956b132dde80e5472d2912e3bd",
+      "merge_sha": "b0adcb7714c697fbe5efb864a2be305dc6605273",
+      "number": 3775,
+      "title": "docs and typing"
+    },
+    {
+      "base_sha": "8732dc52db3836302657696cd71486dfb61777c7",
+      "head_sha": "f0626d32f243faf680696717f8a6451544358a87",
+      "merge_sha": "d4a15f081bb12313f31c805fa8228a6a160fa00e",
+      "number": 3731,
+      "title": "fix(logging): fix tracebacks_code_width type hint"
+    },
+    {
+      "base_sha": "2809954800af15b4027364cebf82390fe23dc194",
+      "head_sha": "b96cd22883640a2e7865ec00551c188f59331ca4",
+      "merge_sha": "2a282af76d3f7a731e1c23145e13977044150f1e",
+      "number": 3772,
+      "title": "Fix traceback recursion"
+    },
+    {
+      "base_sha": "27d923023127ac66359a18b5b02b83c1e534db3e",
+      "head_sha": "6ae321ad86a093bcf4251e1784e43b0654cb3987",
+      "merge_sha": "2809954800af15b4027364cebf82390fe23dc194",
+      "number": 3763,
+      "title": "Remove `typing-extensions` as a runtime dependency"
+    },
+    {
+      "base_sha": "4309fd235e6c96c6d056a0007337fb78a1b30f3d",
+      "head_sha": "5a2db8fcc780487a76da9a9ab87a1b75fd3cfbab",
+      "merge_sha": "27d923023127ac66359a18b5b02b83c1e534db3e",
+      "number": 3768,
+      "title": "permit nested live"
+    },
+    {
+      "base_sha": "8c4d3d1d50047e3aaa4140d0ffc1e0c9f1df5af4",
+      "head_sha": "5eaa444630dd0a38d65389fa7723acca3dcf103b",
+      "merge_sha": "c8f234f136b3ec60da6a96364705490b7ee9cf39",
+      "number": 3760,
+      "title": "Update pull_request_template.md"
+    },
+    {
+      "base_sha": "0c6c75644f80530de219dae3e94f0aeb999f9b4c",
+      "head_sha": "c45f73ae26f76af444265500f5607869b1fc369b",
+      "merge_sha": "8c4d3d1d50047e3aaa4140d0ffc1e0c9f1df5af4",
+      "number": 3716,
+      "title": "docs: update supported python versions"
+    },
+    {
+      "base_sha": "6396050ad77d0de796107336aeeb5eeb7d030893",
+      "head_sha": "4d82dad7c5e89aa883b6c3b7a1a089790e719069",
+      "merge_sha": "b8c169556ecbe64957dd48629fb73559927a1e93",
+      "number": 3720,
+      "title": "Fix typos in Polish README"
+    },
+    {
+      "base_sha": "0c6c75644f80530de219dae3e94f0aeb999f9b4c",
+      "head_sha": "a648cdcec2ded5dd57b1a498102c983c71354f9a",
+      "merge_sha": "6396050ad77d0de796107336aeeb5eeb7d030893",
+      "number": 3698,
+      "title": "docs: fix search not working"
+    },
+    {
+      "base_sha": "2bae2fe3d861ef83d778c289f6e1e17733225b76",
+      "head_sha": "859d77bd6fbe67a72ddeacc300c85deed3b26598",
+      "merge_sha": "72e3bb33d44fd96881f7742b77137983907a942f",
+      "number": 3681,
+      "title": "bump to 14.0.0"
+    },
+    {
+      "base_sha": "43d3b04725ab9731727fb1126e35980c62f32377",
+      "head_sha": "d8f08fd607f3982366e3faaa9ebe1fdd1b5fe849",
+      "merge_sha": "07b738a23005076c75ecaeae1202e3a7772905b6",
+      "number": 3610,
+      "title": "Update docstring to reflect that box is not optional"
+    },
+    {
+      "base_sha": "43d3b04725ab9731727fb1126e35980c62f32377",
+      "head_sha": "ae25db6df734739e77108775eda903d63820b69c",
+      "merge_sha": "e6673492e52a2290d765438c33547df0a8b3e290",
+      "number": 3624,
+      "title": "Remove unnecessary import that confuses type checkers"
+    },
+    {
+      "base_sha": "2ffd9d69763ed09269214c8ffe2fe435581febd8",
+      "head_sha": "8f68c848bf458a1bf371c073d1e366da574eccde",
+      "merge_sha": "a48a5b309f9273ffba85fb9491b974634c8f7ab9",
+      "number": 3677,
+      "title": "exception groups"
+    },
+    {
+      "base_sha": "d43db994181f91cfa996f2f3df3b557ba87494e4",
+      "head_sha": "dab648cc486025c8613fd5dd5761b67ac188dc35",
+      "merge_sha": "4de139ef0ec2581a6e1fe045949a86c183b734ac",
+      "number": 3679,
+      "title": "Remove leftover code from previous commit"
+    },
+    {
+      "base_sha": "d43db994181f91cfa996f2f3df3b557ba87494e4",
+      "head_sha": "47da97e46a529905a170d609c38bd1380034583a",
+      "merge_sha": "39fa5eeeffe1153ae6b0ba0f9f68fb3ce8852f99",
+      "number": 3678,
+      "title": "Don't underline indentation"
+    },
+    {
+      "base_sha": "edc6b0a39b6df1c0e26d409bb5c5eda7149b2de6",
+      "head_sha": "225cb07b3be67cfa8efd7bd52181638be461065d",
+      "merge_sha": "863d3daa54565cd169139616b71ab4bd8548e3ec",
+      "number": 3675,
+      "title": "TTY_COMPATIBLE"
+    },
+    {
+      "base_sha": "2b5d648b2c62960deb6439f4204ed8fa6eb3cf7b",
+      "head_sha": "17baaed1c0525f23dca438b8192af79cb52b792e",
+      "merge_sha": "edc6b0a39b6df1c0e26d409bb5c5eda7149b2de6",
+      "number": 3676,
+      "title": "Notes"
+    },
+    {
+      "base_sha": "43d3b04725ab9731727fb1126e35980c62f32377",
+      "head_sha": "0d0ed7bc864476c9d114fac0fd37b7acd086c6be",
+      "merge_sha": "2b5d648b2c62960deb6439f4204ed8fa6eb3cf7b",
+      "number": 3653,
+      "title": "fix typo in `docs/source/style.rst`"
+    }
+  ],
+  "python_version": "3.12",
+  "repo_slug": "Textualize/rich",
+  "repo_url": "https://github.com/Textualize/rich.git",
+  "schema": "acquit/study-manifest-v1",
+  "window_months": 18
+}
