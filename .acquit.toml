@@ -1,0 +1,6 @@
+# Acquit analyzing acquit: the dogfooding configuration.
+
+[[waive]]
+rule = "R006"
+glob = "tests/fixtures/conftest.py"
+justification = "collect_ignore here only excludes fixture-repo files from collection; it never adds or redirects tests, so static discovery stays over-inclusive, which is the safe direction."
