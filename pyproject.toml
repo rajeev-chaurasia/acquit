@@ -24,6 +24,7 @@ Repository = "https://github.com/rajeev-chaurasia/acquit"
 
 [project.scripts]
 acquit = "acquit.cli:main"
+acquit-study = "acquit.study.cli:main"
 
 [project.entry-points.pytest11]
 acquit = "acquit.plugin"

@@ -1,0 +1,95 @@
+name: study
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: which committed manifest to replay
+        type: choice
+        options: [flask, rich, httpx, click]
+        required: true
+      shards:
+        description: number of shards
+        type: string
+        default: "20"
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.emit.outputs.shards }}
+    steps:
+      - id: emit
+        env:
+          SHARDS: ${{ inputs.shards }}
+        run: |
+          python3 -c "import json, os; n = int(os.environ['SHARDS']); print('shards=' + json.dumps(list(range(1, n + 1))))" >> "$GITHUB_OUTPUT"
+
+  run:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJson(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v9.0.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-suffix: study-${{ inputs.repo }}-${{ hashFiles(format('study/constraints/{0}.txt', inputs.repo)) }}
+      - name: Restore repo mirror
+        uses: actions/cache@v4
+        with:
+          path: workdir/mirror.git
+          key: study-mirror-${{ inputs.repo }}-${{ github.run_id }}
+          restore-keys: |
+            study-mirror-${{ inputs.repo }}-
+      - run: uv sync --frozen
+      - name: Replay shard
+        run: >
+          uv run acquit-study run
+          --manifest study/manifests/${{ inputs.repo }}.json
+          --workdir workdir
+          --shard ${{ matrix.shard }}/${{ inputs.shards }}
+          --constraints study/constraints/${{ inputs.repo }}.txt
+          --results-dir results-shard
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-shard-${{ matrix.shard }}
+          path: results-shard
+          if-no-files-found: ignore
+
+  aggregate:
+    needs: run
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v9.0.0
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: results-shard-*
+          path: results
+      - name: Aggregate
+        run: >
+          uv run acquit-study aggregate
+          --results-dir results
+          --out ${{ inputs.repo }}-summary.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: study-summary-${{ inputs.repo }}
+          path: |
+            ${{ inputs.repo }}-summary.md
+            ${{ inputs.repo }}-summary.json
