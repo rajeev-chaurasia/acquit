@@ -11,7 +11,7 @@ from typing import Any
 
 from acquit import vcs
 from acquit.config import load_config
-from acquit.constants import REPORT_SCHEMA, WITNESSES_SCHEMA
+from acquit.constants import REPORT_SCHEMA, SELECTION_SCHEMA, WITNESSES_SCHEMA
 from acquit.errors import ExitCode, GraphError
 from acquit.pipeline import Snapshot, snapshot_tree
 from acquit.pytestmap.pytestcfg import load_pytest_config
@@ -87,11 +87,52 @@ def _check_skipped(
     return True
 
 
-def run_replay(report_path: Path, witnesses_path: Path, cwd: Path) -> tuple[Lines, ExitCode]:
+def _skip_pairs(entries: Any, failures: list[str], source: str) -> list[tuple[str, str]] | None:
+    if not isinstance(entries, list):
+        failures.append(f"{source}: skip entries are not a list")
+        return None
+    pairs: list[tuple[str, str]] = []
+    for entry in entries:
+        if (
+            not isinstance(entry, dict)
+            or not isinstance(entry.get("path"), str)
+            or not isinstance(entry.get("witness"), str)
+        ):
+            failures.append(f"{source}: malformed skip entry {entry!r}")
+            return None
+        pairs.append((entry["path"], entry["witness"]))
+    return pairs
+
+
+def _check_selection(
+    selection: dict[str, Any], report: dict[str, Any], fresh_hash: str, failures: list[str]
+) -> None:
+    """Cross-check the document that actually deselects tests against the report."""
+    if selection.get("graph_hash") != fresh_hash:
+        failures.append(
+            f"graph hash mismatch: rebuilt {fresh_hash}, selection doc says "
+            f"{selection.get('graph_hash')}"
+        )
+    claimed = _skip_pairs(selection.get("skip"), failures, "selection doc")
+    reported = _skip_pairs(report.get("tests", {}).get("skipped"), failures, "report")
+    if claimed is None or reported is None:
+        return
+    for path, witness in sorted(set(claimed) - set(reported)):
+        failures.append(f"selection doc skips {path} ({witness}) but the report does not")
+    for path, witness in sorted(set(reported) - set(claimed)):
+        failures.append(f"report skips {path} ({witness}) but the selection doc does not")
+
+
+def run_replay(
+    report_path: Path, witnesses_path: Path, selection_path: Path | None, cwd: Path
+) -> tuple[Lines, ExitCode]:
     """Re-verify a report's witnesses against a fresh snapshot of its head sha."""
     try:
         report = _load_document(report_path, REPORT_SCHEMA)
         witnesses_doc = _load_document(witnesses_path, WITNESSES_SCHEMA)
+        selection = (
+            None if selection_path is None else _load_document(selection_path, SELECTION_SCHEMA)
+        )
     except (OSError, ValueError) as error:
         return ((f"acquit replay: {error}",), ExitCode.USAGE)
 
@@ -120,6 +161,9 @@ def run_replay(report_path: Path, witnesses_path: Path, cwd: Path) -> tuple[Line
             f"graph hash mismatch: rebuilt {fresh_hash}, witnesses doc says "
             f"{witnesses_doc.get('graph_hash')}"
         )
+
+    if selection is not None:
+        _check_selection(selection, report, fresh_hash, failures)
 
     witnesses = _witnesses_by_id(witnesses_doc, failures)
     closures = witnesses_doc.get("closures")

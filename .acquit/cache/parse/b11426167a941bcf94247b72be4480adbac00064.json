@@ -1,0 +1,1 @@
+{"facts": {"defines_module_getattr": false, "dyn_literal_imports": [], "imports": [{"is_star": false, "level": 0, "module": "pkg.util", "names": ["double_add"]}], "path": "tests/fixtures/repos/srclayout/tests/test_util.py", "pytest_plugins_decl": [], "suspects": []}, "version": 2}

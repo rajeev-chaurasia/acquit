@@ -1,0 +1,1 @@
+{"facts": {"defines_module_getattr": false, "dyn_literal_imports": [], "imports": [{"is_star": false, "level": 0, "module": null, "names": ["importlib"]}], "path": "tests/fixtures/repos/dynamic/dynloader.py", "pytest_plugins_decl": [], "suspects": [{"kind": "non-literal-dynamic-import", "lineno": 5}]}, "version": 2}

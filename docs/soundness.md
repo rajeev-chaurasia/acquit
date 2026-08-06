@@ -40,6 +40,14 @@ verified is a bug in acquit, not a judgment call.
   assume_inert entry in the same diff as the change it excuses, and acquit
   honors it. Reviewers should treat .acquit.toml diffs as security-relevant,
   the same way they treat CI workflow changes.
+- The parse cache lives outside the checkout (ACQUIT_CACHE_DIR when set,
+  otherwise the platform user cache directory, namespaced per repository
+  root), so a hostile working tree cannot preseed it. CI cache restore keys
+  (actions/cache and friends) remain a trust boundary: a poisoned restored
+  cache can erase import edges at selection time. Replay is the backstop; it
+  rebuilds the graph without any cache and refuses forged witnesses, which is
+  why the shipped action replays the evidence before a selective run is
+  honored.
 
 ## What this is not
 

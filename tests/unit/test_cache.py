@@ -7,8 +7,15 @@ from typing import Any
 
 import pytest
 
+from acquit.constants import ENV_CACHE_DIR
 from acquit.errors import GraphError
-from acquit.graph.cache import CACHE_FORMAT_VERSION, ParseCache, facts_from_dict, facts_to_dict
+from acquit.graph.cache import (
+    CACHE_FORMAT_VERSION,
+    ParseCache,
+    facts_from_dict,
+    facts_to_dict,
+    parse_cache_dir,
+)
 from acquit.graph.parse import ModuleFacts, parse_module_facts
 
 SHA = "0123abcd" * 5
@@ -105,6 +112,33 @@ def test_get_with_unreadable_root_returns_none(tmp_path: Path) -> None:
     blocker = tmp_path / "not-a-dir"
     blocker.write_text("occupied", encoding="utf-8")
     assert ParseCache(blocker).get(SHA) is None
+
+
+def test_parse_cache_dir_honors_the_env_override(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv(ENV_CACHE_DIR, str(tmp_path / "override"))
+    location = parse_cache_dir(tmp_path / "repo")
+    assert location.parts[: len((tmp_path / "override").parts)] == (tmp_path / "override").parts
+    assert location.name == "parse"
+
+
+def test_parse_cache_dir_lives_outside_the_repository(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv(ENV_CACHE_DIR, raising=False)
+    repo = tmp_path / "repo"
+    location = parse_cache_dir(repo)
+    assert not location.is_relative_to(repo)
+
+
+def test_parse_cache_dir_is_namespaced_per_repository(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv(ENV_CACHE_DIR, str(tmp_path / "cache"))
+    first = parse_cache_dir(tmp_path / "one")
+    second = parse_cache_dir(tmp_path / "two")
+    assert first != second
 
 
 def test_facts_dict_round_trip() -> None:

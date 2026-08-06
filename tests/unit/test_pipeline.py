@@ -1,13 +1,13 @@
 """End-to-end pipeline tests over throwaway git repositories."""
 
 import shutil
+from pathlib import Path
 
 import pytest
 from conftest import RepoBuilder, ScenarioRepo, module_test_source
 
 from acquit import vcs
 from acquit.config import load_config
-from acquit.constants import PARSE_CACHE_DIR
 from acquit.graph.cache import ParseCache
 from acquit.pipeline import run_select, snapshot_tree
 from acquit.policy.model import RuleId
@@ -161,9 +161,27 @@ def test_snapshot_of_clean_working_tree_matches_head_snapshot(
     assert working.files == at_head.files
 
 
-def test_working_tree_blob_shas_match_git(scenario_repo: ScenarioRepo) -> None:
+def test_clean_working_tree_fingerprint_matches_head_fingerprint(
+    scenario_repo: ScenarioRepo,
+) -> None:
     repo = scenario_repo.path
-    cache_root = repo / PARSE_CACHE_DIR
+    assert vcs.working_tree_fingerprint(repo) == vcs.ref_tree_fingerprint("HEAD", repo)
+
+
+def test_dirty_file_changes_the_working_tree_fingerprint(repo_builder: RepoBuilder) -> None:
+    repo_builder.write({"mod.py": "X = 1\n", "res.txt": "data\n"})
+    repo_builder.commit("base")
+    clean = vcs.working_tree_fingerprint(repo_builder.path)
+
+    # Resources count too: the fingerprint binds content, not just imports.
+    repo_builder.write({"res.txt": "changed\n"})
+
+    assert vcs.working_tree_fingerprint(repo_builder.path) != clean
+
+
+def test_working_tree_blob_shas_match_git(scenario_repo: ScenarioRepo, tmp_path: Path) -> None:
+    repo = scenario_repo.path
+    cache_root = tmp_path / "parse"
 
     snapshot_tree(None, repo, load_config(repo), load_pytest_config(repo), ParseCache(cache_root))
 
@@ -172,7 +190,7 @@ def test_working_tree_blob_shas_match_git(scenario_repo: ScenarioRepo) -> None:
 
 
 def test_identical_files_keep_their_own_paths_through_the_cache(
-    repo_builder: RepoBuilder,
+    repo_builder: RepoBuilder, tmp_path: Path
 ) -> None:
     repo_builder.write(
         {
@@ -189,7 +207,7 @@ def test_identical_files_keep_their_own_paths_through_the_cache(
         repo,
         load_config(repo),
         load_pytest_config(repo),
-        ParseCache(repo / PARSE_CACHE_DIR),
+        ParseCache(tmp_path / "cache-probe"),
     )
 
     assert snapshot.facts["a.py"].path == "a.py"

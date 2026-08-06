@@ -1,59 +1,163 @@
 """Pytest plugin that applies an acquit selection file.
 
-The plugin is inert unless ACQUIT_SELECTION_FILE is set. A missing, unreadable,
-or malformed file means every test runs, with a loud warning.
+The plugin is inert unless ACQUIT_SELECTION_FILE is set. Before any skip is
+applied the document is verified once per session: it must be a selection-v2
+document whose tree fingerprint matches a fresh recompute of the working tree,
+resolved against the enclosing git repository. Any failure, from a missing
+file to a stale tree, means every test runs. Status is reported through
+pytest_report_header (and the terminal reporter under -q), never as a warning,
+so filterwarnings=error cannot turn a degraded run into a broken one.
 """
 
 import json
 import os
-import warnings
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from acquit.constants import ENV_SELECTION_FILE, SELECTION_SCHEMA
+from acquit import vcs
+from acquit.constants import ENV_SELECTION_FILE, SELECTION_SCHEMA, SELECTION_SIZE_CAP
 from acquit.report import SelectionMode
 
+_PLUGIN_NAME = "acquit-selection"
 
-def _load_selection(path: Path) -> dict[str, Any] | None:
-    try:
-        document = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return None
-    if not isinstance(document, dict) or document.get("schema") != SELECTION_SCHEMA:
-        return None
-    skip = document.get("skip")
-    if not isinstance(skip, list) or not all(isinstance(entry, str) for entry in skip):
-        return None
+
+class _Refused(Exception):
+    """The selection document may not be applied; the reason is the message."""
+
+
+def _parse_skip_paths(document: dict[str, Any]) -> frozenset[str]:
+    entries = document.get("skip")
+    if not isinstance(entries, list):
+        raise _Refused("skip entries are not a list")
+    paths: set[str] = set()
+    for entry in entries:
+        if (
+            not isinstance(entry, dict)
+            or not isinstance(entry.get("path"), str)
+            or not isinstance(entry.get("witness"), str)
+        ):
+            raise _Refused("malformed skip entry")
+        paths.add(entry["path"])
+    return frozenset(paths)
+
+
+def _load_document(path: Path) -> dict[str, Any]:
+    if path.stat().st_size > SELECTION_SIZE_CAP:
+        raise _Refused("selection file is too large")
+    document: Any = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(document, dict):
+        raise _Refused("selection document is not an object")
+    if document.get("schema") != SELECTION_SCHEMA:
+        raise _Refused(f"schema is not {SELECTION_SCHEMA}")
     return document
 
 
-def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    selection_path = os.environ.get(ENV_SELECTION_FILE)
-    if not selection_path:
-        return
+class AcquitSelectionPlugin:
+    """Session-scoped state shared by the header, collection, and exit hooks."""
 
-    selection = _load_selection(Path(selection_path))
-    if selection is None:
-        warnings.warn(
-            pytest.PytestWarning(
-                f"acquit: selection file {selection_path!r} is missing or invalid, "
-                "running every test"
-            ),
-            stacklevel=2,
-        )
-        return
-    if selection.get("mode") != str(SelectionMode.SELECTIVE):
-        return
+    def __init__(self) -> None:
+        self._evaluated = False
+        self._status: str | None = None
+        self._skip: frozenset[str] = frozenset()
+        self._root: Path | None = None
+        self._emptied_run = False
 
-    skip = set(selection["skip"])
-    kept: list[pytest.Item] = []
-    deselected: list[pytest.Item] = []
-    for item in items:
-        relative = Path(item.path).resolve().relative_to(config.rootpath).as_posix()
-        (deselected if relative in skip else kept).append(item)
+    def _refuse(self, path: str, reason: str) -> None:
+        self._status = f"acquit: selection {path!r} refused ({reason}), running every test"
 
-    if deselected:
-        config.hook.pytest_deselected(items=deselected)
-        items[:] = kept
+    def _verify(self, path: Path, config: pytest.Config) -> None:
+        document = _load_document(path)
+        if document.get("mode") != str(SelectionMode.SELECTIVE):
+            self._status = f"acquit: selection {str(path)!r} is run-all, running every test"
+            return
+        if not isinstance(document.get("graph_hash"), str):
+            raise _Refused("selective document carries no graph hash")
+        skip = _parse_skip_paths(document)
+        tree = document.get("tree")
+        if not isinstance(tree, dict) or not isinstance(tree.get("fingerprint"), str):
+            raise _Refused("selective document carries no tree fingerprint")
+        root = vcs.repo_root(Path(config.rootpath)).resolve()
+        if vcs.working_tree_fingerprint(root) != tree["fingerprint"]:
+            raise _Refused("tree fingerprint mismatch, the analyzed tree has moved on")
+        self._skip = skip
+        self._root = root
+        self._status = f"acquit: selection {str(path)!r} applied, {len(skip)} skippable"
+
+    def _ensure_evaluated(self, config: pytest.Config) -> None:
+        if self._evaluated:
+            return
+        self._evaluated = True
+        raw = os.environ.get(ENV_SELECTION_FILE)
+        if not raw:
+            return
+        try:
+            self._verify(Path(raw), config)
+        except _Refused as refusal:
+            self._refuse(raw, str(refusal))
+        except Exception as error:  # anything surprising also fails closed
+            self._refuse(raw, f"{type(error).__name__}: {error}")
+
+    def _explicit_files(self, config: pytest.Config) -> frozenset[Path]:
+        """Files the operator named on the command line, resolved at the root."""
+        if config.args_source is not pytest.Config.ArgsSource.ARGS or self._root is None:
+            return frozenset()
+        named: set[Path] = set()
+        for arg in config.args:
+            file_part = Path(arg.split("::")[0])
+            anchored = file_part if file_part.is_absolute() else self._root / file_part
+            try:
+                named.add(anchored.resolve())
+            except OSError:
+                continue
+        return frozenset(named)
+
+    def pytest_report_header(self, config: pytest.Config) -> list[str]:
+        self._ensure_evaluated(config)
+        return [] if self._status is None else [self._status]
+
+    def pytest_collection_modifyitems(
+        self, config: pytest.Config, items: list[pytest.Item]
+    ) -> None:
+        self._ensure_evaluated(config)
+        # The header is suppressed under -q; degraded runs must still say so.
+        if self._status is not None and config.get_verbosity() < 0:
+            reporter = config.pluginmanager.get_plugin("terminalreporter")
+            if reporter is not None:
+                reporter.write_line(self._status)
+        if not self._skip or self._root is None:
+            return
+
+        explicit = self._explicit_files(config)
+        kept: list[pytest.Item] = []
+        deselected: list[pytest.Item] = []
+        for item in items:
+            try:
+                resolved = Path(item.path).resolve()
+                relative = (
+                    resolved.relative_to(self._root).as_posix()
+                    if resolved.is_relative_to(self._root)
+                    else None
+                )
+            except (OSError, ValueError):
+                relative = None
+            if relative in self._skip and resolved not in explicit:
+                deselected.append(item)
+            else:
+                kept.append(item)
+
+        if deselected:
+            config.hook.pytest_deselected(items=deselected)
+            items[:] = kept
+            self._emptied_run = not kept
+
+    def pytest_sessionfinish(self, session: pytest.Session, exitstatus: int) -> None:
+        # An empty run because acquit proved every test unaffected is a success.
+        if self._emptied_run and exitstatus == int(pytest.ExitCode.NO_TESTS_COLLECTED):
+            session.exitstatus = int(pytest.ExitCode.OK)
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    if not config.pluginmanager.has_plugin(_PLUGIN_NAME):
+        config.pluginmanager.register(AcquitSelectionPlugin(), _PLUGIN_NAME)

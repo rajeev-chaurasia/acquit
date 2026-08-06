@@ -15,8 +15,9 @@ from pathlib import Path
 import pytest
 
 from acquit.cli import main
+from acquit.constants import ENV_CACHE_DIR
 from acquit.errors import ExitCode
-from acquit.graph.cache import CACHE_FORMAT_VERSION, facts_to_dict
+from acquit.graph.cache import CACHE_FORMAT_VERSION, facts_to_dict, parse_cache_dir
 from acquit.graph.parse import ModuleFacts
 from adversarial.failclosed_support import (
     commit,
@@ -28,15 +29,17 @@ from adversarial.failclosed_support import (
     replay,
     run_pytest,
     select,
+    skip_paths,
     two_module_repo,
     write,
     write_json,
 )
 
-PARSE_CACHE = Path(".acquit/cache/parse")
+# The legacy in-checkout location, kept to prove it is no longer trusted.
+IN_REPO_PARSE_CACHE = Path(".acquit/cache/parse")
 
 
-def poison_cache(repo: Path, blob_sha: str, path: str) -> Path:
+def poison_cache(cache_dir: Path, blob_sha: str, path: str) -> Path:
     """Claim, for one blob, that the file it holds imports nothing."""
     facts = ModuleFacts(
         path=path,
@@ -46,7 +49,7 @@ def poison_cache(repo: Path, blob_sha: str, path: str) -> Path:
         defines_module_getattr=False,
         pytest_plugins_decl=(),
     )
-    entry = repo / PARSE_CACHE / f"{blob_sha}.json"
+    entry = cache_dir / f"{blob_sha}.json"
     entry.parent.mkdir(parents=True, exist_ok=True)
     return write_json(entry, {"version": CACHE_FORMAT_VERSION, "facts": facts_to_dict(facts)})
 
@@ -85,48 +88,46 @@ def select_with_durations(repo: Path, out: Path, base: str, head: str, durations
         )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-FC-7: the parse cache is trusted by sha alone, so a crafted entry inside the "
-    "workspace erases an import edge and forges a witness for an impacted test",
-)
-def test_poisoned_parse_cache_cannot_forge_a_skip(tmp_path: Path) -> None:
+def test_poisoned_in_repo_parse_cache_cannot_forge_a_skip(tmp_path: Path) -> None:
+    """ADV-FC-7: a crafted cache entry inside the workspace is never read."""
     repo, base, head = alpha_change_repo(tmp_path / "repo")
     out = tmp_path / "out"
     assert select(repo, out, base, head) == ExitCode.OK
-    assert read_json(out / "selection.json")["skip"] == ["tests/test_beta.py"]
+    assert skip_paths(read_json(out / "selection.json")) == ["tests/test_beta.py"]
 
-    poison_cache(repo, git(repo, "rev-parse", f"{head}:tests/test_alpha.py"), "tests/test_alpha.py")
+    blob = git(repo, "rev-parse", f"{head}:tests/test_alpha.py")
+    poison_cache(repo / IN_REPO_PARSE_CACHE, blob, "tests/test_alpha.py")
     poisoned = tmp_path / "poisoned"
     assert select(repo, poisoned, base, head) == ExitCode.OK
 
     document = read_json(poisoned / "selection.json")
-    assert "tests/test_alpha.py" not in document["skip"], document
+    assert "tests/test_alpha.py" not in skip_paths(document), document
 
 
-def test_replay_catches_the_poisoned_parse_cache(tmp_path: Path) -> None:
+def test_replay_catches_the_poisoned_parse_cache(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """The evidence layer refuses the forgery the selection layer accepted."""
     repo, base, head = alpha_change_repo(tmp_path / "repo")
-    poison_cache(repo, git(repo, "rev-parse", f"{head}:tests/test_alpha.py"), "tests/test_alpha.py")
+    # The cache acquit actually trusts (a restored CI cache, say) is poisoned.
+    monkeypatch.setenv(ENV_CACHE_DIR, str(tmp_path / "cache"))
+    blob = git(repo, "rev-parse", f"{head}:tests/test_alpha.py")
+    poison_cache(parse_cache_dir(repo), blob, "tests/test_alpha.py")
     out = tmp_path / "out"
     assert select(repo, out, base, head) == ExitCode.OK
-    assert "tests/test_alpha.py" in read_json(out / "selection.json")["skip"]
+    assert "tests/test_alpha.py" in skip_paths(read_json(out / "selection.json"))
 
     assert replay(repo, out) == ExitCode.REPLAY_MISMATCH
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-FC-8: replay verifies the report and the witnesses but never the selection "
-    "document, so the artifact that actually deselects tests is unverified",
-)
 def test_replay_verifies_the_document_that_drives_pytest(tmp_path: Path) -> None:
+    """ADV-FC-8: replay cross-checks the artifact that actually deselects tests."""
     repo, base, head = alpha_change_repo(tmp_path / "repo")
     out = tmp_path / "out"
     assert select(repo, out, base, head) == ExitCode.OK
     selection = out / "selection.json"
     document = read_json(selection)
-    document["skip"] = sorted({*document["skip"], "tests/test_alpha.py"})
+    document["skip"] = document["skip"] + [{"path": "tests/test_alpha.py", "witness": "w-000666"}]
     write_json(selection, document)
 
     verdict = replay(repo, out)
@@ -163,7 +164,7 @@ def test_every_base_ref_style_agrees(tmp_path: Path, style: str) -> None:
 
     assert select(repo, out, ref, head) == ExitCode.OK
 
-    assert read_json(out / "selection.json")["skip"] == ["tests/test_beta.py"]
+    assert skip_paths(read_json(out / "selection.json")) == ["tests/test_beta.py"]
 
 
 def test_conflicted_merge_never_skips_the_conflicted_module(tmp_path: Path) -> None:
@@ -182,7 +183,7 @@ def test_conflicted_merge_never_skips_the_conflicted_module(tmp_path: Path) -> N
     assert select(repo, out, base) == ExitCode.OK
 
     document = read_json(out / "selection.json")
-    assert "tests/test_alpha.py" not in document["skip"], document
+    assert "tests/test_alpha.py" not in skip_paths(document), document
     rules = {finding["rule"] for finding in read_json(out / "report.json")["decision"]["findings"]}
     assert "R010" in rules, rules
 
@@ -222,7 +223,7 @@ def test_autocrlf_variance_does_not_change_the_decision(tmp_path: Path, autocrlf
     assert select(repo, out, base) == ExitCode.OK
 
     document = read_json(out / "selection.json")
-    assert document["skip"] == ["tests/test_beta.py"]
+    assert skip_paths(document) == ["tests/test_beta.py"]
 
 
 @contextmanager
@@ -235,12 +236,8 @@ def read_only(path: Path) -> Iterator[Path]:
         path.chmod(original)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-FC-9: _write_failure_docs suppresses OSError, so an internal error can leave a "
-    "previous selective document in place while the run reports only an exit code",
-)
 def test_failed_select_never_leaves_a_selective_document(tmp_path: Path) -> None:
+    """ADV-FC-9: the failure path converts the selection document, loudly."""
     if hasattr(os, "geteuid") and os.geteuid() == 0:  # pragma: no cover - CI containers
         pytest.skip("a read-only file does not stop root")
     repo, base, head = alpha_change_repo(tmp_path / "repo")
@@ -276,18 +273,18 @@ def test_select_from_a_subdirectory_emits_repo_relative_paths(tmp_path: Path) ->
 
     assert select(repo / "tests", out, base, head) == ExitCode.OK
 
-    assert read_json(out / "selection.json")["skip"] == ["tests/test_beta.py"]
+    assert skip_paths(read_json(out / "selection.json")) == ["tests/test_beta.py"]
 
 
 def test_untracked_artifacts_in_the_workspace_do_not_change_the_diff(tmp_path: Path) -> None:
     """The action leaves its documents in the workspace; a rerun must ignore them."""
     repo, base, _ = alpha_change_repo(tmp_path / "repo")
     (repo / "acquit-report.json").write_text("{}", encoding="utf-8")
-    (repo / PARSE_CACHE).mkdir(parents=True, exist_ok=True)
+    (repo / IN_REPO_PARSE_CACHE).mkdir(parents=True, exist_ok=True)
     out = tmp_path / "out"
 
     assert select(repo, out, base) == ExitCode.OK
 
     report = read_json(out / "report.json")
     assert [entry["path"] for entry in report["changed"]] == ["alpha.py"]
-    assert read_json(out / "selection.json")["skip"] == ["tests/test_beta.py"]
+    assert skip_paths(read_json(out / "selection.json")) == ["tests/test_beta.py"]

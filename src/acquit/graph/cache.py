@@ -6,19 +6,42 @@ instead of raising, and put swallows I/O errors, because a broken cache must
 never break analysis.
 """
 
+import hashlib
 import json
+import os
+import sys
 import uuid
 from collections.abc import Mapping
 from contextlib import suppress
 from pathlib import Path
 from typing import Any, Final
 
+from acquit.constants import ENV_CACHE_DIR
 from acquit.errors import GraphError
 from acquit.graph.parse import ImportStmt, ModuleFacts, Suspect, SuspectKind
 
 # Bump whenever parser semantics change: cached ModuleFacts for an unchanged
 # blob must never outlive the rules that produced them.
 CACHE_FORMAT_VERSION: Final = 3
+
+
+def parse_cache_dir(repo_root: Path) -> Path:
+    """Where the parse cache for one repository lives: outside the checkout.
+
+    A cache inside the working tree could be preseeded by the very diff under
+    analysis, so entries land under ACQUIT_CACHE_DIR when set, otherwise the
+    platform user cache directory, namespaced per resolved repository root.
+    """
+    namespace = hashlib.sha256(str(repo_root.resolve()).encode("utf-8")).hexdigest()[:16]
+    override = os.environ.get(ENV_CACHE_DIR)
+    if override:
+        base = Path(override)
+    elif sys.platform == "win32" and os.environ.get("LOCALAPPDATA"):
+        base = Path(os.environ["LOCALAPPDATA"]) / "acquit"
+    else:
+        xdg = os.environ.get("XDG_CACHE_HOME")
+        base = (Path(xdg) if xdg else Path.home() / ".cache") / "acquit"
+    return base / namespace / "parse"
 
 
 def facts_to_dict(facts: ModuleFacts) -> dict[str, Any]:

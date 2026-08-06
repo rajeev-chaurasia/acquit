@@ -1,0 +1,1 @@
+{"facts": {"defines_module_getattr": false, "dyn_literal_imports": [], "imports": [{"is_star": false, "level": 0, "module": null, "names": ["pytest"]}, {"is_star": false, "level": 0, "module": null, "names": ["tower_helpers"]}], "path": "tests/fixtures/repos/conftest_tower/tests/sub/conftest.py", "pytest_plugins_decl": [], "suspects": []}, "version": 2}

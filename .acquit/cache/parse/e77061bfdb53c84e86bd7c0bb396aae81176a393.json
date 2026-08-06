@@ -1,0 +1,1 @@
+{"facts": {"defines_module_getattr": false, "dyn_literal_imports": [], "imports": [{"is_star": false, "level": 0, "module": "ns.sub.gamma", "names": ["G"]}], "path": "tests/fixtures/repos/namespace/tests/test_gamma.py", "pytest_plugins_decl": [], "suspects": []}, "version": 2}

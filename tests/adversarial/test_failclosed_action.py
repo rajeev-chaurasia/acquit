@@ -1,9 +1,9 @@
 """Attacks on the composite action wrapper.
 
 The bash body of the select step is lifted verbatim out of action.yml and run
-under real bash with the two commands it shells out to (uvx and python)
-replaced by stubs. Everything else, including the fail-closed fallback and the
-GITHUB_ENV export, is the shipped code.
+under real bash with the command it shells out to (uvx) replaced by a stub.
+Everything else, including the fail-closed fallback and the GITHUB_ENV export,
+is the shipped code.
 """
 
 import os
@@ -12,8 +12,6 @@ import sys
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-
-import pytest
 
 from adversarial.failclosed_support import (
     action_select_script,
@@ -24,8 +22,9 @@ from adversarial.failclosed_support import (
 )
 
 SELECTIVE_DOC = (
-    '{"schema":"acquit/selection-v1","mode":"selective",'
-    '"skip":["tests/test_a.py"],"graph_hash":"abc"}'
+    '{"schema":"acquit/selection-v2","mode":"selective","graph_hash":"abc",'
+    '"tree":{"head_sha":null,"fingerprint":"abc"},'
+    '"skip":[{"path":"tests/test_a.py","witness":"w-000001"}]}'
 )
 
 UVX_FAILS = 'uvx() { printf "%s\\n" "$*" > "$UVX_ARGV_LOG"; return 1; }'
@@ -50,11 +49,29 @@ class ActionRun:
 
 
 def _entries(path: Path) -> dict[str, str]:
+    """Parse a GITHUB_ENV or GITHUB_OUTPUT file the way the runner does.
+
+    Both the plain NAME=value form and the NAME<<DELIMITER heredoc form are
+    understood; lines inside a heredoc block are value content, never keys.
+    """
     pairs: dict[str, str] = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
-        key, sep, value = line.partition("=")
-        if sep:
-            pairs[key] = value
+    lines = path.read_text(encoding="utf-8").splitlines()
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        key, sep, delimiter = line.partition("<<")
+        if sep and delimiter:
+            value: list[str] = []
+            index += 1
+            while index < len(lines) and lines[index] != delimiter:
+                value.append(lines[index])
+                index += 1
+            pairs[key] = "\n".join(value)
+        else:
+            key, sep, plain = line.partition("=")
+            if sep:
+                pairs[key] = plain
+        index += 1
     return pairs
 
 
@@ -103,10 +120,11 @@ def test_fallback_document_is_a_valid_run_all_selection(tmp_path: Path) -> None:
 
     document = read_json(run.selection)
     assert document == {
-        "schema": "acquit/selection-v1",
+        "schema": "acquit/selection-v2",
         "mode": "run-all",
-        "skip": [],
         "graph_hash": None,
+        "tree": {"head_sha": None, "fingerprint": None},
+        "skip": [],
     }
     assert run.outputs["mode"] == "run-all"
     assert run.exported["ACQUIT_SELECTION_FILE"] == run.outputs["selection"]
@@ -140,12 +158,8 @@ def test_provided_base_ref_reaches_the_cli(tmp_path: Path) -> None:
     assert "--base origin/release/2.0" in argv
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-FC-10: the mode output is derived by a best-effort python probe, so it can "
-    "report run-all while the exported selection document still deselects tests",
-)
 def test_mode_output_never_contradicts_the_exported_selection(tmp_path: Path) -> None:
+    """ADV-FC-10: the mode is read from the document itself, no probe involved."""
     run = run_action(tmp_path, UVX_WRITES_SELECTIVE, python=PYTHON_MISSING)
 
     assert read_json(run.selection)["mode"] == "selective"
@@ -153,19 +167,15 @@ def test_mode_output_never_contradicts_the_exported_selection(tmp_path: Path) ->
     assert run.outputs["mode"] == "selective", run.outputs
 
 
-def test_mode_output_follows_the_document_when_the_probe_works(tmp_path: Path) -> None:
+def test_mode_output_follows_the_document(tmp_path: Path) -> None:
     run = run_action(tmp_path, UVX_WRITES_SELECTIVE)
 
     assert run.outputs["mode"] == "selective"
-    assert read_json(run.selection)["skip"] == ["tests/test_a.py"]
+    assert read_json(run.selection)["skip"] == [{"path": "tests/test_a.py", "witness": "w-000001"}]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ADV-FC-11: the GITHUB_ENV export is a bare echo, so a workspace path containing a "
-    "newline defines extra environment variables for every later step in the job",
-)
 def test_github_env_export_cannot_define_extra_variables(tmp_path: Path) -> None:
+    """ADV-FC-11: a newline in the exported value never becomes a second variable."""
     bash = bash_for(tmp_path)
     export_line = next(
         line for line in action_select_script().splitlines() if "$GITHUB_ENV" in line

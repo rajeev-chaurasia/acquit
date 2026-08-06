@@ -1,8 +1,8 @@
 """Behaviors probed adversarially and found sound, locked in as regressions.
 
-These passed the same attack method as the xfail reproductions: a scenario
-built to produce an unsafe skip failed to produce one because a rule or the
-graph already covers it.
+These passed the same attack method as the fail-closed reproductions: a
+scenario built to produce an unsafe skip failed to produce one because a rule
+or the graph already covers it.
 """
 
 from acquit.pipeline import run_select

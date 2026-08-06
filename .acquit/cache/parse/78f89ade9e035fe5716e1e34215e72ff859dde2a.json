@@ -1,0 +1,1 @@
+{"facts": {"defines_module_getattr": false, "dyn_literal_imports": [], "imports": [], "path": "tests/fixtures/repos/dynamic/execmod.py", "pytest_plugins_decl": [], "suspects": [{"kind": "exec-eval", "lineno": 2}]}, "version": 2}

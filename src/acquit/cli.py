@@ -6,10 +6,12 @@ in the safe direction.
 
 import argparse
 import json
+import stat
 import sys
-from contextlib import suppress
+import uuid
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from acquit import __version__
 from acquit.constants import (
@@ -28,7 +30,7 @@ from acquit.report import (
     SelectionMode,
     build_report,
     build_run_all_report,
-    build_selection,
+    build_run_all_selection,
     build_selection_doc,
     build_witnesses_doc,
     to_canonical_json,
@@ -58,6 +60,7 @@ def _build_parser() -> argparse.ArgumentParser:
     replay = subcommands.add_parser("replay", help="re-verify the witnesses behind a report")
     replay.add_argument("report", help="path to an acquit report file")
     replay.add_argument("--witnesses", default=DEFAULT_WITNESSES_FILE, help="witnesses file path")
+    replay.add_argument("--selection", help="selection file to cross-check against the report")
     return parser
 
 
@@ -102,17 +105,35 @@ def _summary(result: SelectResult) -> str:
     return f"acquit: run-all: {top} ({total} tests)"
 
 
+def _write_document(path: Path, document: dict[str, Any]) -> None:
+    """Write one document atomically: temp file in place, then replace."""
+    tmp = path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        tmp.write_text(to_canonical_json(document), encoding="utf-8")
+        try:
+            tmp.replace(path)
+        except PermissionError:
+            # Windows refuses to replace a read-only target; clear the bit.
+            path.chmod(stat.S_IWRITE)
+            tmp.replace(path)
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
+
+
 def _run_select(args: argparse.Namespace) -> int:
     created_at = _now()
     durations = _load_durations(args.durations)
     result = run_select(args.base, args.head, Path.cwd())
     graph_hash = result.head.graph.graph_hash
     report = build_report(result, created_at=created_at, durations=durations)
-    selection = build_selection_doc(result.decision, graph_hash)
+    selection = build_selection_doc(
+        result.decision, graph_hash, result.head_sha, result.tree_fingerprint
+    )
     witnesses = build_witnesses_doc(result.decision, graph_hash)
-    Path(args.report).write_text(to_canonical_json(report), encoding="utf-8")
-    Path(args.selection).write_text(to_canonical_json(selection), encoding="utf-8")
-    Path(args.witnesses).write_text(to_canonical_json(witnesses), encoding="utf-8")
+    _write_document(Path(args.report), report)
+    _write_document(Path(args.selection), selection)
+    _write_document(Path(args.witnesses), witnesses)
     print(_summary(result))
     return ExitCode.OK
 
@@ -143,7 +164,8 @@ def _run_explain(args: argparse.Namespace) -> int:
 
 
 def _run_replay(args: argparse.Namespace) -> int:
-    lines, code = run_replay(Path(args.report), Path(args.witnesses), Path.cwd())
+    selection = None if args.selection is None else Path(args.selection)
+    lines, code = run_replay(Path(args.report), Path(args.witnesses), selection, Path.cwd())
     stream = sys.stdout if code is ExitCode.OK else sys.stderr
     for line in lines:
         print(line, file=stream)
@@ -159,11 +181,16 @@ def _write_failure_docs(args: argparse.Namespace, error: Exception) -> None:
     )
     run = RunInfo(base_sha=args.base, head_sha=args.head, created_at=_now())
     report = build_run_all_report(run, findings=[finding])
-    selection = build_selection(SelectionMode.RUN_ALL, skip=[], graph_hash=None)
-    with suppress(OSError):
-        Path(args.report).write_text(to_canonical_json(report), encoding="utf-8")
-    with suppress(OSError):
-        Path(args.selection).write_text(to_canonical_json(selection), encoding="utf-8")
+    # The selection is what pytest obeys, so it must convert to run-all first,
+    # and a failure to convert it must be loud, never suppressed.
+    for path, document in ((args.selection, build_run_all_selection()), (args.report, report)):
+        try:
+            _write_document(Path(path), document)
+        except Exception as write_error:
+            print(
+                f"acquit: FAILED to write fail-closed document {path}: {write_error}",
+                file=sys.stderr,
+            )
 
 
 def main(argv: list[str] | None = None) -> int:

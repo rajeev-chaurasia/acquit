@@ -170,19 +170,29 @@ def build_witnesses_doc(decision: Decision, graph_hash: str) -> dict[str, Any]:
     }
 
 
-def build_selection_doc(decision: Decision, graph_hash: str) -> dict[str, Any]:
-    """Build the selection document the pytest plugin consumes for a decision."""
-    return build_selection(decision.mode, [entry.path for entry in decision.skipped], graph_hash)
-
-
-def build_selection(mode: SelectionMode, skip: list[str], graph_hash: str | None) -> dict[str, Any]:
-    """The document the pytest plugin consumes. It lists provably skippable files;
-    anything not listed runs, so unknown files run by default."""
+def build_selection_doc(
+    decision: Decision, graph_hash: str, head_sha: str | None, tree_fingerprint: str
+) -> dict[str, Any]:
+    """The document the pytest plugin consumes. It lists provably skippable files
+    bound to the analyzed tree; anything not listed runs, so unknown files run
+    by default, and a tree that no longer matches the fingerprint runs everything."""
     return {
         "schema": SELECTION_SCHEMA,
-        "mode": str(mode),
-        "skip": sorted(skip),
+        "mode": str(decision.mode),
         "graph_hash": graph_hash,
+        "tree": {"head_sha": head_sha, "fingerprint": tree_fingerprint},
+        "skip": [{"path": entry.path, "witness": entry.witness_id} for entry in decision.skipped],
+    }
+
+
+def build_run_all_selection() -> dict[str, Any]:
+    """A selection that skips nothing and binds no tree: the safe default."""
+    return {
+        "schema": SELECTION_SCHEMA,
+        "mode": str(SelectionMode.RUN_ALL),
+        "graph_hash": None,
+        "tree": {"head_sha": None, "fingerprint": None},
+        "skip": [],
     }
 
 

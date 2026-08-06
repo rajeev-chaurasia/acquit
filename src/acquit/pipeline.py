@@ -5,17 +5,15 @@ together here behind an imperative shell that talks to git and the filesystem.
 Everything downstream of the I/O boundary stays deterministic.
 """
 
-import hashlib
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from pathlib import Path
 
 from acquit import vcs
 from acquit.config import AcquitConfig, load_config
-from acquit.constants import PARSE_CACHE_DIR
 from acquit.errors import ParseFailure
 from acquit.graph.build import assemble_graph
-from acquit.graph.cache import ParseCache
+from acquit.graph.cache import ParseCache, parse_cache_dir
 from acquit.graph.index import ModuleIndex, build_index, detect_roots, pytest_sys_path_roots
 from acquit.graph.model import BuiltGraph, NodeKind
 from acquit.graph.parse import ModuleFacts, parse_module_facts
@@ -53,14 +51,8 @@ class SelectResult:
     changed_kinds: Mapping[str, NodeKind]
     base_sha: str
     head_sha: str | None
-
-
-def _blob_sha(content: bytes) -> str:
-    # Matches git hash-object, so working-tree parses share ref cache entries.
-    hasher = hashlib.sha1(usedforsecurity=False)
-    hasher.update(f"blob {len(content)}\x00".encode())
-    hasher.update(content)
-    return hasher.hexdigest()
+    # Content fingerprint of the analyzed head tree; the plugin recomputes it.
+    tree_fingerprint: str
 
 
 def _read_sources(
@@ -77,7 +69,7 @@ def _read_sources(
                 unreadable.append(path)
                 continue
             sources[path] = content
-            shas[path] = _blob_sha(content)
+            shas[path] = vcs.blob_sha_of_bytes(content)
         return sources, shas, unreadable
     ref_shas = vcs.blob_shas(ref, repo)
     for path in py_files:
@@ -169,7 +161,7 @@ def snapshot_working_tree(cwd: Path) -> Snapshot:
         repo,
         load_config(repo),
         load_pytest_config(repo),
-        ParseCache(repo / PARSE_CACHE_DIR),
+        ParseCache(parse_cache_dir(repo)),
     )
 
 
@@ -211,8 +203,11 @@ def run_select(base: str, head: str | None, cwd: Path) -> SelectResult:
     acquit_config = load_config(repo)
     pytest_config = load_pytest_config(repo)
     changed = vcs.changed_files(base, head, repo)
-    cache = ParseCache(repo / PARSE_CACHE_DIR)
+    cache = ParseCache(parse_cache_dir(repo))
     head_snapshot = snapshot_tree(head, repo, acquit_config, pytest_config, cache)
+    fingerprint = (
+        vcs.working_tree_fingerprint(repo) if head is None else vcs.ref_tree_fingerprint(head, repo)
+    )
     if head is None:
         base_files = frozenset(vcs.list_files(base, repo))
         changed = _with_untracked_additions(changed, head_snapshot.files, base_files)
@@ -249,4 +244,5 @@ def run_select(base: str, head: str | None, cwd: Path) -> SelectResult:
         changed_kinds=_classify_changed(changed, head_snapshot.kinds, pytest_config),
         base_sha=vcs.resolve_sha(base, repo),
         head_sha=vcs.resolve_sha(head, repo) if head is not None else None,
+        tree_fingerprint=fingerprint,
     )

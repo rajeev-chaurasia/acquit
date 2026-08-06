@@ -11,10 +11,9 @@ from acquit.policy.engine import PolicyOutcome, WaivedFinding
 from acquit.policy.model import Finding, RuleId, Scope, ScopeKind
 from acquit.report import (
     RunInfo,
-    SelectionMode,
     build_report,
     build_run_all_report,
-    build_selection,
+    build_run_all_selection,
     build_selection_doc,
     build_witnesses_doc,
     to_canonical_json,
@@ -88,6 +87,7 @@ def _result() -> SelectResult:
         changed_kinds={"src/a.py": NodeKind.MODULE},
         base_sha="b" * 40,
         head_sha="h" * 40,
+        tree_fingerprint="f" * 64,
     )
 
 
@@ -150,14 +150,15 @@ def test_build_witnesses_doc_shape() -> None:
     assert document["closures"] == {closure_hash(expected_closure): expected_closure}
 
 
-def test_build_selection_doc_lists_skipped_paths() -> None:
+def test_build_selection_doc_binds_skips_to_the_analyzed_tree() -> None:
     result = _result()
-    document = build_selection_doc(result.decision, "hand-built")
+    document = build_selection_doc(result.decision, "hand-built", "h" * 40, "f" * 64)
 
     assert document["schema"] == SELECTION_SCHEMA
     assert document["mode"] == "selective"
-    assert document["skip"] == ["tests/test_b.py"]
     assert document["graph_hash"] == "hand-built"
+    assert document["tree"] == {"head_sha": "h" * 40, "fingerprint": "f" * 64}
+    assert document["skip"] == [{"path": "tests/test_b.py", "witness": "w-000001"}]
 
 
 def test_run_all_report_shape() -> None:
@@ -174,10 +175,15 @@ def test_run_all_report_shape() -> None:
     assert report["stats"]["estimated_seconds_saved"] is None
 
 
-def test_selection_sorts_skip_list() -> None:
-    selection = build_selection(SelectionMode.SELECTIVE, skip=["b.py", "a.py"], graph_hash="x")
-    assert selection["schema"] == SELECTION_SCHEMA
-    assert selection["skip"] == ["a.py", "b.py"]
+def test_run_all_selection_binds_nothing_and_skips_nothing() -> None:
+    selection = build_run_all_selection()
+    assert selection == {
+        "schema": SELECTION_SCHEMA,
+        "mode": "run-all",
+        "graph_hash": None,
+        "tree": {"head_sha": None, "fingerprint": None},
+        "skip": [],
+    }
 
 
 def test_canonical_json_is_deterministic() -> None:

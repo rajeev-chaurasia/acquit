@@ -1,0 +1,1 @@
+{"facts": {"defines_module_getattr": false, "dyn_literal_imports": [], "imports": [], "path": "tests/fixtures/repos/monorepo/liba/api.py", "pytest_plugins_decl": [], "suspects": []}, "version": 2}

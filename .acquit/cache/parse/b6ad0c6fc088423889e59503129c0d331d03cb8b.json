@@ -1,0 +1,1 @@
+{"facts": {"defines_module_getattr": true, "dyn_literal_imports": [], "imports": [], "path": "tests/fixtures/repos/dynamic/lazy_attach.py", "pytest_plugins_decl": [], "suspects": [{"kind": "lazy-module-getattr", "lineno": 8}]}, "version": 2}

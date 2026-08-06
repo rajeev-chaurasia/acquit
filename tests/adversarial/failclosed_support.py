@@ -21,6 +21,7 @@ import pytest
 
 from acquit.cli import main
 from acquit.constants import ENV_SELECTION_FILE, SELECTION_SCHEMA
+from acquit.vcs import working_tree_fingerprint
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 ACTION_YML = PROJECT_ROOT / "action.yml"
@@ -132,7 +133,14 @@ def select(repo: Path, out: Path, base: str, head: str | None = None) -> int:
 def replay(repo: Path, out: Path) -> int:
     with chdir(repo):
         return main(
-            ["replay", str(out / "report.json"), "--witnesses", str(out / "witnesses.json")]
+            [
+                "replay",
+                str(out / "report.json"),
+                "--witnesses",
+                str(out / "witnesses.json"),
+                "--selection",
+                str(out / "selection.json"),
+            ]
         )
 
 
@@ -147,13 +155,26 @@ def write_json(path: Path, document: Any) -> Path:
     return path
 
 
-def selection_doc(skip: Sequence[str], mode: str = "selective", graph_hash: Any = "0" * 64) -> Any:
+def selection_doc(
+    skip: Sequence[str],
+    mode: str = "selective",
+    graph_hash: Any = "0" * 64,
+    tree: Path | None = None,
+) -> Any:
+    """A hand-built selection-v2 document, optionally bound to a real tree."""
+    fingerprint = working_tree_fingerprint(tree) if tree is not None else None
     return {
         "schema": SELECTION_SCHEMA,
         "mode": mode,
-        "skip": list(skip),
         "graph_hash": graph_hash,
+        "tree": {"head_sha": None, "fingerprint": fingerprint},
+        "skip": [{"path": path, "witness": f"w-{index:06d}"} for index, path in enumerate(skip, 1)],
     }
+
+
+def skip_paths(document: Mapping[str, Any]) -> list[str]:
+    """The skipped test paths of a selection document, in document order."""
+    return [entry["path"] for entry in document["skip"]]
 
 
 def run_pytest(

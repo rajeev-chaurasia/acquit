@@ -4,9 +4,10 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
-from conftest import ScenarioRepo
+from conftest import RepoBuilder, ScenarioRepo, module_test_source
 
 from acquit.cli import main
 from acquit.constants import ENV_SELECTION_FILE
@@ -33,10 +34,14 @@ def _select_args(repo: ScenarioRepo, out: Path, base: str, head: str | None) -> 
     return args
 
 
-def _read(path: Path) -> dict[str, object]:
+def _read(path: Path) -> dict[str, Any]:
     document = json.loads(path.read_text(encoding="utf-8"))
     assert isinstance(document, dict)
     return document
+
+
+def _skip_paths(selection: dict[str, Any]) -> list[str]:
+    return [entry["path"] for entry in selection["skip"]]
 
 
 def test_select_writes_report_selection_and_witnesses(
@@ -65,12 +70,14 @@ def test_select_writes_report_selection_and_witnesses(
     assert report["graph"]["hash"] == selection["graph_hash"] == witnesses["graph_hash"]
     assert report["stats"]["estimated_seconds_saved"] is None
     assert selection["mode"] == "selective"
-    assert selection["skip"] == [
+    assert selection["tree"]["head_sha"] == scenario_repo.alpha_change
+    assert len(selection["tree"]["fingerprint"]) == 64
+    assert _skip_paths(selection) == [
         "tests/pkg/test_pkg.py",
         "tests/test_beta.py",
         "tests/test_delta.py",
     ]
-    assert [entry["test"] for entry in witnesses["witnesses"]] == selection["skip"]
+    assert [entry["test"] for entry in witnesses["witnesses"]] == _skip_paths(selection)
 
 
 def test_select_run_all_from_rules_exits_ok(
@@ -144,20 +151,48 @@ def test_select_output_is_deterministic(
 
 
 def test_selection_file_drives_pytest_deselection(
-    scenario_repo: ScenarioRepo, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    repo_builder: RepoBuilder, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.chdir(scenario_repo.path)
-    exit_code = main(
-        _select_args(scenario_repo, tmp_path, scenario_repo.base, scenario_repo.alpha_change)
+    # The selection binds the analyzed tree, so pytest must run on that tree:
+    # a fresh repo whose head commit is exactly what select analyzed.
+    repo_builder.write(
+        {
+            ".gitignore": "out/\n__pycache__/\n*.pyc\n.pytest_cache/\n",
+            "mod.py": "X = 1\n",
+            "other.py": "Y = 1\n",
+            "tests/test_mod.py": module_test_source("mod"),
+            "tests/test_other.py": module_test_source("other"),
+        }
     )
-    assert exit_code == ExitCode.OK
+    base = repo_builder.commit("base")
+    repo_builder.write({"mod.py": "X = 2\n"})
+    head = repo_builder.commit("head")
+    out = repo_builder.path / "out"
+    out.mkdir()
+    monkeypatch.chdir(repo_builder.path)
+    args = [
+        "select",
+        "--base",
+        base,
+        "--head",
+        head,
+        "--report",
+        str(out / "report.json"),
+        "--selection",
+        str(out / "selection.json"),
+        "--witnesses",
+        str(out / "witnesses.json"),
+    ]
+    assert main(args) == ExitCode.OK
+    assert _skip_paths(_read(out / "selection.json")) == ["tests/test_other.py"]
 
     env = dict(os.environ)
-    env[ENV_SELECTION_FILE] = str(tmp_path / "selection.json")
-    env["PYTHONPATH"] = str(scenario_repo.path)
+    env[ENV_SELECTION_FILE] = str(out / "selection.json")
+    env["PYTHONPATH"] = str(repo_builder.path)
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
     completed = subprocess.run(
-        [sys.executable, "-m", "pytest", "-q"],
-        cwd=scenario_repo.path,
+        [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"],
+        cwd=repo_builder.path,
         env=env,
         capture_output=True,
         text=True,
@@ -166,7 +201,7 @@ def test_selection_file_drives_pytest_deselection(
 
     assert completed.returncode == 0, completed.stdout + completed.stderr
     assert "1 passed" in completed.stdout
-    assert "3 deselected" in completed.stdout
+    assert "1 deselected" in completed.stdout
 
 
 def test_internal_failure_writes_run_all_docs_and_exits_internal(
@@ -202,6 +237,7 @@ def test_internal_failure_writes_run_all_docs_and_exits_internal(
     selection = _read(selection_path)
     assert selection["mode"] == "run-all"
     assert selection["skip"] == []
+    assert selection["tree"] == {"head_sha": None, "fingerprint": None}
 
 
 def test_analyze_prints_graph_health(

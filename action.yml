@@ -17,8 +17,8 @@ inputs:
 
 outputs:
   mode:
-    description: "Selection mode: run-all or selective."
-    value: ${{ steps.select.outputs.mode }}
+    description: "Selection mode after verification: run-all or selective."
+    value: ${{ steps.verify.outputs.mode }}
   report-file:
     description: "Path to the report JSON."
     value: ${{ steps.select.outputs.report }}
@@ -38,19 +38,65 @@ runs:
         BASE_REF: ${{ inputs.base-ref != '' && inputs.base-ref || github.base_ref }}
       run: |
         set -u
-        REPORT="$PWD/acquit-report.json"
-        SELECTION="$PWD/acquit-selection.json"
-        if ! uvx --from "acquit==${{ inputs.acquit-version }}" acquit select \
-            --base "origin/${BASE_REF:-main}" \
-            --report "$REPORT" --selection "$SELECTION"; then
-          # Fail closed: a broken tool must never reduce the test run.
-          printf '{"schema":"acquit/selection-v1","mode":"run-all","skip":[],"graph_hash":null}\n' > "$SELECTION"
-          printf '{"schema":"acquit/report-v1","decision":{"mode":"run-all"}}\n' > "$REPORT"
+        RUN_ALL_DOC='{"schema":"acquit/selection-v2","mode":"run-all","graph_hash":null,"tree":{"head_sha":null,"fingerprint":null},"skip":[]}'
+        MODE=run-all
+        SAFE=1
+        # A newline inside any of these paths could smuggle extra lines into
+        # the runner files below; refuse to analyze and emit run-all instead.
+        case "$PWD${RUNNER_TEMP:-}" in (*$'\n'*) SAFE=0 ;; esac
+        if [ "$SAFE" = "1" ]; then
+          OUT_DIR="${RUNNER_TEMP:-$PWD}"
+          REPORT="$OUT_DIR/acquit-report.json"
+          SELECTION="$OUT_DIR/acquit-selection.json"
+          WITNESSES="$OUT_DIR/acquit-witnesses.json"
+          if ! uvx --from "acquit==${{ inputs.acquit-version }}" acquit select \
+              --base "origin/${BASE_REF:-main}" --head HEAD \
+              --report "$REPORT" --selection "$SELECTION" --witnesses "$WITNESSES"; then
+            # Fail closed: a broken tool must never reduce the test run.
+            printf '%s\n' "$RUN_ALL_DOC" > "$SELECTION"
+            printf '{"schema":"acquit/report-v1","decision":{"mode":"run-all"}}\n' > "$REPORT"
+          fi
+          # The mode output must never contradict the document pytest obeys,
+          # so it is read back from the document itself, not from a probe.
+          DOC=""
+          if [ -f "$SELECTION" ]; then DOC=$(<"$SELECTION"); fi
+          case "$DOC" in (*'"mode": "selective"'*|*'"mode":"selective"'*) MODE=selective ;; esac
+        else
+          REPORT=""
+          SELECTION=""
+          WITNESSES=""
         fi
-        MODE=$(python -c "import json;print(json.load(open('$SELECTION'))['mode'])" 2>/dev/null || echo run-all)
-        echo "mode=$MODE" >> "$GITHUB_OUTPUT"
-        echo "report=$REPORT" >> "$GITHUB_OUTPUT"
-        echo "selection=$SELECTION" >> "$GITHUB_OUTPUT"
-        echo "ACQUIT_SELECTION_FILE=$SELECTION" >> "$GITHUB_ENV"
+        printf 'mode<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$MODE" >> "$GITHUB_OUTPUT"
+        printf 'report<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$REPORT" >> "$GITHUB_OUTPUT"
+        printf 'selection<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$SELECTION" >> "$GITHUB_OUTPUT"
+        printf 'witnesses<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$WITNESSES" >> "$GITHUB_OUTPUT"
+        printf 'ACQUIT_SELECTION_FILE<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$SELECTION" >> "$GITHUB_ENV"
         echo "### Acquit" >> "$GITHUB_STEP_SUMMARY"
         echo "Selection mode: \`$MODE\`" >> "$GITHUB_STEP_SUMMARY"
+
+    - id: verify
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        MODE: ${{ steps.select.outputs.mode }}
+        REPORT: ${{ steps.select.outputs.report }}
+        SELECTION: ${{ steps.select.outputs.selection }}
+        WITNESSES: ${{ steps.select.outputs.witnesses }}
+      run: |
+        set -u
+        RUN_ALL_DOC='{"schema":"acquit/selection-v2","mode":"run-all","graph_hash":null,"tree":{"head_sha":null,"fingerprint":null},"skip":[]}'
+        FINAL="${MODE:-run-all}"
+        if [ "$FINAL" = "selective" ]; then
+          # Replay the evidence before any skip is honored; an unverifiable
+          # selection is rewritten to run-all, not merely reported as such.
+          if ! uvx --from "acquit==${{ inputs.acquit-version }}" acquit replay "$REPORT" \
+              --witnesses "$WITNESSES" --selection "$SELECTION"; then
+            FINAL=run-all
+            if ! printf '%s\n' "$RUN_ALL_DOC" > "$SELECTION"; then
+              # The document could not be neutralized; unhook the plugin.
+              printf 'ACQUIT_SELECTION_FILE<<EOF_ACQUIT_c9d41e\n\nEOF_ACQUIT_c9d41e\n' >> "$GITHUB_ENV"
+            fi
+          fi
+        fi
+        printf 'mode<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$FINAL" >> "$GITHUB_OUTPUT"
+        echo "Verified mode: \`$FINAL\`" >> "$GITHUB_STEP_SUMMARY"

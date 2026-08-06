@@ -1,0 +1,1 @@
+{"facts": {"defines_module_getattr": false, "dyn_literal_imports": [], "imports": [{"is_star": false, "level": 0, "module": null, "names": ["other"]}], "path": "tests/fixtures/repos/dynamic/tests/test_other.py", "pytest_plugins_decl": [], "suspects": []}, "version": 2}

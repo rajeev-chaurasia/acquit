@@ -226,11 +226,13 @@ def test_pipeline_soundness_properties(data: GeneratedRepo, workspace: Path, dri
 
     # P3: identical trees produce byte-identical selection and witness documents.
     first_docs = (
-        build_selection_doc(first.decision, graph.graph_hash),
+        build_selection_doc(first.decision, graph.graph_hash, None, first.tree_fingerprint),
         build_witnesses_doc(first.decision, graph.graph_hash),
     )
     second_docs = (
-        build_selection_doc(second.decision, second.head.graph.graph_hash),
+        build_selection_doc(
+            second.decision, second.head.graph.graph_hash, None, second.tree_fingerprint
+        ),
         build_witnesses_doc(second.decision, second.head.graph.graph_hash),
     )
     for mine, theirs in zip(first_docs, second_docs, strict=True):

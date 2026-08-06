@@ -5,6 +5,7 @@ including a missing git binary, into VcsError carrying the command and stderr.
 All returned paths are repo-relative POSIX, matching graph node identity.
 """
 
+import hashlib
 import subprocess
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -12,6 +13,9 @@ from enum import StrEnum
 from pathlib import Path
 
 from acquit.errors import VcsError
+
+# Gitlinks (submodules) carry no blob content and never enter fingerprints.
+_GITLINK_MODE = "160000"
 
 
 class ChangeStatus(StrEnum):
@@ -152,3 +156,87 @@ def read_blob(ref: str, path: str, cwd: Path) -> bytes:
 def resolve_sha(ref: str, cwd: Path) -> str:
     """Resolve ref to the full sha of the commit it points at."""
     return _run_git_text(["rev-parse", "--verify", f"{ref}^{{commit}}"], cwd).strip()
+
+
+def blob_sha_of_bytes(content: bytes) -> str:
+    """The sha git hash-object would assign to these bytes."""
+    hasher = hashlib.sha1(usedforsecurity=False)
+    hasher.update(f"blob {len(content)}\x00".encode())
+    hasher.update(content)
+    return hasher.hexdigest()
+
+
+def fingerprint_of_shas(shas: Mapping[str, str]) -> str:
+    """Canonical tree fingerprint: sha256 over sorted path TAB sha lines."""
+    lines = sorted(f"{path}\t{sha}" for path, sha in shas.items())
+    return hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest()
+
+
+def _index_shas(root: Path) -> tuple[dict[str, str], frozenset[str]]:
+    """Stage-0 index blob shas by path, plus the set of gitlink paths."""
+    raw = _run_git_text(["ls-files", "-s", "-z"], root)
+    shas: dict[str, str] = {}
+    gitlinks: set[str] = set()
+    for entry in raw.split("\0"):
+        if not entry:
+            continue
+        meta, tab, path = entry.partition("\t")
+        fields = meta.split(" ")
+        if not tab or len(fields) != 3:
+            raise VcsError(f"unparseable ls-files -s entry {entry!r}")
+        mode, sha, stage = fields
+        if mode == _GITLINK_MODE:
+            gitlinks.add(path)
+        elif stage == "0":
+            shas[path] = sha
+    return shas, frozenset(gitlinks)
+
+
+def _dirty_paths(root: Path) -> frozenset[str]:
+    """Paths whose worktree content may differ from the index, plus untracked."""
+    raw = _run_git_text(["status", "--porcelain", "-z"], root)
+    tokens = raw.split("\0")
+    if tokens and tokens[-1] == "":
+        tokens.pop()
+    dirty: set[str] = set()
+    index = 0
+    while index < len(tokens):
+        entry = tokens[index]
+        if len(entry) < 4:
+            raise VcsError(f"unparseable status entry {entry!r}")
+        status, path = entry[:2], entry[3:]
+        dirty.add(path)
+        # Renames and copies carry the origin path in the next token.
+        index += 2 if status[0] in ("R", "C") else 1
+    return frozenset(dirty)
+
+
+def working_tree_fingerprint(root: Path) -> str:
+    """Fingerprint the working tree at the repository root.
+
+    Clean tracked files reuse their index blob shas; dirty and untracked files
+    are hashed from disk. Unreadable or vanished files are omitted, and both
+    the pipeline and the pytest plugin run this same code, so any divergence
+    between select time and test time surfaces as a mismatch, never a skip.
+    """
+    raw = _run_git_text(["ls-files", "-z", "--cached", "--others", "--exclude-standard"], root)
+    listing = tuple(entry for entry in raw.split("\0") if entry)
+    index_shas, gitlinks = _index_shas(root)
+    dirty = _dirty_paths(root)
+    shas: dict[str, str] = {}
+    for path in listing:
+        if path in gitlinks:
+            continue
+        sha = index_shas.get(path) if path not in dirty else None
+        if sha is None:
+            try:
+                sha = blob_sha_of_bytes((root / path).read_bytes())
+            except OSError:
+                continue
+        shas[path] = sha
+    return fingerprint_of_shas(shas)
+
+
+def ref_tree_fingerprint(ref: str, cwd: Path) -> str:
+    """Fingerprint the committed tree at ref, blobs only."""
+    return fingerprint_of_shas(blob_shas(ref, cwd))

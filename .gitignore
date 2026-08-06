@@ -13,9 +13,6 @@ build/
 .coverage
 htmlcov/
 
-# Acquit's own cache
-.acquit/cache/
-
 # Editors and OS
 .idea/
 .vscode/

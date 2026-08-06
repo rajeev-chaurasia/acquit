@@ -68,6 +68,43 @@ def test_replay_verifies_every_witness(
     assert capsys.readouterr().out.strip() == "replay ok: 3 witnesses verified"
 
 
+def test_replay_accepts_the_matching_selection_document(
+    select_docs: tuple[Path, Path],
+    scenario_repo: ScenarioRepo,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    report, witnesses = select_docs
+    selection = report.parent / "selection.json"
+    monkeypatch.chdir(scenario_repo.path)
+
+    exit_code = main(
+        ["replay", str(report), "--witnesses", str(witnesses), "--selection", str(selection)]
+    )
+
+    assert exit_code == ExitCode.OK
+
+
+def test_replay_rejects_a_selection_with_an_extra_skip(
+    select_docs: tuple[Path, Path],
+    scenario_repo: ScenarioRepo,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    report, witnesses = select_docs
+    document = _load(report.parent / "selection.json")
+    document["skip"].append({"path": "tests/test_alpha.py", "witness": "w-000099"})
+    tampered = _dump(document, tmp_path / "selection.json")
+    monkeypatch.chdir(scenario_repo.path)
+
+    exit_code = main(
+        ["replay", str(report), "--witnesses", str(witnesses), "--selection", str(tampered)]
+    )
+
+    assert exit_code == ExitCode.REPLAY_MISMATCH
+    assert "but the report does not" in capsys.readouterr().err
+
+
 def test_replay_detects_a_tampered_closure_hash(
     select_docs: tuple[Path, Path],
     scenario_repo: ScenarioRepo,

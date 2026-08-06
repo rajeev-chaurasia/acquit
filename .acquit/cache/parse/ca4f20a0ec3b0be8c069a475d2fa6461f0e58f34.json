@@ -1,0 +1,1 @@
+{"facts": {"defines_module_getattr": false, "dyn_literal_imports": [], "imports": [{"is_star": false, "level": 0, "module": "pkg.textops", "names": ["shout"]}], "path": "tests/fixtures/repos/srclayout/tests/test_textops.py", "pytest_plugins_decl": [], "suspects": []}, "version": 2}
