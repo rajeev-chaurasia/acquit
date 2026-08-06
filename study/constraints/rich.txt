@@ -1,0 +1,10 @@
+# frozen from rich@ce51a2f, the newest manifest head sha
+# regenerate per the acquit-study docs in study/README.md
+colorama==0.4.6
+iniconfig==2.3.0
+markdown-it-py==4.2.0
+mdurl==0.1.2
+packaging==26.3
+pluggy==1.6.0
+pygments==2.20.0
+pytest==9.1.1
