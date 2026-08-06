@@ -1,4 +1,4 @@
-"""The sticky PR comment: render a report as markdown and upsert it.
+"""The sticky PR comment: render a report as markdown and upsert it in place.
 
 Rendering is a pure function over the report document. The upsert talks to
 the GitHub REST API through an injectable opener so tests never touch the
