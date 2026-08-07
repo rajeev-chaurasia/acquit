@@ -18,11 +18,15 @@ from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from acquit.errors import AcquitError
 from acquit.report import to_canonical_json
 from acquit.study import EXCLUSION_SCHEMA, RESULT_SCHEMA, SUMMARY_SCHEMA
+
+# The one blocker a repo config can neutralize: R001 flags changed resource
+# files, and an assume_inert glob vouches that the named files feed no test.
+_RECOVERABLE_RULE: Final = "R001"
 
 
 @dataclass(frozen=True, slots=True)
@@ -69,6 +73,9 @@ class StudySummary:
     skip_rate_count_weighted: Quartiles | None
     skip_rate_duration_weighted: Quartiles | None
     fail_closed_rules: Mapping[str, int]
+    sole_blocker_rules: Mapping[str, int]
+    recoverable_run_alls: int
+    counterfactual_selective_share: float
     unsafe_skips_total: int
     new_test_violations: int
     replay_selective: int
@@ -196,6 +203,27 @@ def _read_json(path: Path) -> dict[str, Any] | None:
     return data if isinstance(data, dict) else None
 
 
+def sole_global_blocker(result: PrResult) -> str | None:
+    """The single global rule that alone forced this run-all, when provable.
+
+    A run-all is sole-blocked when exactly one distinct rule fired with
+    global scope, no global-if-reached finding is present (such a finding may
+    have been the one that acted, and the record cannot tell), and the
+    recorded totals are zero. Zero totals mean the decision short-circuited
+    on the global finding before consulting the graph; a run-all with totals
+    walked the graph and every test was impacted anyway, so removing the
+    rule would not have made it selective.
+    """
+    global_rules = {rule for rule, scope in result.findings if scope == "global"}
+    if len(global_rules) != 1:
+        return None
+    if any(scope == "global-if-reached" for _, scope in result.findings):
+        return None
+    if result.total > 0:
+        return None
+    return next(iter(global_rules))
+
+
 def summarize(results: Sequence[PrResult], exclusions: Sequence[ExclusionRecord]) -> StudySummary:
     """Compute the study summary; pure over already-loaded records."""
     selective = [result for result in results if result.mode == "selective"]
@@ -210,6 +238,7 @@ def summarize(results: Sequence[PrResult], exclusions: Sequence[ExclusionRecord]
         )
         duration_rates.append(skipped_seconds / total_seconds)
     rules: Counter[str] = Counter()
+    sole_blockers: Counter[str] = Counter()
     for result in results:
         if result.mode == "selective":
             continue
@@ -219,6 +248,10 @@ def summarize(results: Sequence[PrResult], exclusions: Sequence[ExclusionRecord]
         else:
             # No rule fired; the diff genuinely reaches every test file.
             rules["full-graph-impact"] += 1
+        blocker = sole_global_blocker(result)
+        if blocker is not None:
+            sole_blockers[blocker] += 1
+    recoverable = sole_blockers.get(_RECOVERABLE_RULE, 0)
     analysis = [result.analysis_seconds for result in results]
     return StudySummary(
         analyzed=len(results),
@@ -229,6 +262,11 @@ def summarize(results: Sequence[PrResult], exclusions: Sequence[ExclusionRecord]
         skip_rate_count_weighted=_quartiles(count_rates),
         skip_rate_duration_weighted=_quartiles(duration_rates),
         fail_closed_rules=dict(sorted(rules.items())),
+        sole_blocker_rules=dict(sorted(sole_blockers.items())),
+        recoverable_run_alls=recoverable,
+        counterfactual_selective_share=(
+            (len(selective) + recoverable) / len(results) if results else 0.0
+        ),
         unsafe_skips_total=sum(len(result.unsafe_skips) for result in results),
         new_test_violations=sum(1 for result in results if not result.new_tests_selected),
         replay_selective=len(selective),
@@ -256,6 +294,11 @@ def summary_to_dict(summary: StudySummary) -> dict[str, Any]:
         "skip_rate_count_weighted": _quartiles_dict(summary.skip_rate_count_weighted),
         "skip_rate_duration_weighted": _quartiles_dict(summary.skip_rate_duration_weighted),
         "fail_closed_rules": dict(summary.fail_closed_rules),
+        "sole_blocker_rules": dict(summary.sole_blocker_rules),
+        "recoverable_run_alls": {
+            "count": summary.recoverable_run_alls,
+            "counterfactual_selective_share": summary.counterfactual_selective_share,
+        },
         "unsafe_skips_total": summary.unsafe_skips_total,
         "new_test_violations": summary.new_test_violations,
         "replay": {
@@ -319,6 +362,16 @@ def render_markdown(summary: StudySummary) -> str:
     if not summary.fail_closed_rules:
         lines.append("| (none) | 0 |")
     lines += [
+        "",
+        "## Recoverable run-alls",
+        "",
+        f"- Run-alls whose only global blocker is {_RECOVERABLE_RULE}: "
+        f"{summary.recoverable_run_alls}",
+        f"- Counterfactual selective share ((selective + recoverable) / analyzed): "
+        f"{_pct(summary.counterfactual_selective_share)}",
+        "- These PRs would have been selective with an `assume_inert` list under"
+        " `[tool.acquit]`, which vouches that the flagged docs or data files feed"
+        " no test and removes R001 for exactly those files.",
         "",
         "## Safety",
         "",

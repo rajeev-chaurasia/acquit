@@ -43,6 +43,38 @@ def _result(number: int, **overrides: Any) -> dict[str, Any]:
     return payload
 
 
+_R001 = {"rule": "R001", "scope": "global", "subject": "CHANGES.md"}
+_R002 = {"rule": "R002", "scope": "global", "subject": "pyproject.toml"}
+_R007 = {"rule": "R007", "scope": "closure-taint", "subject": "pkg/dynamic.py"}
+
+
+def _run_all(number: int, findings: list[dict[str, str]], **overrides: Any) -> dict[str, Any]:
+    """A run-all that short-circuited on a global finding: totals stay zero."""
+    return _result(
+        number,
+        mode="run-all",
+        selected=0,
+        skipped=0,
+        always_run=0,
+        total=0,
+        findings=findings,
+        **overrides,
+    )
+
+
+def _full_impact(number: int, findings: list[dict[str, str]]) -> dict[str, Any]:
+    """A run-all where the graph selected every test: the diff reaches everything."""
+    return _result(
+        number,
+        mode="run-all",
+        selected=10,
+        skipped=0,
+        always_run=0,
+        total=10,
+        findings=findings,
+    )
+
+
 def _selective(number: int, skipped: int, analysis: float) -> dict[str, Any]:
     keep_seconds = float(10 - skipped)
     return _result(
@@ -128,12 +160,79 @@ def test_summarize_computes_documented_numbers(tmp_path: Path) -> None:
     assert duration_rates is not None
     assert duration_rates.median == pytest.approx(0.5)
     assert summary.fail_closed_rules == {"R001": 1, "R002": 1, "full-graph-impact": 1}
+    assert summary.sole_blocker_rules == {}
+    assert summary.recoverable_run_alls == 0
+    assert summary.counterfactual_selective_share == pytest.approx(4 / 6)
     assert summary.unsafe_skips_total == 0
     assert summary.new_test_violations == 0
     assert summary.replay_selective == 4
     assert summary.replay_selective_verified == 4
     assert summary.analysis_p50 == pytest.approx(3.5)
     assert summary.analysis_p95 == pytest.approx(5.75)
+
+
+def test_sole_blocker_r001_only_is_recoverable(tmp_path: Path) -> None:
+    _write(tmp_path, "pr-000001.json", _selective(1, 2, 1.0))
+    # R001 is the only global finding; non-global findings do not disqualify.
+    _write(tmp_path, "pr-000002.json", _run_all(2, [_R001, _R007]))
+    results, exclusions = load_results(tmp_path)
+    summary = summarize(results, exclusions)
+    assert summary.sole_blocker_rules == {"R001": 1}
+    assert summary.recoverable_run_alls == 1
+    assert summary.counterfactual_selective_share == pytest.approx(2 / 2)
+
+
+def test_sole_blocker_rejects_second_global_rule(tmp_path: Path) -> None:
+    _write(tmp_path, "pr-000001.json", _selective(1, 2, 1.0))
+    _write(tmp_path, "pr-000002.json", _run_all(2, [_R001, _R002]))
+    results, exclusions = load_results(tmp_path)
+    summary = summarize(results, exclusions)
+    assert summary.sole_blocker_rules == {}
+    assert summary.recoverable_run_alls == 0
+    assert summary.counterfactual_selective_share == pytest.approx(1 / 2)
+
+
+def test_sole_blocker_rejects_r001_with_full_graph_impact(tmp_path: Path) -> None:
+    # R001 fired, but the recorded totals show the graph selected every test
+    # anyway, so removing R001 would not have made the PR selective.
+    _write(tmp_path, "pr-000001.json", _selective(1, 2, 1.0))
+    _write(tmp_path, "pr-000002.json", _full_impact(2, [_R001]))
+    results, exclusions = load_results(tmp_path)
+    summary = summarize(results, exclusions)
+    assert summary.sole_blocker_rules == {}
+    assert summary.recoverable_run_alls == 0
+    assert summary.counterfactual_selective_share == pytest.approx(1 / 2)
+
+
+def test_sole_blocker_rejects_full_graph_impact_without_findings(tmp_path: Path) -> None:
+    _write(tmp_path, "pr-000001.json", _selective(1, 2, 1.0))
+    _write(tmp_path, "pr-000002.json", _full_impact(2, []))
+    results, exclusions = load_results(tmp_path)
+    summary = summarize(results, exclusions)
+    assert summary.sole_blocker_rules == {}
+    assert summary.recoverable_run_alls == 0
+    assert summary.counterfactual_selective_share == pytest.approx(1 / 2)
+
+
+def test_sole_blocker_counts_other_rules_without_recovery(tmp_path: Path) -> None:
+    # A sole R002 blocker is counted per rule, but only R001 is recoverable,
+    # and an ambient global-if-reached finding fails closed: it may have been
+    # the finding that acted.
+    _write(
+        tmp_path,
+        "pr-000001.json",
+        _run_all(1, [{"rule": "R002", "scope": "global", "subject": "pyproject.toml"}]),
+    )
+    _write(
+        tmp_path,
+        "pr-000002.json",
+        _run_all(2, [_R001, {"rule": "R008", "scope": "global-if-reached", "subject": "conf.py"}]),
+    )
+    results, exclusions = load_results(tmp_path)
+    summary = summarize(results, exclusions)
+    assert summary.sole_blocker_rules == {"R002": 1}
+    assert summary.recoverable_run_alls == 0
+    assert summary.counterfactual_selective_share == pytest.approx(0.0)
 
 
 def test_duplicate_results_count_once(tmp_path: Path) -> None:
@@ -172,10 +271,17 @@ def test_run_aggregate_writes_summary_and_passes_when_clean(tmp_path: Path) -> N
         "excluded": 1,
         "exclusion_stages": {"base-suite": 1},
     }
+    assert summary["sole_blocker_rules"] == {}
+    assert summary["recoverable_run_alls"] == {
+        "count": 0,
+        "counterfactual_selective_share": pytest.approx(4 / 6),
+    }
     markdown = out.read_text(encoding="utf-8")
     assert "Unsafe skips: 0 (must be 0)" in markdown
     assert "4/4 verified" in markdown
     assert "| R001 | 1 |" in markdown
+    assert "## Recoverable run-alls" in markdown
+    assert "Run-alls whose only global blocker is R001: 0" in markdown
 
 
 def test_run_aggregate_fails_on_unsafe_skip(tmp_path: Path) -> None:
@@ -204,3 +310,4 @@ def test_markdown_handles_no_selective_prs() -> None:
     rendered = render_markdown(summary)
     assert "| by file count | - | - | - |" in rendered
     assert "No analyzed PRs." in rendered
+    assert "Run-alls whose only global blocker is R001: 0" in rendered
