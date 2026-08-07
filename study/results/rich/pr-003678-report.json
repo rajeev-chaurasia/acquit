@@ -1,0 +1,501 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "rich/default_styles.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/traceback.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1371,
+    "hash": "3453299d9b6b55c632af056740b85260be7906bb005a9684b823dbe3746084e6",
+    "nodes": 595,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "d43db994181f91cfa996f2f3df3b557ba87494e4",
+    "created_at": "2026-08-07T01:24:39+00:00",
+    "head_sha": "47da97e46a529905a170d609c38bd1380034583a"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 62,
+    "skipped": 0,
+    "total": 62
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/test_align.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_ansi.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_bar.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_block_bar.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_box.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_card.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_cells.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_color.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_color_triplet.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_columns.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_columns_align.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_console.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_constrain.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_containers.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_control.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_emoji.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_file_proxy.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_filesize.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_getfileno.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_highlighter.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_inspect.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_json.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_jupyter.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_layout.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_live.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_live_render.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_log.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_logging.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_markdown.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_markdown_no_hyperlinks.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_markup.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_measure.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_null_file.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_padding.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_palette.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_panel.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_pick.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_pretty.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_progress.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_prompt.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_protocol.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_ratio.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_repr.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py",
+          "rule:R009"
+        ]
+      },
+      {
+        "path": "tests/test_rich_print.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_rule.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_rule_in_table.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_screen.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_segment.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_spinner.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_stack.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_status.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_style.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_styled.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_syntax.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_table.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_text.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_theme.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_tools.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_traceback.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py",
+          "rule:R009"
+        ]
+      },
+      {
+        "path": "tests/test_tree.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_win32_console.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_windows_renderer.py",
+        "reasons": [
+          "reachable-from:rich/default_styles.py",
+          "reachable-from:rich/traceback.py"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

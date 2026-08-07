@@ -1,0 +1,147 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "src/ahttpx/_parsers.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/ahttpx/_server.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/httpx/_parsers.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/httpx/_server.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 234,
+    "hash": "3253534fd775ba894629e9338fab7b5005c14741fa07df6c7f05b10c8f15e3e5",
+    "nodes": 99,
+    "roots": [
+      "src",
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "20380490fd0bd13c68704080754c1385bff96d69",
+    "created_at": "2026-08-07T01:25:06+00:00",
+    "head_sha": "350221558d4f079fc4ab3673d81a4bc730fbb9c3"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 12,
+    "skipped": 0,
+    "total": 12
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/test_client.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_content.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_headers.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_network.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_parsers.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_pool.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_quickstart.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_request.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_response.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_streams.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_urlencode.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      },
+      {
+        "path": "tests/test_urls.py",
+        "reasons": [
+          "reachable-from:src/httpx/_parsers.py",
+          "reachable-from:src/httpx/_server.py"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

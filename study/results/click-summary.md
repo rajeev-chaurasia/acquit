@@ -24,6 +24,12 @@ Regenerate it after any run; never edit it by hand.
 | R002 | 1 |
 | R003 | 1 |
 
+## Recoverable run-alls
+
+- Run-alls whose only global blocker is R001: 6
+- Counterfactual selective share ((selective + recoverable) / analyzed): 80.0%
+- These PRs would have been selective with an `assume_inert` list under `[tool.acquit]`, which vouches that the flagged docs or data files feed no test and removes R001 for exactly those files.
+
 ## Safety
 
 - Unsafe skips: 0 (must be 0)

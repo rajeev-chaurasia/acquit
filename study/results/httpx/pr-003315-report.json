@@ -1,0 +1,80 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_client.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_asgi.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_wsgi.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "tests/test_asgi.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_asgi.py"
+      },
+      {
+        "reason": "tests/test_wsgi.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_wsgi.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 419,
+    "hash": "818fcb45c08caef36d765306fc902ca0115a05a0358b38a2c54e26ee861d40f7",
+    "nodes": 183,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "a18f79610141500cf540b2cf4783559731109d7d",
+    "created_at": "2026-08-07T01:25:04+00:00",
+    "head_sha": "4d0cb0ce9d8b2696285f98dbedefffbd1829f569"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

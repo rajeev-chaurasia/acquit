@@ -1,0 +1,39 @@
+{
+  "analysis_seconds": {
+    "p50": 0.462,
+    "p95": 0.506
+  },
+  "fail_closed_rules": {
+    "R001": 32,
+    "R002": 8,
+    "R003": 5,
+    "full-graph-impact": 5
+  },
+  "new_test_violations": 0,
+  "prs": {
+    "analyzed": 41,
+    "excluded": 0,
+    "exclusion_stages": {}
+  },
+  "recoverable_run_alls": {
+    "count": 26,
+    "counterfactual_selective_share": 0.6341463414634146
+  },
+  "replay": {
+    "selective": 0,
+    "selective_verified": 0
+  },
+  "schema": "acquit/study-summary-v1",
+  "selective": {
+    "count": 0,
+    "share": 0.0
+  },
+  "skip_rate_count_weighted": null,
+  "skip_rate_duration_weighted": null,
+  "sole_blocker_rules": {
+    "R001": 26,
+    "R002": 1,
+    "R003": 2
+  },
+  "unsafe_skips_total": 0
+}

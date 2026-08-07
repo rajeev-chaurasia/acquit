@@ -1,0 +1,141 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": ".github/workflows/lock.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/pre-commit.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/publish.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/tests.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/zizmor.yaml",
+      "status": "added"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".github/workflows/lock.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/lock.yaml"
+      },
+      {
+        "reason": ".github/workflows/pre-commit.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/pre-commit.yaml"
+      },
+      {
+        "reason": ".github/workflows/publish.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/publish.yaml"
+      },
+      {
+        "reason": ".github/workflows/tests.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/tests.yaml"
+      },
+      {
+        "reason": ".github/workflows/zizmor.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/zizmor.yaml"
+      },
+      {
+        "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/helpers.py"
+      },
+      {
+        "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_cli.py"
+      },
+      {
+        "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/config.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 518,
+    "hash": "62bc165ac494d6813381d9ff682aee683f05e648cd157c33eb6326efc77d7064",
+    "nodes": 311,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "a29f88ce6f2f9843bd6fcbbfce1390a2071965d6",
+    "created_at": "2026-08-07T01:22:38+00:00",
+    "head_sha": "560c119e3dc33b35b9c57172fae521d99c2a1421"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

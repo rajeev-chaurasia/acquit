@@ -77,6 +77,13 @@ study table in the summary (and anything quoted in the README) is generated
 from that json by this command and is never hand-edited. Aggregate exits
 nonzero if any PR recorded an unsafe skip or a skipped new test.
 
+## Results
+
+Per-repo summaries live in `study/results/*-summary.md`, each generated from
+the per-PR result files committed next to it: click, flask, rich, and httpx
+so far. The json beside each summary carries the same numbers for machines,
+and the README table quotes those json files.
+
 ## Reproducibility contract
 
 - Manifests are committed. They pin the repo, the PR list (numbers and

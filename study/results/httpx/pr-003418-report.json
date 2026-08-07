@@ -1,0 +1,233 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "httpx/_config.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 409,
+    "hash": "856f4317076bb201822980977128c72942091d35619d6028abd2a8df3a11f6bf",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "47f4a96ffaaaa07dca1614409549b5d7a6e7af49",
+    "created_at": "2026-08-07T01:26:13+00:00",
+    "head_sha": "8a40ebc44fa32b90edfb45ba3ba57d85ddfc7756"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 31,
+    "skipped": 0,
+    "total": 31
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/client/test_async_client.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_auth.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_client.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_cookies.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_event_hooks.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_headers.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_properties.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_proxies.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_queryparams.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_redirects.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_cookies.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_headers.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_queryparams.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_requests.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_responses.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_url.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_whatwg.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_api.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_asgi.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_auth.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_config.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_content.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_decoders.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_exceptions.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_exported_members.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_main.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_multipart.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_status_codes.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_timeouts.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_utils.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      },
+      {
+        "path": "tests/test_wsgi.py",
+        "reasons": [
+          "reachable-from:httpx/_config.py"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

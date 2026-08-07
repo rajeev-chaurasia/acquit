@@ -1,0 +1,72 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.438,
+  "base_sha": "0aa20e449e742f81fbc518ce793878015226652d",
+  "base_suite_seconds": 10.876,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": "docs/img/speakeasy.png is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/img/speakeasy.png"
+    },
+    {
+      "reason": "docs/overrides/partials/nav.html is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/overrides/partials/nav.html"
+    },
+    {
+      "reason": "mkdocs.yml is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "mkdocs.yml"
+    }
+  ],
+  "head_sha": "da256f267e0302b62d09aa60501db6ff1c98b037",
+  "head_suite_seconds": 10.969,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 3305,
+  "per_file_durations": {
+    "tests/client/test_async_client.py": 0.82,
+    "tests/client/test_auth.py": 0.199,
+    "tests/client/test_client.py": 0.642,
+    "tests/client/test_cookies.py": 0.014,
+    "tests/client/test_event_hooks.py": 0.023,
+    "tests/client/test_headers.py": 0.02,
+    "tests/client/test_properties.py": 0.175,
+    "tests/client/test_proxies.py": 2.934,
+    "tests/client/test_queryparams.py": 0.06,
+    "tests/client/test_redirects.py": 0.079,
+    "tests/models/test_cookies.py": 0.01,
+    "tests/models/test_headers.py": 0.019,
+    "tests/models/test_queryparams.py": 0.019,
+    "tests/models/test_requests.py": 0.029,
+    "tests/models/test_responses.py": 0.162,
+    "tests/models/test_url.py": 0.132,
+    "tests/models/test_whatwg.py": 0.608,
+    "tests/test_api.py": 0.231,
+    "tests/test_asgi.py": 0.057,
+    "tests/test_auth.py": 0.014,
+    "tests/test_config.py": 0.279,
+    "tests/test_content.py": 0.082,
+    "tests/test_decoders.py": 0.064,
+    "tests/test_exceptions.py": 0.051,
+    "tests/test_exported_members.py": 0.001,
+    "tests/test_main.py": 0.021,
+    "tests/test_multipart.py": 0.068,
+    "tests/test_status_codes.py": 0.006,
+    "tests/test_timeouts.py": 0.24,
+    "tests/test_utils.py": 0.251,
+    "tests/test_wsgi.py": 0.7
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

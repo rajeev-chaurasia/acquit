@@ -1,0 +1,99 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.458,
+  "base_sha": "30da640ffe23b6e461fa91d387ffea6b9d9fa847",
+  "base_suite_seconds": 2.465,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": ".pre-commit-config.yaml is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": ".pre-commit-config.yaml"
+    },
+    {
+      "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+      "rule": "R002",
+      "scope": "global",
+      "subject": "pyproject.toml"
+    },
+    {
+      "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/helpers.py"
+    },
+    {
+      "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_cli.py"
+    },
+    {
+      "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/config.py"
+    }
+  ],
+  "head_sha": "3709c4a9a87e6ce8c26dc4a951e1df52ac9ecad0",
+  "head_suite_seconds": 2.465,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 5844,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/test_appctx.py": 0.021,
+    "tests/test_basic.py": 0.269,
+    "tests/test_blueprints.py": 0.141,
+    "tests/test_cli.py": 0.118,
+    "tests/test_config.py": 0.028,
+    "tests/test_converters.py": 0.004,
+    "tests/test_helpers.py": 0.047,
+    "tests/test_instance_config.py": 0.014,
+    "tests/test_json.py": 0.05,
+    "tests/test_json_tag.py": 0.001,
+    "tests/test_logging.py": 0.01,
+    "tests/test_regression.py": 0.002,
+    "tests/test_reqctx.py": 0.032,
+    "tests/test_request.py": 0.005,
+    "tests/test_session_interface.py": 0.002,
+    "tests/test_signals.py": 0.014,
+    "tests/test_subclassing.py": 0.002,
+    "tests/test_templating.py": 0.066,
+    "tests/test_testing.py": 0.048,
+    "tests/test_user_error_handler.py": 0.03,
+    "tests/test_views.py": 0.034
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

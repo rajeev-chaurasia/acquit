@@ -1,0 +1,434 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "rich/console.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1353,
+    "hash": "4b261896931e2f49c67968066d5d42b9818f402892c6ba9c07cca0c0c46d373e",
+    "nodes": 595,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "9c9b011187bba772dca57653c9114005b489f005",
+    "created_at": "2026-08-07T01:23:37+00:00",
+    "head_sha": "9a08a2d3a983591e2d0d46e4f63558dd8df9e47d"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 62,
+    "skipped": 0,
+    "total": 62
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/test_align.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_ansi.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_bar.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_block_bar.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_box.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_card.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_cells.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_color.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_color_triplet.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_columns.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_columns_align.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_console.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_constrain.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_containers.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_control.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_emoji.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_file_proxy.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_filesize.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_getfileno.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_highlighter.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_inspect.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_json.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_jupyter.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_layout.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_live.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_live_render.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_log.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_logging.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_markdown.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_markdown_no_hyperlinks.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_markup.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_measure.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_null_file.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_padding.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_palette.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_panel.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_pick.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_pretty.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_progress.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_prompt.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_protocol.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_ratio.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_repr.py",
+        "reasons": [
+          "reachable-from:rich/console.py",
+          "rule:R009"
+        ]
+      },
+      {
+        "path": "tests/test_rich_print.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_rule.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_rule_in_table.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_screen.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_segment.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_spinner.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_stack.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_status.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_style.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_styled.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_syntax.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_table.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_text.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_theme.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_tools.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_traceback.py",
+        "reasons": [
+          "reachable-from:rich/console.py",
+          "rule:R009"
+        ]
+      },
+      {
+        "path": "tests/test_tree.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_win32_console.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      },
+      {
+        "path": "tests/test_windows_renderer.py",
+        "reasons": [
+          "reachable-from:rich/console.py"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

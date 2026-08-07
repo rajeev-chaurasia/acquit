@@ -1,0 +1,54 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "README.md",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "README.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.md"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 232,
+    "hash": "42204eded0dda15cf8b0e95c6fdcc12aee98e6aee474f3fc90b75dbf832ea27f",
+    "nodes": 99,
+    "roots": [
+      "src",
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "77589cc6f7b0b395f29df49c767cda6d144812bc",
+    "created_at": "2026-08-07T01:27:11+00:00",
+    "head_sha": "6a5bb5a4e4f5f5503e76f93fe9d635824acb52c9"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

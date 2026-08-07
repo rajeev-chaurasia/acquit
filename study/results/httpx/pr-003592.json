@@ -1,0 +1,102 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.45,
+  "base_sha": "336204f0121a9aefdebac5cacd81f912bafe8057",
+  "base_suite_seconds": 11.392,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "CHANGELOG.md"
+    },
+    {
+      "reason": "README.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "README.md"
+    },
+    {
+      "reason": "docs/async.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/async.md"
+    },
+    {
+      "reason": "docs/index.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/index.md"
+    },
+    {
+      "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+      "rule": "R002",
+      "scope": "global",
+      "subject": "pyproject.toml"
+    },
+    {
+      "reason": "requirements.txt is a dependency manifest, so the environment of every test may change.",
+      "rule": "R002",
+      "scope": "global",
+      "subject": "requirements.txt"
+    },
+    {
+      "reason": ".github/workflows/publish.yml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/publish.yml"
+    },
+    {
+      "reason": ".github/workflows/test-suite.yml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/test-suite.yml"
+    }
+  ],
+  "head_sha": "3fa326b2b0ab737274709334fe771d1aceb99101",
+  "head_suite_seconds": 10.593,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 3592,
+  "per_file_durations": {
+    "tests/client/test_async_client.py": 0.814,
+    "tests/client/test_auth.py": 0.206,
+    "tests/client/test_client.py": 1.176,
+    "tests/client/test_cookies.py": 0.014,
+    "tests/client/test_event_hooks.py": 0.022,
+    "tests/client/test_headers.py": 0.118,
+    "tests/client/test_properties.py": 0.17,
+    "tests/client/test_proxies.py": 2.589,
+    "tests/client/test_queryparams.py": 0.058,
+    "tests/client/test_redirects.py": 0.076,
+    "tests/models/test_cookies.py": 0.009,
+    "tests/models/test_headers.py": 0.03,
+    "tests/models/test_queryparams.py": 0.015,
+    "tests/models/test_requests.py": 0.031,
+    "tests/models/test_responses.py": 0.157,
+    "tests/models/test_url.py": 0.122,
+    "tests/models/test_whatwg.py": 0.583,
+    "tests/test_api.py": 0.251,
+    "tests/test_asgi.py": 0.054,
+    "tests/test_auth.py": 0.014,
+    "tests/test_config.py": 0.271,
+    "tests/test_content.py": 0.088,
+    "tests/test_decoders.py": 0.066,
+    "tests/test_exceptions.py": 0.053,
+    "tests/test_exported_members.py": 0.001,
+    "tests/test_main.py": 0.018,
+    "tests/test_multipart.py": 0.069,
+    "tests/test_status_codes.py": 0.006,
+    "tests/test_timeouts.py": 0.241,
+    "tests/test_utils.py": 0.107,
+    "tests/test_wsgi.py": 0.839
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

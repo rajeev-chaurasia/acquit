@@ -1,0 +1,179 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "README.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/_static/flask-horizontal.png",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/_static/flask-horizontal.svg",
+      "status": "added"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/_static/flask-icon.svg",
+      "status": "added"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/_static/flask-vertical.png",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/_static/flask-vertical.svg",
+      "status": "added"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/_static/shortcut-icon.png",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "docs/conf.py",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/index.rst",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "README.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.md"
+      },
+      {
+        "reason": "docs/_static/flask-horizontal.png is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/_static/flask-horizontal.png"
+      },
+      {
+        "reason": "docs/_static/flask-horizontal.svg is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/_static/flask-horizontal.svg"
+      },
+      {
+        "reason": "docs/_static/flask-icon.svg is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/_static/flask-icon.svg"
+      },
+      {
+        "reason": "docs/_static/flask-vertical.png is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/_static/flask-vertical.png"
+      },
+      {
+        "reason": "docs/_static/flask-vertical.svg is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/_static/flask-vertical.svg"
+      },
+      {
+        "reason": "docs/_static/shortcut-icon.png is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/_static/shortcut-icon.png"
+      },
+      {
+        "reason": "docs/index.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/index.rst"
+      },
+      {
+        "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/helpers.py"
+      },
+      {
+        "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_cli.py"
+      },
+      {
+        "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/config.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 516,
+    "hash": "e84f9d578b30feb1b7e26170fc7a5a05f6d4fabcd724e74c493b70f70f60895c",
+    "nodes": 309,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "f04c5e696400badaa52b3450ded53e9091c2078a",
+    "created_at": "2026-08-07T01:22:49+00:00",
+    "head_sha": "a758915893352f5986c6ee101cdf7e3b7a64fa28"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/advanced/ssl.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/contributing.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/__init__.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_api.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_client.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_config.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_main.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_transports/default.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_urls.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_config.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "docs/advanced/ssl.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/advanced/ssl.md"
+      },
+      {
+        "reason": "docs/contributing.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/contributing.md"
+      },
+      {
+        "reason": "tests/test_config.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_config.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 410,
+    "hash": "0e96aca5679eabeec7ccd19d7643e3700ab41ceda13195988e694f0a79d40a9a",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "41597adffa9d34171a63f7511fc0f702558dd08c",
+    "created_at": "2026-08-07T01:24:15+00:00",
+    "head_sha": "0f9cd3fdf3c73e217b9f78c304aa266163245da8"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

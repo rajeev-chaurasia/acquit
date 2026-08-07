@@ -1,0 +1,97 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/source/console.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/console.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/diagnose.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_console.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "docs/source/console.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/source/console.rst"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      },
+      {
+        "reason": "tests/test_console.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_console.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1350,
+    "hash": "17c3d6740d6b27bb1b40155b1aaa9c4f9e9d47d3cf76d1ce7082a8b6ce751ca3",
+    "nodes": 594,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "49117ced6648a432d85951f72dce777038f6ce09",
+    "created_at": "2026-08-07T01:23:39+00:00",
+    "head_sha": "b46bd78ee5c665172d936adca111a9b54420f675"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

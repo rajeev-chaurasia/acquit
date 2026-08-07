@@ -1,0 +1,283 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": ".github/CONTRIBUTING.md",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/test-suite.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/advanced/ssl.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/compatibility.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/environment_variables.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/logging.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/__init__.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/__version__.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_api.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_client.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_compat.py",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_config.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_content.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_decoders.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_main.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_transports/asgi.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_transports/default.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_types.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_urls.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_utils.py",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "pyproject.toml",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/client/test_proxies.py",
+      "status": "modified"
+    },
+    {
+      "kind": "conftest",
+      "path": "tests/conftest.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/models/test_url.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_asgi.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_config.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_utils.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_wsgi.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".github/CONTRIBUTING.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".github/CONTRIBUTING.md"
+      },
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "docs/advanced/ssl.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/advanced/ssl.md"
+      },
+      {
+        "reason": "docs/compatibility.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/compatibility.md"
+      },
+      {
+        "reason": "docs/environment_variables.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/environment_variables.md"
+      },
+      {
+        "reason": "docs/logging.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/logging.md"
+      },
+      {
+        "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "pyproject.toml"
+      },
+      {
+        "reason": ".github/workflows/test-suite.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/test-suite.yml"
+      },
+      {
+        "reason": "tests/conftest.py changed, and pytest applies it to every test under tests/.",
+        "rule": "R005",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/client/test_proxies.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/client/test_proxies.py"
+      },
+      {
+        "reason": "tests/conftest.py is a conftest, so the tests it configures must run.",
+        "rule": "R014",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/models/test_url.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/models/test_url.py"
+      },
+      {
+        "reason": "tests/test_asgi.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_asgi.py"
+      },
+      {
+        "reason": "tests/test_config.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_config.py"
+      },
+      {
+        "reason": "tests/test_utils.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_utils.py"
+      },
+      {
+        "reason": "tests/test_wsgi.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_wsgi.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 407,
+    "hash": "5ce08194d5d60ae26e0409108134736c4ed7134e20ba8ef5aae570be152c62f1",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "3f76571d3429497c4ee4ecf5d8bc034b6f765957",
+    "created_at": "2026-08-07T01:26:55+00:00",
+    "head_sha": "e83069830fa016b509377dcc4af713615fe44f4f"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

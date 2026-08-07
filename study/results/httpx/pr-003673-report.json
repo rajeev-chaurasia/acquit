@@ -1,0 +1,90 @@
+{
+  "changed": [],
+  "decision": {
+    "findings": [],
+    "mode": "selective",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 234,
+    "hash": "3253534fd775ba894629e9338fab7b5005c14741fa07df6c7f05b10c8f15e3e5",
+    "nodes": 99,
+    "roots": [
+      "src",
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "68989ae47d9fd10381a3859619a3880014d187f6",
+    "created_at": "2026-08-07T01:24:56+00:00",
+    "head_sha": "a711667febc881914bd117d6e86dfbf0b91c9f47"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 12,
+    "total": 12
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": [
+      {
+        "path": "tests/test_client.py",
+        "witness": "w-000001"
+      },
+      {
+        "path": "tests/test_content.py",
+        "witness": "w-000002"
+      },
+      {
+        "path": "tests/test_headers.py",
+        "witness": "w-000003"
+      },
+      {
+        "path": "tests/test_network.py",
+        "witness": "w-000004"
+      },
+      {
+        "path": "tests/test_parsers.py",
+        "witness": "w-000005"
+      },
+      {
+        "path": "tests/test_pool.py",
+        "witness": "w-000006"
+      },
+      {
+        "path": "tests/test_quickstart.py",
+        "witness": "w-000007"
+      },
+      {
+        "path": "tests/test_request.py",
+        "witness": "w-000008"
+      },
+      {
+        "path": "tests/test_response.py",
+        "witness": "w-000009"
+      },
+      {
+        "path": "tests/test_streams.py",
+        "witness": "w-000010"
+      },
+      {
+        "path": "tests/test_urlencode.py",
+        "witness": "w-000011"
+      },
+      {
+        "path": "tests/test_urls.py",
+        "witness": "w-000012"
+      }
+    ]
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

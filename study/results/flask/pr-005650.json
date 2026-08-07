@@ -1,0 +1,93 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.452,
+  "base_sha": "165af0a090e229e94ccd93896efc15b9fe0488da",
+  "base_suite_seconds": 2.474,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": "docs/patterns/mongoengine.rst is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/patterns/mongoengine.rst"
+    },
+    {
+      "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/helpers.py"
+    },
+    {
+      "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_cli.py"
+    },
+    {
+      "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/config.py"
+    }
+  ],
+  "head_sha": "75a8327cfd6eb912e469a8a613151d7ee50a1c1c",
+  "head_suite_seconds": 2.45,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 5650,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/test_appctx.py": 0.021,
+    "tests/test_basic.py": 0.264,
+    "tests/test_blueprints.py": 0.141,
+    "tests/test_cli.py": 0.114,
+    "tests/test_config.py": 0.028,
+    "tests/test_converters.py": 0.004,
+    "tests/test_helpers.py": 0.046,
+    "tests/test_instance_config.py": 0.02,
+    "tests/test_json.py": 0.049,
+    "tests/test_json_tag.py": 0.0,
+    "tests/test_logging.py": 0.01,
+    "tests/test_regression.py": 0.002,
+    "tests/test_reqctx.py": 0.035,
+    "tests/test_request.py": 0.006,
+    "tests/test_session_interface.py": 0.002,
+    "tests/test_signals.py": 0.014,
+    "tests/test_subclassing.py": 0.002,
+    "tests/test_templating.py": 0.067,
+    "tests/test_testing.py": 0.049,
+    "tests/test_user_error_handler.py": 0.031,
+    "tests/test_views.py": 0.034
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

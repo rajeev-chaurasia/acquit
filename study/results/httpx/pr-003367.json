@@ -1,0 +1,94 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.449,
+  "base_sha": "8e36f2bc685dfbe43cd7503bc1c422a6ed6e05a5",
+  "base_suite_seconds": 10.267,
+  "changed_outcomes": [
+    "tests/test_content.py::test_allow_nan_false",
+    "tests/test_content.py::test_ensure_ascii_false_with_french_characters",
+    "tests/test_content.py::test_separators_for_compact_json"
+  ],
+  "findings": [
+    {
+      "reason": "tests/client/test_auth.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/client/test_auth.py"
+    },
+    {
+      "reason": "tests/models/test_requests.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/models/test_requests.py"
+    },
+    {
+      "reason": "tests/models/test_responses.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/models/test_responses.py"
+    },
+    {
+      "reason": "tests/models/test_whatwg.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/models/test_whatwg.py"
+    },
+    {
+      "reason": "tests/test_content.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_content.py"
+    },
+    {
+      "reason": "tests/test_main.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_main.py"
+    }
+  ],
+  "head_sha": "fa17a052f90af8b3cc90ffa4589adf17f5c4a663",
+  "head_suite_seconds": 10.251,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 3367,
+  "per_file_durations": {
+    "tests/client/test_async_client.py": 0.79,
+    "tests/client/test_auth.py": 0.198,
+    "tests/client/test_client.py": 0.619,
+    "tests/client/test_cookies.py": 0.014,
+    "tests/client/test_event_hooks.py": 0.022,
+    "tests/client/test_headers.py": 0.022,
+    "tests/client/test_properties.py": 0.163,
+    "tests/client/test_proxies.py": 2.478,
+    "tests/client/test_queryparams.py": 0.057,
+    "tests/client/test_redirects.py": 0.076,
+    "tests/models/test_cookies.py": 0.009,
+    "tests/models/test_headers.py": 0.019,
+    "tests/models/test_queryparams.py": 0.015,
+    "tests/models/test_requests.py": 0.029,
+    "tests/models/test_responses.py": 0.156,
+    "tests/models/test_url.py": 0.117,
+    "tests/models/test_whatwg.py": 0.583,
+    "tests/test_api.py": 0.219,
+    "tests/test_asgi.py": 0.055,
+    "tests/test_auth.py": 0.014,
+    "tests/test_config.py": 0.282,
+    "tests/test_content.py": 0.083,
+    "tests/test_decoders.py": 0.062,
+    "tests/test_exceptions.py": 0.049,
+    "tests/test_exported_members.py": 0.001,
+    "tests/test_main.py": 0.019,
+    "tests/test_multipart.py": 0.067,
+    "tests/test_status_codes.py": 0.006,
+    "tests/test_timeouts.py": 0.235,
+    "tests/test_utils.py": 0.195,
+    "tests/test_wsgi.py": 0.754
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 31,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 31,
+  "unsafe_skips": []
+}

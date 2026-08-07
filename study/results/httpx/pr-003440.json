@@ -1,0 +1,68 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.345,
+  "base_sha": "0cb7e5a2e736628e2f506d259fcf0d48cd2bde82",
+  "base_suite_seconds": 8.242,
+  "changed_outcomes": [
+    "tests/models/test_requests.py::test_request_params"
+  ],
+  "findings": [
+    {
+      "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "CHANGELOG.md"
+    },
+    {
+      "reason": "tests/models/test_requests.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/models/test_requests.py"
+    }
+  ],
+  "head_sha": "6e69e620024eb99b72e85eb24acc532f7bc20143",
+  "head_suite_seconds": 8.273,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 3440,
+  "per_file_durations": {
+    "tests/client/test_async_client.py": 0.617,
+    "tests/client/test_auth.py": 0.158,
+    "tests/client/test_client.py": 0.476,
+    "tests/client/test_cookies.py": 0.007,
+    "tests/client/test_event_hooks.py": 0.017,
+    "tests/client/test_headers.py": 0.089,
+    "tests/client/test_properties.py": 0.125,
+    "tests/client/test_proxies.py": 1.966,
+    "tests/client/test_queryparams.py": 0.042,
+    "tests/client/test_redirects.py": 0.048,
+    "tests/models/test_cookies.py": 0.007,
+    "tests/models/test_headers.py": 0.027,
+    "tests/models/test_queryparams.py": 0.014,
+    "tests/models/test_requests.py": 0.027,
+    "tests/models/test_responses.py": 0.121,
+    "tests/models/test_url.py": 0.094,
+    "tests/models/test_whatwg.py": 0.564,
+    "tests/test_api.py": 0.186,
+    "tests/test_asgi.py": 0.046,
+    "tests/test_auth.py": 0.008,
+    "tests/test_config.py": 0.209,
+    "tests/test_content.py": 0.067,
+    "tests/test_decoders.py": 0.053,
+    "tests/test_exceptions.py": 0.041,
+    "tests/test_exported_members.py": 0.001,
+    "tests/test_main.py": 0.011,
+    "tests/test_multipart.py": 0.042,
+    "tests/test_status_codes.py": 0.006,
+    "tests/test_timeouts.py": 0.182,
+    "tests/test_utils.py": 0.072,
+    "tests/test_wsgi.py": 0.872
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

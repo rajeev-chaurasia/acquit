@@ -1,0 +1,344 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": ".github/workflows/lock.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/pre-commit.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/publish.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/tests.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": ".pre-commit-config.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": ".readthedocs.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "pyproject.toml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/build.in",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/build.txt",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/dev.in",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/dev.txt",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/docs.in",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/docs.txt",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/tests-dev.txt",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/tests-min.in",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/tests-min.txt",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/tests.in",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/tests.txt",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/typing.in",
+      "status": "deleted"
+    },
+    {
+      "kind": "resource",
+      "path": "requirements/typing.txt",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/app.py",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "tox.ini",
+      "status": "deleted"
+    },
+    {
+      "kind": "config",
+      "path": "uv.lock",
+      "status": "added"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".gitignore is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".gitignore"
+      },
+      {
+        "reason": ".pre-commit-config.yaml is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".pre-commit-config.yaml"
+      },
+      {
+        "reason": ".readthedocs.yaml is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".readthedocs.yaml"
+      },
+      {
+        "reason": "requirements/build.in is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/build.in"
+      },
+      {
+        "reason": "requirements/build.txt is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/build.txt"
+      },
+      {
+        "reason": "requirements/dev.in is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/dev.in"
+      },
+      {
+        "reason": "requirements/dev.txt is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/dev.txt"
+      },
+      {
+        "reason": "requirements/docs.in is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/docs.in"
+      },
+      {
+        "reason": "requirements/docs.txt is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/docs.txt"
+      },
+      {
+        "reason": "requirements/tests-dev.txt is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/tests-dev.txt"
+      },
+      {
+        "reason": "requirements/tests-min.in is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/tests-min.in"
+      },
+      {
+        "reason": "requirements/tests-min.txt is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/tests-min.txt"
+      },
+      {
+        "reason": "requirements/tests.in is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/tests.in"
+      },
+      {
+        "reason": "requirements/tests.txt is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/tests.txt"
+      },
+      {
+        "reason": "requirements/typing.in is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/typing.in"
+      },
+      {
+        "reason": "requirements/typing.txt is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "requirements/typing.txt"
+      },
+      {
+        "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "pyproject.toml"
+      },
+      {
+        "reason": "uv.lock is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "uv.lock"
+      },
+      {
+        "reason": ".github/workflows/lock.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/lock.yaml"
+      },
+      {
+        "reason": ".github/workflows/pre-commit.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/pre-commit.yaml"
+      },
+      {
+        "reason": ".github/workflows/publish.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/publish.yaml"
+      },
+      {
+        "reason": ".github/workflows/tests.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/tests.yaml"
+      },
+      {
+        "reason": "tox.ini shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": "tox.ini"
+      },
+      {
+        "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/helpers.py"
+      },
+      {
+        "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_cli.py"
+      },
+      {
+        "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/config.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 516,
+    "hash": "f1a775b03a8b5f5f639b71899166d72ed73add7b095ebac56a312aef7ebcde5b",
+    "nodes": 309,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "e7851665071cb93b3c70b1e7103f82d1e6d01f5d",
+    "created_at": "2026-08-07T01:22:54+00:00",
+    "head_sha": "0109e496f6ca68de29480fe6413e81b1d3f86aa9"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

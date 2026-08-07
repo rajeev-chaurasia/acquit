@@ -1,0 +1,86 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": "requirements.txt",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/client/test_auth.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/client/test_properties.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/client/test_queryparams.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "requirements.txt is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "requirements.txt"
+      },
+      {
+        "reason": "tests/client/test_auth.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/client/test_auth.py"
+      },
+      {
+        "reason": "tests/client/test_properties.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/client/test_properties.py"
+      },
+      {
+        "reason": "tests/client/test_queryparams.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/client/test_queryparams.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 411,
+    "hash": "b028e4ebaffc7be2ae1fc8f80e5c5163d5a32003d3d5789c62d330d013e51d29",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "15e9759e656654b44307fbee685e032c7bb4aede",
+    "created_at": "2026-08-07T01:25:20+00:00",
+    "head_sha": "c070473cda466f1f4cbbed2c23dcc8afc8b9ebbe"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

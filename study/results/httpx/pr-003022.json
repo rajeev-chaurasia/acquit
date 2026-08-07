@@ -1,0 +1,118 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.436,
+  "base_sha": "5766bf58e20548f106e13e95d7064635a9b06941",
+  "base_suite_seconds": 10.683,
+  "changed_outcomes": [
+    "tests/test_config.py::test_SSLContext_repr",
+    "tests/test_config.py::test_SSLContext_with_get_request",
+    "tests/test_config.py::test_load_ssl_with_keylog"
+  ],
+  "findings": [
+    {
+      "reason": ".github/CONTRIBUTING.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": ".github/CONTRIBUTING.md"
+    },
+    {
+      "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "CHANGELOG.md"
+    },
+    {
+      "reason": "docs/advanced/ssl.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/advanced/ssl.md"
+    },
+    {
+      "reason": "docs/compatibility.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/compatibility.md"
+    },
+    {
+      "reason": "docs/environment_variables.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/environment_variables.md"
+    },
+    {
+      "reason": "docs/logging.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/logging.md"
+    },
+    {
+      "reason": "tests/conftest.py changed, and pytest applies it to every test under tests/.",
+      "rule": "R005",
+      "scope": "subtree",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "tests/conftest.py is a conftest, so the tests it configures must run.",
+      "rule": "R014",
+      "scope": "subtree",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "tests/test_config.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_config.py"
+    },
+    {
+      "reason": "tests/test_utils.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_utils.py"
+    }
+  ],
+  "head_sha": "cb71af3c28f30e08e874de367921091d5b4ba66d",
+  "head_suite_seconds": 10.702,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 3022,
+  "per_file_durations": {
+    "tests/client/test_async_client.py": 0.849,
+    "tests/client/test_auth.py": 0.199,
+    "tests/client/test_client.py": 0.662,
+    "tests/client/test_cookies.py": 0.014,
+    "tests/client/test_event_hooks.py": 0.023,
+    "tests/client/test_headers.py": 0.02,
+    "tests/client/test_properties.py": 0.178,
+    "tests/client/test_proxies.py": 2.686,
+    "tests/client/test_queryparams.py": 0.059,
+    "tests/client/test_redirects.py": 0.079,
+    "tests/models/test_cookies.py": 0.009,
+    "tests/models/test_headers.py": 0.02,
+    "tests/models/test_queryparams.py": 0.016,
+    "tests/models/test_requests.py": 0.028,
+    "tests/models/test_responses.py": 0.161,
+    "tests/models/test_url.py": 0.124,
+    "tests/models/test_whatwg.py": 0.611,
+    "tests/test_api.py": 0.227,
+    "tests/test_asgi.py": 0.055,
+    "tests/test_auth.py": 0.014,
+    "tests/test_config.py": 0.283,
+    "tests/test_content.py": 0.083,
+    "tests/test_decoders.py": 0.062,
+    "tests/test_exceptions.py": 0.052,
+    "tests/test_exported_members.py": 0.001,
+    "tests/test_main.py": 0.017,
+    "tests/test_multipart.py": 0.07,
+    "tests/test_status_codes.py": 0.006,
+    "tests/test_timeouts.py": 0.248,
+    "tests/test_utils.py": 0.247,
+    "tests/test_wsgi.py": 0.683
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

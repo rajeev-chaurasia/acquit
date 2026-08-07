@@ -1,0 +1,422 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGES.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/api.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/appcontext.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/design.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/extensiondev.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/index.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/lifecycle.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/patterns/sqlalchemy.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/patterns/sqlite3.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/patterns/streaming.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/quickstart.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/reqcontext.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/shell.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/signals.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/testing.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/tutorial/blog.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/tutorial/database.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/tutorial/templates.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/tutorial/tests.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/tutorial/views.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/app.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/cli.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/ctx.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/debughelpers.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/globals.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/helpers.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/json/__init__.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/sansio/app.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/sansio/scaffold.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/templating.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/testing.py",
+      "status": "modified"
+    },
+    {
+      "kind": "conftest",
+      "path": "tests/conftest.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_appctx.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_reqctx.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_session_interface.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_testing.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGES.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGES.rst"
+      },
+      {
+        "reason": "docs/api.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/api.rst"
+      },
+      {
+        "reason": "docs/appcontext.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/appcontext.rst"
+      },
+      {
+        "reason": "docs/design.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/design.rst"
+      },
+      {
+        "reason": "docs/extensiondev.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/extensiondev.rst"
+      },
+      {
+        "reason": "docs/index.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/index.rst"
+      },
+      {
+        "reason": "docs/lifecycle.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/lifecycle.rst"
+      },
+      {
+        "reason": "docs/patterns/sqlalchemy.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/patterns/sqlalchemy.rst"
+      },
+      {
+        "reason": "docs/patterns/sqlite3.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/patterns/sqlite3.rst"
+      },
+      {
+        "reason": "docs/patterns/streaming.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/patterns/streaming.rst"
+      },
+      {
+        "reason": "docs/quickstart.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/quickstart.rst"
+      },
+      {
+        "reason": "docs/reqcontext.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/reqcontext.rst"
+      },
+      {
+        "reason": "docs/shell.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/shell.rst"
+      },
+      {
+        "reason": "docs/signals.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/signals.rst"
+      },
+      {
+        "reason": "docs/testing.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/testing.rst"
+      },
+      {
+        "reason": "docs/tutorial/blog.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/tutorial/blog.rst"
+      },
+      {
+        "reason": "docs/tutorial/database.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/tutorial/database.rst"
+      },
+      {
+        "reason": "docs/tutorial/templates.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/tutorial/templates.rst"
+      },
+      {
+        "reason": "docs/tutorial/tests.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/tutorial/tests.rst"
+      },
+      {
+        "reason": "docs/tutorial/views.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/tutorial/views.rst"
+      },
+      {
+        "reason": "tests/conftest.py changed, and pytest applies it to every test under tests/.",
+        "rule": "R005",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/helpers.py"
+      },
+      {
+        "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_cli.py"
+      },
+      {
+        "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/config.py"
+      },
+      {
+        "reason": "tests/conftest.py is a conftest, so the tests it configures must run.",
+        "rule": "R014",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/test_appctx.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_appctx.py"
+      },
+      {
+        "reason": "tests/test_reqctx.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_reqctx.py"
+      },
+      {
+        "reason": "tests/test_session_interface.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_session_interface.py"
+      },
+      {
+        "reason": "tests/test_testing.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_testing.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 512,
+    "hash": "1d1b87e4df513ce3cd2263e5fdd659c7224bc4c003970f51639e7511890271ec",
+    "nodes": 308,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "330123258e8c3dc391cbe55ab1ed94891ca83af3",
+    "created_at": "2026-08-07T01:22:42+00:00",
+    "head_sha": "c2705ffd9ce1dc8476cb29eaf5ff5d4c719852d9"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

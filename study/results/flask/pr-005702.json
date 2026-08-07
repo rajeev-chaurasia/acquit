@@ -1,0 +1,105 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.385,
+  "base_sha": "2732c4db66763462c2795d2287b61d4f77031342",
+  "base_suite_seconds": 2.16,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": "tests/conftest.py changed, and pytest applies it to every test under tests/.",
+      "rule": "R005",
+      "scope": "subtree",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/helpers.py"
+    },
+    {
+      "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_cli.py"
+    },
+    {
+      "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/config.py"
+    },
+    {
+      "reason": "tests/conftest.py is a conftest, so the tests it configures must run.",
+      "rule": "R014",
+      "scope": "subtree",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "tests/test_instance_config.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_instance_config.py"
+    }
+  ],
+  "head_sha": "41ec5760a2c55a099c3a1733fdd36fbb1258a02b",
+  "head_suite_seconds": 2.118,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 5702,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/test_appctx.py": 0.02,
+    "tests/test_basic.py": 0.204,
+    "tests/test_blueprints.py": 0.108,
+    "tests/test_cli.py": 0.094,
+    "tests/test_config.py": 0.023,
+    "tests/test_converters.py": 0.004,
+    "tests/test_helpers.py": 0.034,
+    "tests/test_instance_config.py": 0.017,
+    "tests/test_json.py": 0.038,
+    "tests/test_json_tag.py": 0.0,
+    "tests/test_logging.py": 0.009,
+    "tests/test_regression.py": 0.002,
+    "tests/test_reqctx.py": 0.042,
+    "tests/test_request.py": 0.004,
+    "tests/test_session_interface.py": 0.001,
+    "tests/test_signals.py": 0.012,
+    "tests/test_subclassing.py": 0.001,
+    "tests/test_templating.py": 0.056,
+    "tests/test_testing.py": 0.041,
+    "tests/test_user_error_handler.py": 0.024,
+    "tests/test_views.py": 0.026
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 22,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 22,
+  "unsafe_skips": []
+}

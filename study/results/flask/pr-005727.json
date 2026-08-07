@@ -1,0 +1,225 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.489,
+  "base_sha": "e7851665071cb93b3c70b1e7103f82d1e6d01f5d",
+  "base_suite_seconds": 2.573,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": ".gitignore is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": ".gitignore"
+    },
+    {
+      "reason": ".pre-commit-config.yaml is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": ".pre-commit-config.yaml"
+    },
+    {
+      "reason": ".readthedocs.yaml is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": ".readthedocs.yaml"
+    },
+    {
+      "reason": "requirements/build.in is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/build.in"
+    },
+    {
+      "reason": "requirements/build.txt is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/build.txt"
+    },
+    {
+      "reason": "requirements/dev.in is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/dev.in"
+    },
+    {
+      "reason": "requirements/dev.txt is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/dev.txt"
+    },
+    {
+      "reason": "requirements/docs.in is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/docs.in"
+    },
+    {
+      "reason": "requirements/docs.txt is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/docs.txt"
+    },
+    {
+      "reason": "requirements/tests-dev.txt is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/tests-dev.txt"
+    },
+    {
+      "reason": "requirements/tests-min.in is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/tests-min.in"
+    },
+    {
+      "reason": "requirements/tests-min.txt is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/tests-min.txt"
+    },
+    {
+      "reason": "requirements/tests.in is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/tests.in"
+    },
+    {
+      "reason": "requirements/tests.txt is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/tests.txt"
+    },
+    {
+      "reason": "requirements/typing.in is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/typing.in"
+    },
+    {
+      "reason": "requirements/typing.txt is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "requirements/typing.txt"
+    },
+    {
+      "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+      "rule": "R002",
+      "scope": "global",
+      "subject": "pyproject.toml"
+    },
+    {
+      "reason": "uv.lock is a dependency manifest, so the environment of every test may change.",
+      "rule": "R002",
+      "scope": "global",
+      "subject": "uv.lock"
+    },
+    {
+      "reason": ".github/workflows/lock.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/lock.yaml"
+    },
+    {
+      "reason": ".github/workflows/pre-commit.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/pre-commit.yaml"
+    },
+    {
+      "reason": ".github/workflows/publish.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/publish.yaml"
+    },
+    {
+      "reason": ".github/workflows/tests.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/tests.yaml"
+    },
+    {
+      "reason": "tox.ini shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": "tox.ini"
+    },
+    {
+      "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/helpers.py"
+    },
+    {
+      "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_cli.py"
+    },
+    {
+      "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/config.py"
+    }
+  ],
+  "head_sha": "0109e496f6ca68de29480fe6413e81b1d3f86aa9",
+  "head_suite_seconds": 2.601,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 5727,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/test_appctx.py": 0.022,
+    "tests/test_basic.py": 0.265,
+    "tests/test_blueprints.py": 0.142,
+    "tests/test_cli.py": 0.105,
+    "tests/test_config.py": 0.029,
+    "tests/test_converters.py": 0.005,
+    "tests/test_helpers.py": 0.046,
+    "tests/test_instance_config.py": 0.014,
+    "tests/test_json.py": 0.049,
+    "tests/test_json_tag.py": 0.001,
+    "tests/test_logging.py": 0.01,
+    "tests/test_regression.py": 0.003,
+    "tests/test_reqctx.py": 0.044,
+    "tests/test_request.py": 0.005,
+    "tests/test_session_interface.py": 0.002,
+    "tests/test_signals.py": 0.019,
+    "tests/test_subclassing.py": 0.002,
+    "tests/test_templating.py": 0.069,
+    "tests/test_testing.py": 0.051,
+    "tests/test_user_error_handler.py": 0.031,
+    "tests/test_views.py": 0.034
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

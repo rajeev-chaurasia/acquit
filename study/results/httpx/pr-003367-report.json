@@ -1,0 +1,312 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "httpx/_content.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/client/test_auth.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/models/test_requests.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/models/test_responses.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/models/test_whatwg.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_content.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_main.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "tests/client/test_auth.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/client/test_auth.py"
+      },
+      {
+        "reason": "tests/models/test_requests.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/models/test_requests.py"
+      },
+      {
+        "reason": "tests/models/test_responses.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/models/test_responses.py"
+      },
+      {
+        "reason": "tests/models/test_whatwg.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/models/test_whatwg.py"
+      },
+      {
+        "reason": "tests/test_content.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_content.py"
+      },
+      {
+        "reason": "tests/test_main.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_main.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 408,
+    "hash": "187950dfc8f62235781e81de2e885d3a3207b5a1cb29d9451fb99a27ef14cca8",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "8e36f2bc685dfbe43cd7503bc1c422a6ed6e05a5",
+    "created_at": "2026-08-07T01:24:55+00:00",
+    "head_sha": "fa17a052f90af8b3cc90ffa4589adf17f5c4a663"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 31,
+    "skipped": 0,
+    "total": 31
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/client/test_async_client.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_auth.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py",
+          "reachable-from:tests/client/test_auth.py",
+          "rule:R014"
+        ]
+      },
+      {
+        "path": "tests/client/test_client.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_cookies.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_event_hooks.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_headers.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_properties.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_proxies.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_queryparams.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_redirects.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_cookies.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_headers.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_queryparams.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_requests.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py",
+          "reachable-from:tests/models/test_requests.py",
+          "rule:R014"
+        ]
+      },
+      {
+        "path": "tests/models/test_responses.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py",
+          "reachable-from:tests/models/test_responses.py",
+          "rule:R014"
+        ]
+      },
+      {
+        "path": "tests/models/test_url.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_whatwg.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py",
+          "reachable-from:tests/models/test_whatwg.py",
+          "rule:R014"
+        ]
+      },
+      {
+        "path": "tests/test_api.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_asgi.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_auth.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_config.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_content.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py",
+          "reachable-from:tests/test_content.py",
+          "rule:R014"
+        ]
+      },
+      {
+        "path": "tests/test_decoders.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_exceptions.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_exported_members.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_main.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py",
+          "reachable-from:tests/test_main.py",
+          "rule:R014"
+        ]
+      },
+      {
+        "path": "tests/test_multipart.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_status_codes.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_timeouts.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_utils.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      },
+      {
+        "path": "tests/test_wsgi.py",
+        "reasons": [
+          "reachable-from:httpx/_content.py"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.441,
+  "base_sha": "d4961b9f8e7f00b654dbdbf200562bd273f598c7",
+  "base_suite_seconds": 10.939,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": "README.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "README.md"
+    },
+    {
+      "reason": "docs/advanced/proxies.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/advanced/proxies.md"
+    },
+    {
+      "reason": "docs/contributing.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/contributing.md"
+    },
+    {
+      "reason": "docs/http2.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/http2.md"
+    },
+    {
+      "reason": "docs/index.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/index.md"
+    }
+  ],
+  "head_sha": "f42f73b436c790ca93ac73340eb4e476956dc0b5",
+  "head_suite_seconds": 10.912,
+  "mode": "run-all",
+  "new_tests_selected": true,
+  "number": 3192,
+  "per_file_durations": {
+    "tests/client/test_async_client.py": 0.843,
+    "tests/client/test_auth.py": 0.199,
+    "tests/client/test_client.py": 0.637,
+    "tests/client/test_cookies.py": 0.014,
+    "tests/client/test_event_hooks.py": 0.022,
+    "tests/client/test_headers.py": 0.02,
+    "tests/client/test_properties.py": 0.171,
+    "tests/client/test_proxies.py": 2.884,
+    "tests/client/test_queryparams.py": 0.058,
+    "tests/client/test_redirects.py": 0.078,
+    "tests/models/test_cookies.py": 0.01,
+    "tests/models/test_headers.py": 0.018,
+    "tests/models/test_queryparams.py": 0.017,
+    "tests/models/test_requests.py": 0.03,
+    "tests/models/test_responses.py": 0.158,
+    "tests/models/test_url.py": 0.123,
+    "tests/models/test_whatwg.py": 0.594,
+    "tests/test_api.py": 0.23,
+    "tests/test_asgi.py": 0.057,
+    "tests/test_auth.py": 0.015,
+    "tests/test_config.py": 0.282,
+    "tests/test_content.py": 0.082,
+    "tests/test_decoders.py": 0.062,
+    "tests/test_exceptions.py": 0.052,
+    "tests/test_exported_members.py": 0.001,
+    "tests/test_main.py": 0.021,
+    "tests/test_multipart.py": 0.065,
+    "tests/test_status_codes.py": 0.006,
+    "tests/test_timeouts.py": 0.25,
+    "tests/test_utils.py": 0.242,
+    "tests/test_wsgi.py": 0.745
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_skips": []
+}

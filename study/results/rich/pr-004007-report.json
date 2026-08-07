@@ -1,0 +1,519 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "rich/cells.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_cells.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "rich/_unicode_data/__init__.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "rich/_unicode_data/__init__.py"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      },
+      {
+        "reason": "tests/test_cells.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_cells.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1415,
+    "hash": "377be691e978ac73b1d322137468aa03c090d693dd361670efe350f4d999d69c",
+    "nodes": 622,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "7338cb9dafd0d0e916585f191ae505b3e602bb51",
+    "created_at": "2026-08-07T01:23:08+00:00",
+    "head_sha": "f07a3fc5f5f4d5bfc0152cca4b103369934cd8b6"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 63,
+    "skipped": 0,
+    "total": 63
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/test_align.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_ansi.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_bar.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_block_bar.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_box.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_card.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_cells.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "reachable-from:tests/test_cells.py",
+          "rule:R014"
+        ]
+      },
+      {
+        "path": "tests/test_color.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_color_triplet.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_columns.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_columns_align.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_console.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_constrain.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_containers.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_control.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_emoji.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_file_proxy.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_filesize.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_getfileno.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_highlighter.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_inspect.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_json.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_jupyter.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_layout.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_live.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_live_render.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_log.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_logging.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_markdown.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_markdown_no_hyperlinks.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_markup.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_measure.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_null_file.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_padding.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_palette.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_panel.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_pick.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_pretty.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_progress.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_prompt.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_protocol.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_ratio.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_repr.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_rich_print.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_rule.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_rule_in_table.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_screen.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_segment.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_spinner.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_stack.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_status.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_style.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_styled.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_syntax.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_table.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_text.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_theme.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_tools.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_traceback.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_tree.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_unicode_data.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_win32_console.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_windows_renderer.py",
+        "reasons": [
+          "reachable-from:rich/cells.py",
+          "rule:R007"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

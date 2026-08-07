@@ -1,0 +1,85 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/__version__.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_decoders.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_decoders.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "README.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.md"
+      },
+      {
+        "reason": "tests/test_decoders.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_decoders.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 409,
+    "hash": "856f4317076bb201822980977128c72942091d35619d6028abd2a8df3a11f6bf",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "189fc4bcbe5f314128775dec66a616ac9a31ad48",
+    "created_at": "2026-08-07T01:26:02+00:00",
+    "head_sha": "3b9b2b325e5ee5f510e047c6a8775b7b45ee5a17"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 1,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}
