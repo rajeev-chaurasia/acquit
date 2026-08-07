@@ -16,7 +16,7 @@ from acquit.graph.cache import (
     facts_to_dict,
     parse_cache_dir,
 )
-from acquit.graph.parse import ModuleFacts, parse_module_facts
+from acquit.graph.parse import ModuleFacts, SuspectKind, parse_module_facts
 
 SHA = "0123abcd" * 5
 
@@ -44,6 +44,18 @@ def rich_facts(path: str = "pkg/sub/mod.py") -> ModuleFacts:
 def test_round_trip(tmp_path: Path) -> None:
     cache = ParseCache(tmp_path / "parse")
     facts = rich_facts()
+    cache.put(SHA, facts)
+    assert cache.get(SHA) == facts
+
+
+def test_round_trip_preserves_both_sys_path_suspect_kinds(tmp_path: Path) -> None:
+    source = b"import sys\nsys.path.insert(0, 'v')\n\ndef late():\n    sys.path.append('r')\n"
+    facts = parse_module_facts(source, "pkg/paths.py")
+    assert [s.kind for s in facts.suspects] == [
+        SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME,
+        SuspectKind.SYS_PATH_MUTATION,
+    ]
+    cache = ParseCache(tmp_path / "parse")
     cache.put(SHA, facts)
     assert cache.get(SHA) == facts
 

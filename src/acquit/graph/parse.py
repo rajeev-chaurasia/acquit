@@ -25,7 +25,10 @@ class SuspectKind(StrEnum):
     """Constructs whose dependencies cannot be known statically."""
 
     NON_LITERAL_DYNAMIC_IMPORT = "non-literal-dynamic-import"
+    # In a function body: runs only if something calls it at runtime.
     SYS_PATH_MUTATION = "sys-path-mutation"
+    # At module level or in a class body: executes whenever the module is imported.
+    SYS_PATH_MUTATION_IMPORT_TIME = "sys-path-mutation-import-time"
     EXEC_EVAL = "exec-eval"
     LAZY_MODULE_GETATTR = "lazy-module-getattr"
 
@@ -167,11 +170,18 @@ class _FactsVisitor(ast.NodeVisitor):
         self.defines_module_getattr = False
         self.pytest_plugins_decl: list[str] = []
         # Depth gates only the module-level facts (PEP 562 hook, pytest_plugins);
-        # imports and suspects are collected at every depth.
+        # imports and suspects are collected at every depth. Function depth is
+        # tracked separately: class bodies run at import, function bodies do not.
         self._scope_depth = 0
+        self._function_depth = 0
 
     def _suspect(self, kind: SuspectKind, node: ast.stmt | ast.expr) -> None:
         self.suspects.append(Suspect(kind=kind, lineno=node.lineno))
+
+    def _sys_path_kind(self) -> SuspectKind:
+        if self._function_depth > 0:
+            return SuspectKind.SYS_PATH_MUTATION
+        return SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME
 
     def visit_Import(self, node: ast.Import) -> None:
         self.imports.append(
@@ -202,7 +212,7 @@ class _FactsVisitor(ast.NodeVisitor):
             package = _package_argument(node) if last == _IMPORT_MODULE else None
             self._record_dynamic_import(node, package)
         elif self._is_sys_path_call(node) or last in _SITE_PATH_CALLEES:
-            self._suspect(SuspectKind.SYS_PATH_MUTATION, node)
+            self._suspect(self._sys_path_kind(), node)
         elif isinstance(node.func, ast.Name) and node.func.id in _EXEC_EVAL_NAMES:
             self._suspect(SuspectKind.EXEC_EVAL, node)
         elif self._is_sys_modules_access(node):
@@ -269,12 +279,12 @@ class _FactsVisitor(ast.NodeVisitor):
 
     def visit_AugAssign(self, node: ast.AugAssign) -> None:
         if _is_mutation_target(node.target):
-            self._suspect(SuspectKind.SYS_PATH_MUTATION, node)
+            self._suspect(self._sys_path_kind(), node)
         self.generic_visit(node)
 
     def _handle_binding(self, target: ast.expr, value: ast.expr | None, stmt: ast.stmt) -> None:
         if _is_mutation_target(target):
-            self._suspect(SuspectKind.SYS_PATH_MUTATION, stmt)
+            self._suspect(self._sys_path_kind(), stmt)
             return
         if self._scope_depth > 0 or not isinstance(target, ast.Name):
             return
@@ -297,7 +307,9 @@ class _FactsVisitor(ast.NodeVisitor):
         # suspect because there is no body to inspect.
         if self._scope_depth == 0 and node.name == "__getattr__":
             self.defines_module_getattr = True
+        self._function_depth += 1
         self._descend(node)
+        self._function_depth -= 1
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         self._descend(node)

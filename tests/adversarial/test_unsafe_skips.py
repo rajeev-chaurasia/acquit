@@ -133,7 +133,8 @@ def test_relative_dynamic_import_literal(adv_repo: AdvRepo) -> None:
     assert "test_dyn.py" not in skipped
 
 
-# ADV-6: a sys.path mutation is scoped globally, matching its process-wide leak.
+# ADV-6: an import-time sys.path mutation reached by any test escalates to
+# run-all, matching its process-wide leak.
 def test_sys_path_mutation_leaks_across_tests(adv_repo: AdvRepo) -> None:
     adv_repo.write(
         {

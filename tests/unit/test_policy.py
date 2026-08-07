@@ -329,18 +329,44 @@ def test_r007_literal_dynamic_import_is_silent() -> None:
 # R008 SYS_PATH_MUTATION
 
 
-# The mutation leaks process-wide however it is imported, so every location
-# gets the global scope: conftests and plain modules alike.
-@pytest.mark.parametrize(
-    "path",
-    ["conftest.py", "tests/unit/conftest.py", "pkg/paths.py"],
-)
-def test_r008_scope_is_global_everywhere(path: str) -> None:
+# Conftests execute unconditionally during collection, so an import-time
+# mutation there is global at any nesting depth.
+@pytest.mark.parametrize("path", ["conftest.py", "tests/unit/conftest.py"])
+def test_r008_import_time_mutation_in_conftest_is_global(path: str) -> None:
     source = "import sys\n\nsys.path.append('vendored')\n"
     ctx = make_ctx(facts={path: facts_for(path, source)})
     (finding,) = findings_for(evaluate(ctx), RuleId.SYS_PATH_MUTATION)
     assert finding.scope == Scope(ScopeKind.GLOBAL)
     assert finding.subject == path
+
+
+def test_r008_import_time_mutation_in_module_is_global_if_reached() -> None:
+    source = "import sys\n\nsys.path.append('vendored')\n"
+    ctx = make_ctx(facts={"pkg/paths.py": facts_for("pkg/paths.py", source)})
+    (finding,) = findings_for(evaluate(ctx), RuleId.SYS_PATH_MUTATION)
+    assert finding.scope == Scope(ScopeKind.GLOBAL_IF_REACHED, "pkg/paths.py")
+    assert finding.subject == "pkg/paths.py"
+
+
+# A function-level mutation runs only if called, so it taints its own module
+# everywhere, conftests included: scope edges carry the taint to their tests.
+@pytest.mark.parametrize("path", ["pkg/paths.py", "tests/unit/conftest.py"])
+def test_r008_function_level_mutation_is_closure_taint(path: str) -> None:
+    source = "import sys\n\ndef vendor():\n    sys.path.append('vendored')\n"
+    ctx = make_ctx(facts={path: facts_for(path, source)})
+    (finding,) = findings_for(evaluate(ctx), RuleId.SYS_PATH_MUTATION)
+    assert finding.scope == Scope(ScopeKind.CLOSURE_TAINT, path)
+    assert finding.subject == path
+
+
+def test_r008_both_depths_in_one_module_yield_both_findings() -> None:
+    source = "import sys\n\nsys.path.append('a')\n\ndef late():\n    sys.path.append('b')\n"
+    ctx = make_ctx(facts={"pkg/paths.py": facts_for("pkg/paths.py", source)})
+    findings = findings_for(evaluate(ctx), RuleId.SYS_PATH_MUTATION)
+    assert {finding.scope.kind for finding in findings} == {
+        ScopeKind.GLOBAL_IF_REACHED,
+        ScopeKind.CLOSURE_TAINT,
+    }
 
 
 def test_r008_reading_sys_path_is_silent() -> None:
@@ -582,10 +608,14 @@ def _rich_ctx(seed: int) -> PolicyContext:
         "app/main.py": NodeKind.MODULE,
     }
     loader = "import importlib\n\ndef load(name):\n    return importlib.import_module(name)\n"
+    late = "import sys\n\ndef vendor():\n    sys.path.append('late')\n"
     facts = {
         "app/main.py": facts_for("app/main.py", "import app.missing\n"),
         "pkg/dyn.py": facts_for("pkg/dyn.py", loader),
+        # All three R008 shapes: conftest import-time, module import-time, runtime.
         "conftest.py": facts_for("conftest.py", "import sys\n\nsys.path.append('vendored')\n"),
+        "pkg/paths.py": facts_for("pkg/paths.py", "import sys\n\nsys.path.append('eager')\n"),
+        "pkg/latepaths.py": facts_for("pkg/latepaths.py", late),
         "pkg/sh.py": facts_for("pkg/sh.py", "eval('1 + 1')\n"),
         "pkg/lazy.py": facts_for("pkg/lazy.py", "__getattr__ = make_lazy_hook()\n"),
     }

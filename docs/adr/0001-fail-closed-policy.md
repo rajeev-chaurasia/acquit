@@ -17,6 +17,9 @@ bound into findings. Every rule is evaluated on every run; the engine never
 short-circuits, so reports list every reason. Scopes:
 
 - global: nothing may be skipped
+- global-if-reached: nothing may be skipped once any test can reach the
+  subject module through the head graph; with no reaching test the finding
+  stays in the report but has no selection effect
 - subtree: every test under a directory must run
 - closure-taint: every test that can reach a tainted node must run
 - self-test: a changed test always runs
@@ -30,7 +33,7 @@ short-circuits, so reports list every reason. Scopes:
 | R005 | changed non-root conftest.py | subtree |
 | R006 | conftest with collection-altering hooks or unresolvable first-party pytest_plugins | global |
 | R007 | non-literal dynamic import (importlib, __import__, non-literal sys.modules access) | closure-taint |
-| R008 | sys.path mutation | global: the mutation is visible process-wide |
+| R008 | sys.path mutation | import-time (module level or class body) in a conftest: global, conftests execute unconditionally during collection; import-time in a plain module: global-if-reached, the mutation leaks process-wide but only once something imports the module; function-level anywhere: closure-taint, it runs only if called |
 | R009 | exec, eval, or compile | closure-taint |
 | R010 | file that fails to parse | closure-taint |
 | R011 | import that looks first-party but does not resolve | closure-taint |

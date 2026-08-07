@@ -21,8 +21,9 @@ from acquit.errors import GraphError
 from acquit.graph.parse import ImportStmt, ModuleFacts, Suspect, SuspectKind
 
 # Bump whenever parser semantics change: cached ModuleFacts for an unchanged
-# blob must never outlive the rules that produced them.
-CACHE_FORMAT_VERSION: Final = 3
+# blob must never outlive the rules that produced them. Version 4 split the
+# sys.path suspect into import-time and runtime kinds.
+CACHE_FORMAT_VERSION: Final = 4
 
 
 def parse_cache_dir(repo_root: Path) -> Path:

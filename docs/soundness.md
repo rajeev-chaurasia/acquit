@@ -40,6 +40,12 @@ verified is a bug in acquit, not a judgment call.
   assume_inert entry in the same diff as the change it excuses, and acquit
   honors it. Reviewers should treat .acquit.toml diffs as security-relevant,
   the same way they treat CI workflow changes.
+- A runtime (function-level) sys.path mutation is scoped to its own module's
+  closure, so it could in principle redirect a later function-level static
+  import in another module during the same test session. This residual risk
+  is accepted: collection-time imports are already complete when tests run,
+  and runtime module acquisition through mutated paths is dynamic-loading
+  behavior that carries its own taint wherever it occurs.
 - The parse cache lives outside the checkout (ACQUIT_CACHE_DIR when set,
   otherwise the platform user cache directory, namespaced per repository
   root), so a hostile working tree cannot preseed it. CI cache restore keys

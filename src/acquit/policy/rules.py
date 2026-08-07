@@ -232,21 +232,49 @@ def non_literal_dynamic_import(ctx: PolicyContext) -> Iterator[Finding]:
 
 
 def sys_path_mutation(ctx: PolicyContext) -> Iterator[Finding]:
-    """R008: mutating sys.path changes how every later import resolves.
+    """R008: mutating sys.path perturbs how every later import resolves.
 
-    The scope is global no matter where the mutation lives: one import of the
-    mutating module rewrites sys.path for every later import in the process,
-    including tests that never import it themselves.
+    Three-way scope, split on when the mutation executes. Import-time in a
+    conftest is global because conftests execute unconditionally during
+    collection. Import-time in a plain module goes global only if some test
+    reaches the module. A function-level mutation runs only if called, so it
+    taints the module's own closure; for a conftest, its scope edges already
+    propagate that taint to exactly the tests under it.
     """
     for path, facts in ctx.facts.items():
-        if not any(suspect.kind is SuspectKind.SYS_PATH_MUTATION for suspect in facts.suspects):
-            continue
-        yield Finding(
-            rule=RuleId.SYS_PATH_MUTATION,
-            scope=_GLOBAL,
-            subject=path,
-            reason=f"{path} mutates sys.path, and the mutation is visible process-wide.",
-        )
+        kinds = {suspect.kind for suspect in facts.suspects}
+        if SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME in kinds:
+            if _basename(path) == _CONFTEST:
+                yield Finding(
+                    rule=RuleId.SYS_PATH_MUTATION,
+                    scope=_GLOBAL,
+                    subject=path,
+                    reason=(
+                        f"{path} mutates sys.path at import time, and conftests "
+                        "execute unconditionally during collection."
+                    ),
+                )
+            else:
+                yield Finding(
+                    rule=RuleId.SYS_PATH_MUTATION,
+                    scope=Scope(ScopeKind.GLOBAL_IF_REACHED, path),
+                    subject=path,
+                    reason=(
+                        f"{path} mutates sys.path at import time, which perturbs "
+                        "every later import in the process, but only if something "
+                        "imports this module during the test session."
+                    ),
+                )
+        if SuspectKind.SYS_PATH_MUTATION in kinds:
+            yield Finding(
+                rule=RuleId.SYS_PATH_MUTATION,
+                scope=Scope(ScopeKind.CLOSURE_TAINT, path),
+                subject=path,
+                reason=(
+                    f"{path} mutates sys.path inside a function, making its own "
+                    "dynamic behavior unknowable at runtime."
+                ),
+            )
 
 
 def exec_eval(ctx: PolicyContext) -> Iterator[Finding]:

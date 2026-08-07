@@ -31,6 +31,8 @@ class RuleId(StrEnum):
 
 class ScopeKind(StrEnum):
     GLOBAL = "global"
+    # Acts like GLOBAL once any head test reaches the subject; inert otherwise.
+    GLOBAL_IF_REACHED = "global-if-reached"
     SUBTREE = "subtree"
     CLOSURE_TAINT = "closure-taint"
     SELF_TEST = "self-test"
@@ -39,7 +41,8 @@ class ScopeKind(StrEnum):
 @dataclass(frozen=True, slots=True)
 class Scope:
     kind: ScopeKind
-    # Directory for SUBTREE, node path for CLOSURE_TAINT and SELF_TEST, None for GLOBAL.
+    # Directory for SUBTREE; node path for CLOSURE_TAINT, SELF_TEST, and
+    # GLOBAL_IF_REACHED; None for GLOBAL.
     subject: str | None = None
 
 

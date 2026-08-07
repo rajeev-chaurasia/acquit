@@ -176,14 +176,20 @@ def decide(
 ) -> Decision:
     """Decide which tests run for this change; the default is everything.
 
-    Global findings short-circuit to run-all. Impact is reverse reachability
-    from the changed paths at head, plus at base for deletions, rename
-    origins, and modifications when a base graph is given; without one,
-    deletions and renames make every head test impacted. Findings force their
-    captured tests to run. Whatever remains is skipped only after
-    build_witness independently re-verifies that its import closure avoids
-    every changed path.
+    Global findings short-circuit to run-all, and a global-if-reached finding
+    does the same once any head test can reach its subject; unreached, it has
+    no selection effect. Impact is reverse reachability from the changed paths
+    at head, plus at base for deletions, rename origins, and modifications
+    when a base graph is given; without one, deletions and renames make every
+    head test impacted. Findings force their captured tests to run. Whatever
+    remains is skipped only after build_witness independently re-verifies that
+    its import closure avoids every changed path.
     """
+    for finding in findings:
+        if finding.scope.kind is not ScopeKind.GLOBAL_IF_REACHED:
+            continue
+        if impacted_tests(head, (_subject_of(finding),)):
+            return _run_all()
     if any(finding.scope.kind is ScopeKind.GLOBAL for finding in findings):
         return _run_all()
 

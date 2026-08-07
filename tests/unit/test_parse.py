@@ -130,7 +130,7 @@ def test_dynamic_import_without_positional_arg_is_suspect() -> None:
     assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
 
 
-def test_sys_path_method_calls() -> None:
+def test_sys_path_method_calls_at_module_level_are_import_time() -> None:
     source = """\
 import sys
 
@@ -139,11 +139,25 @@ sys.path.insert(0, "b")
 sys.path.extend(["c"])
 """
     result = facts(source)
-    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION] * 3
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME] * 3
     assert [s.lineno for s in result.suspects] == [3, 4, 5]
 
 
-def test_sys_path_assignment_forms() -> None:
+def test_sys_path_method_calls_in_function_body_are_runtime() -> None:
+    source = """\
+import sys
+
+
+def vendor():
+    sys.path.append("a")
+    sys.path.insert(0, "b")
+    sys.path.extend(["c"])
+"""
+    result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION] * 3
+
+
+def test_sys_path_assignment_forms_at_module_level_are_import_time() -> None:
     source = """\
 import sys
 
@@ -152,21 +166,106 @@ sys.path += ["b"]
 sys.path[:0] = ["c"]
 """
     result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME] * 3
+
+
+def test_sys_path_assignment_forms_in_function_body_are_runtime() -> None:
+    source = """\
+import sys
+
+
+def vendor():
+    sys.path = ["a"]
+    sys.path += ["b"]
+    sys.path[:0] = ["c"]
+"""
+    result = facts(source)
     assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION] * 3
+
+
+def test_sys_path_mutation_in_class_body_is_import_time() -> None:
+    # Class bodies execute when the module is imported.
+    source = """\
+import sys
+
+
+class Vendored:
+    sys.path.append("a")
+"""
+    result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME]
+
+
+def test_sys_path_mutation_in_method_body_is_runtime() -> None:
+    source = """\
+import sys
+
+
+class Vendored:
+    def vendor(self):
+        sys.path.append("a")
+"""
+    result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION]
+
+
+def test_sys_path_mutation_in_class_inside_function_is_runtime() -> None:
+    # The class statement itself only executes when the function is called.
+    source = """\
+import sys
+
+
+def build():
+    class Vendored:
+        sys.path.append("a")
+"""
+    result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION]
+
+
+def test_sys_path_mutation_in_async_function_is_runtime() -> None:
+    source = """\
+import sys
+
+
+async def vendor():
+    sys.path.append("a")
+"""
+    result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION]
 
 
 def test_path_dunder_assignment() -> None:
     result = facts("__path__ = extend()")
-    assert result.suspects == (Suspect(kind=SuspectKind.SYS_PATH_MUTATION, lineno=1),)
+    assert result.suspects == (Suspect(kind=SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME, lineno=1),)
 
 
-def test_site_addsitedir_and_pkgutil_extend_path() -> None:
+def test_path_dunder_assignment_in_function_is_runtime() -> None:
+    result = facts("def rewire():\n    __path__ = extend()")
+    assert result.suspects == (Suspect(kind=SuspectKind.SYS_PATH_MUTATION, lineno=2),)
+
+
+def test_site_addsitedir_and_pkgutil_extend_path_at_module_level() -> None:
     source = """\
 import pkgutil
 import site
 
 site.addsitedir("vendored")
 pkgutil.extend_path(p, n)
+"""
+    result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME] * 2
+
+
+def test_site_addsitedir_and_pkgutil_extend_path_in_function() -> None:
+    source = """\
+import pkgutil
+import site
+
+
+def vendor():
+    site.addsitedir("vendored")
+    pkgutil.extend_path(p, n)
 """
     result = facts(source)
     assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION] * 2

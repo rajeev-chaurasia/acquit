@@ -428,6 +428,74 @@ def test_decide_global_finding_short_circuits_to_run_all() -> None:
     )
 
 
+def _mutator_finding(subject: str) -> Finding:
+    return Finding(
+        rule=RuleId.SYS_PATH_MUTATION,
+        scope=Scope(kind=ScopeKind.GLOBAL_IF_REACHED, subject=subject),
+        subject=subject,
+        reason="import-time sys.path mutation",
+    )
+
+
+def test_decide_reached_import_time_mutator_forces_run_all() -> None:
+    head = make_graph(
+        [
+            make_test("tests/test_a.py"),
+            make_test("tests/test_b.py"),
+            make_module("src/mutator.py", tainted=True),
+            make_module("src/b.py"),
+        ],
+        [
+            ("tests/test_a.py", "src/mutator.py"),
+            ("tests/test_b.py", "src/b.py"),
+        ],
+    )
+    decision = decide(head, None, (modified("src/b.py"),), (_mutator_finding("src/mutator.py"),))
+    assert decision == Decision(
+        mode=SelectionMode.RUN_ALL,
+        selected=(),
+        skipped=(),
+        always_run=(),
+        witnesses=(),
+        closures={},
+    )
+
+
+def test_decide_unreached_import_time_mutator_leaves_selection_selective() -> None:
+    # The mutator node exists but no test has a path to it, so the finding
+    # rides along in the report without shrinking the skipped set.
+    head = make_graph(
+        [
+            make_test("tests/test_a.py"),
+            make_test("tests/test_b.py"),
+            make_module("src/a.py"),
+            make_module("src/b.py"),
+            make_module("src/orphan.py", tainted=True),
+        ],
+        [
+            ("tests/test_a.py", "src/a.py"),
+            ("tests/test_b.py", "src/b.py"),
+        ],
+    )
+    with_finding = decide(head, None, (modified("src/a.py"),), (_mutator_finding("src/orphan.py"),))
+    without = decide(head, None, (modified("src/a.py"),), ())
+    assert with_finding.mode is SelectionMode.SELECTIVE
+    assert selected_paths(with_finding) == {"tests/test_a.py"}
+    assert skipped_paths(with_finding) == {"tests/test_b.py"}
+    assert always_paths(with_finding) == set()
+    assert skipped_paths(with_finding) == skipped_paths(without)
+
+
+def test_decide_mutating_test_module_reaches_itself_and_forces_run_all() -> None:
+    # Collection imports every test module, so a mutating test escalates alone.
+    head = make_graph(
+        [make_test("tests/test_mut.py"), make_test("tests/test_other.py")],
+    )
+    decision = decide(head, None, (), (_mutator_finding("tests/test_mut.py"),))
+    assert decision.mode is SelectionMode.RUN_ALL
+    assert decision.skipped == ()
+
+
 def test_decide_impacted_and_always_run_appears_once_with_both_reasons() -> None:
     head = make_graph(
         [
