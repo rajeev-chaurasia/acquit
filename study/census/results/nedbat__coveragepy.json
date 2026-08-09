@@ -1,0 +1,141 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 412,
+    "graph_edges": 1406,
+    "graph_nodes": 524,
+    "modules": 125,
+    "python_files": 169,
+    "test_files": 42,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "coverage/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 1.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "nedbat/coveragepy",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 1.0,
+      "files": 11,
+      "occurrences": 17,
+      "reached_files": 7,
+      "top_offenders": [
+        {
+          "path": "coverage/execfile.py",
+          "suspects": 2
+        },
+        {
+          "path": "lab/run_sysmon.py",
+          "suspects": 2
+        },
+        {
+          "path": "lab/run_trace.py",
+          "suspects": 2
+        },
+        {
+          "path": "setup.py",
+          "suspects": 2
+        },
+        {
+          "path": "tests/test_arcs.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 9,
+      "occurrences": 16,
+      "reached_files": 8,
+      "top_offenders": [
+        {
+          "path": "coverage/debug.py",
+          "suspects": 3
+        },
+        {
+          "path": "coverage/inorout.py",
+          "suspects": 3
+        },
+        {
+          "path": "coverage/misc.py",
+          "suspects": 3
+        },
+        {
+          "path": "coverage/plugin_support.py",
+          "suspects": 2
+        },
+        {
+          "path": "igor.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 1.0,
+      "files": 10,
+      "occurrences": 15,
+      "reached_files": 10,
+      "top_offenders": [
+        {
+          "path": "tests/test_api.py",
+          "suspects": 4
+        },
+        {
+          "path": "tests/coveragetest.py",
+          "suspects": 3
+        },
+        {
+          "path": "coverage/cmdline.py",
+          "suspects": 1
+        },
+        {
+          "path": "coverage/execfile.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/conftest.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 42
+  },
+  "unreached": {
+    "share": 0.1852,
+    "suspect_files": 27,
+    "unreached_suspect_files": 5
+  }
+}

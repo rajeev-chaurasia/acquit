@@ -1,0 +1,139 @@
+{
+  "counts": {
+    "conftests": 3,
+    "files": 708,
+    "graph_edges": 2529,
+    "graph_nodes": 833,
+    "modules": 171,
+    "python_files": 464,
+    "test_files": 288,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 0.9583,
+    "per_init": [
+      {
+        "path": "hypothesis/tests/__init__.py",
+        "share": 0.9583
+      },
+      {
+        "path": "hypothesis/tests/ghostwriter/example_code/__init__.py",
+        "share": 0.0035
+      },
+      {
+        "path": "whole_repo_tests/__init__.py",
+        "share": 0.0069
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "HypothesisWorks/hypothesis",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": [
+      "hypothesis/tests/conftest.py"
+    ]
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0521,
+      "files": 19,
+      "occurrences": 44,
+      "reached_files": 15,
+      "top_offenders": [
+        {
+          "path": "hypothesis/tests/ghostwriter/test_ghostwriter.py",
+          "suspects": 11
+        },
+        {
+          "path": "hypothesis/tests/quality/test_discovery_ability.py",
+          "suspects": 6
+        },
+        {
+          "path": "hypothesis/tests/cover/test_pretty.py",
+          "suspects": 4
+        },
+        {
+          "path": "hypothesis/src/hypothesis/extra/ghostwriter.py",
+          "suspects": 3
+        },
+        {
+          "path": "hypothesis/tests/ghostwriter/test_expected_output.py",
+          "suspects": 3
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.0312,
+      "files": 10,
+      "occurrences": 17,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "hypothesis/src/hypothesis/extra/ghostwriter.py",
+          "suspects": 6
+        },
+        {
+          "path": "hypothesis/src/hypothesis/extra/cli.py",
+          "suspects": 3
+        },
+        {
+          "path": "hypothesis/src/_hypothesis_ftz_detector.py",
+          "suspects": 1
+        },
+        {
+          "path": "hypothesis/src/hypothesis/extra/_patching.py",
+          "suspects": 1
+        },
+        {
+          "path": "hypothesis/src/hypothesis/extra/codemods.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 3,
+      "occurrences": 4,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "hypothesis/docs/conf.py",
+          "suspects": 2
+        },
+        {
+          "path": "hypothesis/src/hypothesis/extra/cli.py",
+          "suspects": 1
+        },
+        {
+          "path": "tooling/scripts/write-cargo-version.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 0.9618,
+    "tainted_reachers": 277
+  },
+  "unreached": {
+    "share": 0.4138,
+    "suspect_files": 29,
+    "unreached_suspect_files": 12
+  }
+}

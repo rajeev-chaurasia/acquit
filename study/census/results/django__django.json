@@ -1,0 +1,1002 @@
+{
+  "counts": {
+    "conftests": 0,
+    "files": 7084,
+    "graph_edges": 19810,
+    "graph_nodes": 7238,
+    "modules": 2299,
+    "python_files": 2928,
+    "test_files": 628,
+    "unparseable": 6
+  },
+  "fat_init": {
+    "max": 0.9952,
+    "per_init": [
+      {
+        "path": "django/__init__.py",
+        "share": 0.9952
+      },
+      {
+        "path": "scripts/pr_quality/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/absolute_url_overrides/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/admin_autodiscover/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/admin_changelist/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/admin_checks/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/admin_custom_urls/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/admin_default_site/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/admin_docs/__init__.py",
+        "share": 0.0048
+      },
+      {
+        "path": "tests/admin_filters/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/admin_inlines/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/admin_ordering/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/admin_registration/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/admin_scripts/__init__.py",
+        "share": 0.0048
+      },
+      {
+        "path": "tests/admin_utils/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/admin_views/__init__.py",
+        "share": 0.0159
+      },
+      {
+        "path": "tests/admin_widgets/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/aggregation/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/aggregation_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/annotations/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/app_loading/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/apps/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/asgi/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/async/__init__.py",
+        "share": 0.0064
+      },
+      {
+        "path": "tests/auth_tests/__init__.py",
+        "share": 0.0223
+      },
+      {
+        "path": "tests/backends/__init__.py",
+        "share": 0.0191
+      },
+      {
+        "path": "tests/base/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/bash_completion/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/basic/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/builtin_server/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/bulk_create/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/cache/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/check_framework/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/composite_pk/__init__.py",
+        "share": 0.0159
+      },
+      {
+        "path": "tests/conditional_processing/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/constraints/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/contenttypes_tests/__init__.py",
+        "share": 0.008
+      },
+      {
+        "path": "tests/context_processors/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/csrf_tests/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/custom_columns/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/custom_lookups/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/custom_managers/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/custom_methods/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/custom_migration_operations/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/custom_pk/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/datatypes/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/dates/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/datetimes/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/db_functions/__init__.py",
+        "share": 0.0876
+      },
+      {
+        "path": "tests/db_typecasts/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/db_utils/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/dbshell/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/decorators/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/defer/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/defer_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/delete/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/delete_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/deprecation/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/dispatch/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/distinct_on_fields/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/empty/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/empty_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/expressions/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/expressions_case/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/expressions_window/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/extra_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/field_deconstruction/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/field_defaults/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/field_subclassing/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/file_storage/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/file_uploads/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/files/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/filtered_relation/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/fixtures/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/fixtures_model_package/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/fixtures_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/flatpages_tests/__init__.py",
+        "share": 0.0048
+      },
+      {
+        "path": "tests/force_insert_update/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/foreign_object/__init__.py",
+        "share": 0.0064
+      },
+      {
+        "path": "tests/forms_tests/__init__.py",
+        "share": 0.0939
+      },
+      {
+        "path": "tests/from_db_value/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/generic_inline_admin/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/generic_relations/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/generic_relations_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/generic_views/__init__.py",
+        "share": 0.008
+      },
+      {
+        "path": "tests/get_earliest_or_latest/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/get_object_or_404/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/get_or_create/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/gis_tests/__init__.py",
+        "share": 0.0223
+      },
+      {
+        "path": "tests/handlers/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/httpwrappers/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/humanize_tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/i18n/__init__.py",
+        "share": 0.0048
+      },
+      {
+        "path": "tests/import_error_package/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/indexes/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/inline_formsets/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/inspectdb/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/introspection/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/invalid_models_tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/known_related_objects/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/logging_tests/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/lookup/__init__.py",
+        "share": 0.0032
+      },
+      {
+        "path": "tests/m2m_and_m2o/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/m2m_intermediary/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/m2m_multiple/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/m2m_recursive/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/m2m_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/m2m_signals/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/m2m_through/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/m2m_through_regress/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/m2o_recursive/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/mail/__init__.py",
+        "share": 0.008
+      },
+      {
+        "path": "tests/managers_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/many_to_many/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/many_to_one/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/many_to_one_null/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/max_lengths/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/messages_tests/__init__.py",
+        "share": 0.008
+      },
+      {
+        "path": "tests/middleware/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/middleware_exceptions/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/migrate_signals/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/migration_test_data_persistence/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/migrations/__init__.py",
+        "share": 0.0175
+      },
+      {
+        "path": "tests/migrations2/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/model_enums/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/model_fields/__init__.py",
+        "share": 0.0334
+      },
+      {
+        "path": "tests/model_forms/__init__.py",
+        "share": 0.0032
+      },
+      {
+        "path": "tests/model_formsets/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/model_formsets_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/model_indexes/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/model_inheritance/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/model_inheritance_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/model_meta/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/model_options/__init__.py",
+        "share": 0.0032
+      },
+      {
+        "path": "tests/model_package/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/model_regress/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/model_utils/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/modeladmin/__init__.py",
+        "share": 0.0032
+      },
+      {
+        "path": "tests/multiple_database/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/mutually_referential/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/nested_foreign_keys/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/no_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/null_fk/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/null_fk_ordering/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/null_queries/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/one_to_one/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/or_lookups/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/order_with_respect_to/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/ordering/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/pagination/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/postgres_tests/__init__.py",
+        "share": 0.0255
+      },
+      {
+        "path": "tests/prefetch_related/__init__.py",
+        "share": 0.0032
+      },
+      {
+        "path": "tests/project_template/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/properties/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/proxy_model_inheritance/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/proxy_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/queries/__init__.py",
+        "share": 0.0143
+      },
+      {
+        "path": "tests/queryset_pickle/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/raw_query/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/redirects_tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/requests_tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/reserved_names/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/resolve_url/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/responses/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/reverse_lookup/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/save_delete_hooks/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/schema/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/select_for_update/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/select_related/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/select_related_onetoone/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/select_related_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/serializers/__init__.py",
+        "share": 0.0111
+      },
+      {
+        "path": "tests/servers/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/sessions_tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/settings_tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/shell/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/shortcuts/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/signals/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/signed_cookies_tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/signing/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/sitemaps_tests/__init__.py",
+        "share": 0.0048
+      },
+      {
+        "path": "tests/sites_framework/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/sites_tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/sphinx/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/staticfiles_tests/__init__.py",
+        "share": 0.0111
+      },
+      {
+        "path": "tests/str/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/string_lookup/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/swappable_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/syndication_tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/tasks/__init__.py",
+        "share": 0.0064
+      },
+      {
+        "path": "tests/template_backends/__init__.py",
+        "share": 0.0032
+      },
+      {
+        "path": "tests/template_loader/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/template_tests/__init__.py",
+        "share": 0.1688
+      },
+      {
+        "path": "tests/test_client/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/test_client_regress/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/test_exceptions/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/test_runner/__init__.py",
+        "share": 0.0032
+      },
+      {
+        "path": "tests/test_runner_apps/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/test_utils/__init__.py",
+        "share": 0.0032
+      },
+      {
+        "path": "tests/timezones/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/transaction_hooks/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/transactions/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/unmanaged_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/update/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/update_only_fields/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/urlpatterns/__init__.py",
+        "share": 0.0016
+      },
+      {
+        "path": "tests/urlpatterns_reverse/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/user_commands/__init__.py",
+        "share": 0.0175
+      },
+      {
+        "path": "tests/utils_tests/__init__.py",
+        "share": 0.0064
+      },
+      {
+        "path": "tests/validation/__init__.py",
+        "share": 0.0064
+      },
+      {
+        "path": "tests/validators/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/version/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/view_tests/__init__.py",
+        "share": 0.0064
+      },
+      {
+        "path": "tests/wsgi/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "tests/xor_lookups/__init__.py",
+        "share": 0.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "django/django",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0096,
+      "files": 6,
+      "occurrences": 15,
+      "reached_files": 4,
+      "top_offenders": [
+        {
+          "path": "django/core/management/commands/shell.py",
+          "suspects": 4
+        },
+        {
+          "path": "tests/deprecation/test_warn_about_external_use.py",
+          "suspects": 4
+        },
+        {
+          "path": "tests/view_tests/tests/test_debug.py",
+          "suspects": 4
+        },
+        {
+          "path": "django/db/migrations/questioner.py",
+          "suspects": 1
+        },
+        {
+          "path": "scripts/manage_translations.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.9952,
+      "files": 40,
+      "occurrences": 60,
+      "reached_files": 36,
+      "top_offenders": [
+        {
+          "path": "django/apps/config.py",
+          "suspects": 6
+        },
+        {
+          "path": "django/test/client.py",
+          "suspects": 6
+        },
+        {
+          "path": "django/utils/module_loading.py",
+          "suspects": 3
+        },
+        {
+          "path": "django/contrib/admindocs/views.py",
+          "suspects": 2
+        },
+        {
+          "path": "django/db/migrations/loader.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.9952,
+      "files": 4,
+      "occurrences": 5,
+      "reached_files": 3,
+      "top_offenders": [
+        {
+          "path": "django/test/utils.py",
+          "suspects": 2
+        },
+        {
+          "path": "django/core/management/base.py",
+          "suspects": 1
+        },
+        {
+          "path": "scripts/check_migrations.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/sphinx/test_github_links.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 3,
+      "occurrences": 4,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "docs/conf.py",
+          "suspects": 2
+        },
+        {
+          "path": "tests/i18n/sampleproject/manage.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/i18n/sampleproject/update_catalogs.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 0.9952,
+    "tainted_reachers": 625
+  },
+  "unreached": {
+    "share": 0.18,
+    "suspect_files": 50,
+    "unreached_suspect_files": 9
+  }
+}

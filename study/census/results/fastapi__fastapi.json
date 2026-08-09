@@ -1,0 +1,407 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 3138,
+    "graph_edges": 3981,
+    "graph_nodes": 3222,
+    "modules": 627,
+    "python_files": 1136,
+    "test_files": 508,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 0.937,
+    "per_init": [
+      {
+        "path": "docs_src/additional_responses/__init__.py",
+        "share": 0.0039
+      },
+      {
+        "path": "docs_src/additional_status_codes/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/advanced_middleware/__init__.py",
+        "share": 0.0059
+      },
+      {
+        "path": "docs_src/app_testing/__init__.py",
+        "share": 0.0157
+      },
+      {
+        "path": "docs_src/async_tests/__init__.py",
+        "share": 0.0039
+      },
+      {
+        "path": "docs_src/authentication_error_status_code/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/background_tasks/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/behind_a_proxy/__init__.py",
+        "share": 0.0098
+      },
+      {
+        "path": "docs_src/bigger_applications/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/body/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/body_fields/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/body_multiple_params/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/body_nested_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/body_updates/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/conditional_openapi/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/configure_swagger_ui/__init__.py",
+        "share": 0.0059
+      },
+      {
+        "path": "docs_src/cookie_param_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/cookie_params/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/cors/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/custom_docs_ui/__init__.py",
+        "share": 0.0039
+      },
+      {
+        "path": "docs_src/custom_request_and_route/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/custom_response/__init__.py",
+        "share": 0.0197
+      },
+      {
+        "path": "docs_src/dataclasses_/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/debugging/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/dependencies/__init__.py",
+        "share": 0.0039
+      },
+      {
+        "path": "docs_src/dependency_testing/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/encoder/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/events/__init__.py",
+        "share": 0.0059
+      },
+      {
+        "path": "docs_src/extending_openapi/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/extra_data_types/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/extra_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/first_steps/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/frontend/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/generate_clients/__init__.py",
+        "share": 0.0059
+      },
+      {
+        "path": "docs_src/graphql_/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/handling_errors/__init__.py",
+        "share": 0.0118
+      },
+      {
+        "path": "docs_src/header_param_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/header_params/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/json_base64_bytes/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/metadata/__init__.py",
+        "share": 0.0098
+      },
+      {
+        "path": "docs_src/middleware/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/openapi_callbacks/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/openapi_webhooks/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/path_operation_advanced_configuration/__init__.py",
+        "share": 0.0098
+      },
+      {
+        "path": "docs_src/path_operation_configuration/__init__.py",
+        "share": 0.0039
+      },
+      {
+        "path": "docs_src/path_params/__init__.py",
+        "share": 0.0118
+      },
+      {
+        "path": "docs_src/path_params_numeric_validations/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/pydantic_v1_in_v2/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/python_types/__init__.py",
+        "share": 0.0157
+      },
+      {
+        "path": "docs_src/query_param_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/query_params/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/query_params_str_validations/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/request_files/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/request_form_models/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/request_forms/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/request_forms_and_files/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/response_change_status_code/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/response_cookies/__init__.py",
+        "share": 0.0039
+      },
+      {
+        "path": "docs_src/response_directly/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/response_headers/__init__.py",
+        "share": 0.0039
+      },
+      {
+        "path": "docs_src/response_model/__init__.py",
+        "share": 0.0039
+      },
+      {
+        "path": "docs_src/response_status_code/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/schema_extra_example/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/security/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/separate_openapi_schemas/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/server_sent_events/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/settings/__init__.py",
+        "share": 0.0039
+      },
+      {
+        "path": "docs_src/sql_databases/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/static_files/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/stream_data/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/stream_json_lines/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/strict_content_type/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/sub_applications/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/templates/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/using_request_directly/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/websockets_/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "docs_src/wsgi/__init__.py",
+        "share": 0.002
+      },
+      {
+        "path": "fastapi/__init__.py",
+        "share": 0.937
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 0.2638
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "fastapi/fastapi",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.3071,
+      "files": 156,
+      "occurrences": 165,
+      "reached_files": 156,
+      "top_offenders": [
+        {
+          "path": "tests/test_tutorial/test_debugging/test_tutorial001.py",
+          "suspects": 6
+        },
+        {
+          "path": "tests/test_tutorial/test_settings/test_app01.py",
+          "suspects": 4
+        },
+        {
+          "path": "tests/test_tutorial/test_settings/test_app02.py",
+          "suspects": 2
+        },
+        {
+          "path": "tests/test_jsonable_encoder.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/test_tutorial/test_additional_responses/test_tutorial002.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 0.3071,
+    "tainted_reachers": 156
+  },
+  "unreached": {
+    "share": 0.0,
+    "suspect_files": 156,
+    "unreached_suspect_files": 0
+  }
+}

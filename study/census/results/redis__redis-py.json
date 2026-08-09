@@ -1,0 +1,97 @@
+{
+  "counts": {
+    "conftests": 6,
+    "files": 430,
+    "graph_edges": 3040,
+    "graph_nodes": 516,
+    "modules": 196,
+    "python_files": 318,
+    "test_files": 116,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "benchmarks/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "redis/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 1.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "redis/redis-py",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.0,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "benchmarks/otel_benchmark.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 1,
+      "occurrences": 4,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "benchmarks/otel_benchmark.py",
+          "suspects": 4
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "docs/conf.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 0.0,
+    "tainted_reachers": 0
+  },
+  "unreached": {
+    "share": 1.0,
+    "suspect_files": 2,
+    "unreached_suspect_files": 2
+  }
+}

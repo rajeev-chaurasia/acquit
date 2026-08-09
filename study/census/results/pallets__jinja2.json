@@ -1,0 +1,105 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 107,
+    "graph_edges": 415,
+    "graph_nodes": 160,
+    "modules": 37,
+    "python_files": 60,
+    "test_files": 22,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "src/jinja2/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "tests/res/__init__.py",
+        "share": 0.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "pallets/jinja2",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 4,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "src/jinja2/debug.py",
+          "suspects": 2
+        },
+        {
+          "path": "src/jinja2/environment.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 7,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "src/jinja2/loaders.py",
+          "suspects": 5
+        },
+        {
+          "path": "src/jinja2/utils.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 4,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "tests/test_loader.py",
+          "suspects": 3
+        },
+        {
+          "path": "src/jinja2/loaders.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 22
+  },
+  "unreached": {
+    "share": 0.0,
+    "suspect_files": 5,
+    "unreached_suspect_files": 0
+  }
+}

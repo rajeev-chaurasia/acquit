@@ -1,0 +1,102 @@
+{
+  "counts": {
+    "conftests": 0,
+    "files": 219,
+    "graph_edges": 193,
+    "graph_nodes": 284,
+    "modules": 5,
+    "python_files": 30,
+    "test_files": 25,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 0.48,
+    "per_init": [
+      {
+        "path": "test/__init__.py",
+        "share": 0.48
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "bottlepy/bottle",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 5,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "bottle.py",
+          "suspects": 3
+        },
+        {
+          "path": "test/test_route.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 10,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "bottle.py",
+          "suspects": 9
+        },
+        {
+          "path": "test/test_importhook.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 1.0,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 1,
+      "top_offenders": [
+        {
+          "path": "bottle.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "docs/conf.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 25
+  },
+  "unreached": {
+    "share": 0.25,
+    "suspect_files": 4,
+    "unreached_suspect_files": 1
+  }
+}

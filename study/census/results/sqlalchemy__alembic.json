@@ -1,0 +1,117 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 190,
+    "graph_edges": 1168,
+    "graph_nodes": 241,
+    "modules": 117,
+    "python_files": 119,
+    "test_files": 0,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": null,
+    "per_init": []
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "sqlalchemy/alembic",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": null,
+      "files": 5,
+      "occurrences": 9,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "tests/test_autogen_render.py",
+          "suspects": 3
+        },
+        {
+          "path": "tests/conftest.py",
+          "suspects": 2
+        },
+        {
+          "path": "tests/test_autogen_indexes.py",
+          "suspects": 2
+        },
+        {
+          "path": "alembic/operations/base.py",
+          "suspects": 1
+        },
+        {
+          "path": "alembic/util/langhelpers.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": null,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": null,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "tools/write_pyi.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": null,
+      "files": 2,
+      "occurrences": 2,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "alembic/script/base.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/test_config.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": null,
+      "files": 3,
+      "occurrences": 4,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "docs/build/conf.py",
+          "suspects": 2
+        },
+        {
+          "path": "noxfile.py",
+          "suspects": 1
+        },
+        {
+          "path": "tools/write_pyi.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": null,
+    "tainted_reachers": 0
+  },
+  "unreached": {
+    "share": 1.0,
+    "suspect_files": 10,
+    "unreached_suspect_files": 10
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 97,
+    "graph_edges": 290,
+    "graph_nodes": 141,
+    "modules": 22,
+    "python_files": 38,
+    "test_files": 14,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "src/dateutil/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 0.2143
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "dateutil/dateutil",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 5,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "tests/test_imports.py",
+          "suspects": 4
+        },
+        {
+          "path": "src/dateutil/__init__.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "updatezinfo.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 14
+  },
+  "unreached": {
+    "share": 0.3333,
+    "suspect_files": 3,
+    "unreached_suspect_files": 1
+  }
+}

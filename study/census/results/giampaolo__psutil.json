@@ -1,0 +1,109 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 368,
+    "graph_edges": 691,
+    "graph_nodes": 463,
+    "modules": 72,
+    "python_files": 99,
+    "test_files": 20,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "psutil/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 1.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "giampaolo/psutil",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.05,
+      "files": 1,
+      "occurrences": 4,
+      "reached_files": 1,
+      "top_offenders": [
+        {
+          "path": "tests/test_connections.py",
+          "suspects": 4
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.05,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 1,
+      "top_offenders": [
+        {
+          "path": "tests/test_misc.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 8,
+      "occurrences": 8,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "docs/conf.py",
+          "suspects": 1
+        },
+        {
+          "path": "docs/test_docs.py",
+          "suspects": 1
+        },
+        {
+          "path": "docs/test_docs_online.py",
+          "suspects": 1
+        },
+        {
+          "path": "scripts/internal/download_wheels.py",
+          "suspects": 1
+        },
+        {
+          "path": "scripts/internal/git_pre_commit.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 0.1,
+    "tainted_reachers": 2
+  },
+  "unreached": {
+    "share": 0.8,
+    "suspect_files": 10,
+    "unreached_suspect_files": 8
+  }
+}

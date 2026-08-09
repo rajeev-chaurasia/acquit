@@ -1,0 +1,8 @@
+{
+  "error": {
+    "message": "maximum recursion depth exceeded",
+    "stage": "snapshot"
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "sympy/sympy"
+}

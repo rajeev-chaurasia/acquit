@@ -1,0 +1,180 @@
+{
+  "counts": {
+    "conftests": 0,
+    "files": 774,
+    "graph_edges": 2224,
+    "graph_nodes": 839,
+    "modules": 423,
+    "python_files": 635,
+    "test_files": 212,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 0.9009,
+    "per_init": [
+      {
+        "path": "docs_src/app_dir/__init__.py",
+        "share": 0.0047
+      },
+      {
+        "path": "docs_src/arguments/__init__.py",
+        "share": 0.0047
+      },
+      {
+        "path": "docs_src/commands/__init__.py",
+        "share": 0.0991
+      },
+      {
+        "path": "docs_src/exceptions/__init__.py",
+        "share": 0.0189
+      },
+      {
+        "path": "docs_src/first_steps/__init__.py",
+        "share": 0.0283
+      },
+      {
+        "path": "docs_src/launch/__init__.py",
+        "share": 0.0094
+      },
+      {
+        "path": "docs_src/multiple_values/__init__.py",
+        "share": 0.0047
+      },
+      {
+        "path": "docs_src/one_file_per_command/__init__.py",
+        "share": 0.0047
+      },
+      {
+        "path": "docs_src/options/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/options_autocompletion/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "docs_src/parameter_types/__init__.py",
+        "share": 0.0189
+      },
+      {
+        "path": "docs_src/printing/__init__.py",
+        "share": 0.0283
+      },
+      {
+        "path": "docs_src/progressbar/__init__.py",
+        "share": 0.0283
+      },
+      {
+        "path": "docs_src/prompt/__init__.py",
+        "share": 0.0189
+      },
+      {
+        "path": "docs_src/subcommands/__init__.py",
+        "share": 0.0708
+      },
+      {
+        "path": "docs_src/terminating/__init__.py",
+        "share": 0.0142
+      },
+      {
+        "path": "docs_src/testing/__init__.py",
+        "share": 0.0283
+      },
+      {
+        "path": "docs_src/typer_app/__init__.py",
+        "share": 0.0189
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 0.1415
+      },
+      {
+        "path": "typer/__init__.py",
+        "share": 0.9009
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "fastapi/typer",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.3585,
+      "files": 76,
+      "occurrences": 77,
+      "reached_files": 76,
+      "top_offenders": [
+        {
+          "path": "tests/test_tutorial/test_testing/test_app02.py",
+          "suspects": 2
+        },
+        {
+          "path": "tests/test_completion/test_completion_complete.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/test_tutorial/test_arguments/test_default/test_tutorial001.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/test_tutorial/test_arguments/test_default/test_tutorial002.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/test_tutorial/test_arguments/test_envvar/test_tutorial001.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0094,
+      "files": 2,
+      "occurrences": 2,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "tests/test_tutorial/test_subcommands/test_tutorial001.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/test_tutorial/test_subcommands/test_tutorial003.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 0.3679,
+    "tainted_reachers": 78
+  },
+  "unreached": {
+    "share": 0.0,
+    "suspect_files": 78,
+    "unreached_suspect_files": 0
+  }
+}

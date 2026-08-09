@@ -1,0 +1,79 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 45,
+    "graph_edges": 150,
+    "graph_nodes": 71,
+    "modules": 9,
+    "python_files": 17,
+    "test_files": 7,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "src/platformdirs/__init__.py",
+        "share": 1.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "tox-dev/platformdirs",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.1429,
+      "files": 1,
+      "occurrences": 2,
+      "reached_files": 1,
+      "top_offenders": [
+        {
+          "path": "tests/test_api.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 7
+  },
+  "unreached": {
+    "share": 0.0,
+    "suspect_files": 1,
+    "unreached_suspect_files": 0
+  }
+}

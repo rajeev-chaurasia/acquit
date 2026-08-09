@@ -1,0 +1,79 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 104,
+    "graph_edges": 921,
+    "graph_nodes": 163,
+    "modules": 32,
+    "python_files": 74,
+    "test_files": 40,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 0.95,
+    "per_init": [
+      {
+        "path": "src/filelock/__init__.py",
+        "share": 0.95
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "tox-dev/filelock",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.0,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "tasks/capability/sitecustomize.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 0.95,
+    "tainted_reachers": 38
+  },
+  "unreached": {
+    "share": 1.0,
+    "suspect_files": 1,
+    "unreached_suspect_files": 1
+  }
+}

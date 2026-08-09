@@ -1,0 +1,115 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 102,
+    "graph_edges": 258,
+    "graph_nodes": 156,
+    "modules": 29,
+    "python_files": 48,
+    "test_files": 18,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "jsonpickle/__init__.py",
+        "share": 1.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "jsonpickle/jsonpickle",
+  "standing": {
+    "doctest_modules": true,
+    "doctest_source": "pytest.ini",
+    "r006_files": [
+      "conftest.py"
+    ]
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 2,
+      "reached_files": 1,
+      "top_offenders": [
+        {
+          "path": "contrib/pyqt-reduce-handler.py",
+          "suspects": 1
+        },
+        {
+          "path": "jsonpickle/unpickler.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 6,
+      "occurrences": 10,
+      "reached_files": 5,
+      "top_offenders": [
+        {
+          "path": "jsonpickle/util.py",
+          "suspects": 3
+        },
+        {
+          "path": "contrib/pyqt-reduce-handler.py",
+          "suspects": 2
+        },
+        {
+          "path": "jsonpickle/unpickler.py",
+          "suspects": 2
+        },
+        {
+          "path": "jsonpickle/backend.py",
+          "suspects": 1
+        },
+        {
+          "path": "jsonpickle/pickler.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 2,
+      "occurrences": 2,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "docs/conf.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/benchmark.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 18
+  },
+  "unreached": {
+    "share": 0.375,
+    "suspect_files": 8,
+    "unreached_suspect_files": 3
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "build_next": [
+    {
+      "affected_repos": 55,
+      "affected_share": 0.9167,
+      "item": "fat-init full-graph exposure",
+      "median_cost": 1.0,
+      "score": 0.9167
+    },
+    {
+      "affected_repos": 36,
+      "affected_share": 0.6,
+      "item": "non-literal-dynamic-import",
+      "median_cost": 1.0,
+      "score": 0.6
+    },
+    {
+      "affected_repos": 27,
+      "affected_share": 0.45,
+      "item": "exec-eval",
+      "median_cost": 1.0,
+      "score": 0.45
+    },
+    {
+      "affected_repos": 16,
+      "affected_share": 0.2667,
+      "item": "sys-path-mutation",
+      "median_cost": 0.9752,
+      "score": 0.2601
+    },
+    {
+      "affected_repos": 10,
+      "affected_share": 0.1667,
+      "item": "collection-altering-conftest (R006)",
+      "median_cost": 1.0,
+      "score": 0.1667
+    },
+    {
+      "affected_repos": 3,
+      "affected_share": 0.05,
+      "item": "doctest-modules (R015)",
+      "median_cost": 1.0,
+      "score": 0.05
+    },
+    {
+      "affected_repos": 2,
+      "affected_share": 0.0333,
+      "item": "lazy-module-getattr",
+      "median_cost": 1.0,
+      "score": 0.0333
+    },
+    {
+      "affected_repos": 3,
+      "affected_share": 0.05,
+      "item": "sys-path-mutation-import-time",
+      "median_cost": 0.0,
+      "score": 0.0
+    }
+  ],
+  "failures": [
+    {
+      "error": "maximum recursion depth exceeded",
+      "slug": "sympy/sympy",
+      "stage": "snapshot"
+    }
+  ],
+  "fat_init": {
+    "distribution": {
+      "max": 1.0,
+      "median": 1.0,
+      "p25": 1.0,
+      "p75": 1.0
+    },
+    "repos_over_half": 55
+  },
+  "idioms": {
+    "exec-eval": {
+      "median_blast_radius": 1.0,
+      "present_share": 0.4833,
+      "reached_share": 0.45,
+      "repos_present": 29,
+      "repos_reached": 27
+    },
+    "lazy-module-getattr": {
+      "median_blast_radius": 1.0,
+      "present_share": 0.0333,
+      "reached_share": 0.0333,
+      "repos_present": 2,
+      "repos_reached": 2
+    },
+    "non-literal-dynamic-import": {
+      "median_blast_radius": 1.0,
+      "present_share": 0.7,
+      "reached_share": 0.6,
+      "repos_present": 42,
+      "repos_reached": 36
+    },
+    "sys-path-mutation": {
+      "median_blast_radius": 0.9752,
+      "present_share": 0.3333,
+      "reached_share": 0.2667,
+      "repos_present": 20,
+      "repos_reached": 16
+    },
+    "sys-path-mutation-import-time": {
+      "median_blast_radius": 0.0,
+      "present_share": 0.4333,
+      "reached_share": 0.05,
+      "repos_present": 26,
+      "repos_reached": 3
+    }
+  },
+  "repos": {
+    "analyzed": 60,
+    "failed": 1,
+    "zero_tests": 1
+  },
+  "schema": "acquit/census-summary-v1",
+  "standing": {
+    "conftest_count_median": 1.0,
+    "doctest_repos": 3,
+    "r006_repos": 10
+  },
+  "taint_blast_radius": {
+    "max": 1.0,
+    "median": 1.0,
+    "p25": 0.02,
+    "p75": 1.0
+  },
+  "unreached_hazard_share": {
+    "max": 1.0,
+    "median": 0.3333,
+    "p25": 0.0,
+    "p75": 0.5
+  }
+}

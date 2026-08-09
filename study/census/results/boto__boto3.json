@@ -1,0 +1,83 @@
+{
+  "counts": {
+    "conftests": 0,
+    "files": 2350,
+    "graph_edges": 552,
+    "graph_nodes": 2384,
+    "modules": 51,
+    "python_files": 104,
+    "test_files": 52,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 0.9808,
+    "per_init": [
+      {
+        "path": "boto3/__init__.py",
+        "share": 0.9808
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 0.8846
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "boto/boto3",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.9808,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 1,
+      "top_offenders": [
+        {
+          "path": "boto3/utils.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 0.9808,
+    "tainted_reachers": 51
+  },
+  "unreached": {
+    "share": 0.0,
+    "suspect_files": 1,
+    "unreached_suspect_files": 0
+  }
+}

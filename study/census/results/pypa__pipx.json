@@ -1,0 +1,96 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 218,
+    "graph_edges": 1594,
+    "graph_nodes": 299,
+    "modules": 71,
+    "python_files": 129,
+    "test_files": 54,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "src/pipx/__init__.py",
+        "share": 1.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "pypa/pipx",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 3,
+      "occurrences": 3,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "docs/conf.py",
+          "suspects": 1
+        },
+        {
+          "path": "src/pipx/commands/manifest.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/test_run.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 2,
+      "occurrences": 2,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "docs/conf.py",
+          "suspects": 1
+        },
+        {
+          "path": "src/pipx/__main__.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 54
+  },
+  "unreached": {
+    "share": 0.5,
+    "suspect_files": 4,
+    "unreached_suspect_files": 2
+  }
+}

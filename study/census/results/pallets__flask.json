@@ -1,0 +1,113 @@
+{
+  "counts": {
+    "conftests": 3,
+    "files": 236,
+    "graph_edges": 520,
+    "graph_nodes": 309,
+    "modules": 58,
+    "python_files": 83,
+    "test_files": 22,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "src/flask/__init__.py",
+        "share": 1.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "pallets/flask",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 4,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "src/flask/cli.py",
+          "suspects": 2
+        },
+        {
+          "path": "src/flask/config.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 3,
+      "occurrences": 7,
+      "reached_files": 3,
+      "top_offenders": [
+        {
+          "path": "src/flask/helpers.py",
+          "suspects": 3
+        },
+        {
+          "path": "src/flask/cli.py",
+          "suspects": 2
+        },
+        {
+          "path": "tests/conftest.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 1.0,
+      "files": 4,
+      "occurrences": 7,
+      "reached_files": 4,
+      "top_offenders": [
+        {
+          "path": "tests/conftest.py",
+          "suspects": 3
+        },
+        {
+          "path": "tests/test_instance_config.py",
+          "suspects": 2
+        },
+        {
+          "path": "src/flask/cli.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/test_cli.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 22
+  },
+  "unreached": {
+    "share": 0.0,
+    "suspect_files": 6,
+    "unreached_suspect_files": 0
+  }
+}

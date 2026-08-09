@@ -1,0 +1,136 @@
+{
+  "counts": {
+    "conftests": 3,
+    "files": 2796,
+    "graph_edges": 1708,
+    "graph_nodes": 2849,
+    "modules": 368,
+    "python_files": 405,
+    "test_files": 34,
+    "unparseable": 1
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "pygments/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 0.0588
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "pygments/pygments",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": [
+      "tests/examplefiles/conftest.py",
+      "tests/snippets/conftest.py"
+    ]
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 1.0,
+      "files": 4,
+      "occurrences": 4,
+      "reached_files": 3,
+      "top_offenders": [
+        {
+          "path": "pygments/formatters/__init__.py",
+          "suspects": 1
+        },
+        {
+          "path": "pygments/lexers/__init__.py",
+          "suspects": 1
+        },
+        {
+          "path": "scripts/check_sources.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/test_util.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 5,
+      "occurrences": 11,
+      "reached_files": 3,
+      "top_offenders": [
+        {
+          "path": "pygments/formatters/__init__.py",
+          "suspects": 3
+        },
+        {
+          "path": "pygments/lexers/__init__.py",
+          "suspects": 3
+        },
+        {
+          "path": "pygments/sphinxext.py",
+          "suspects": 3
+        },
+        {
+          "path": "pygments/styles/__init__.py",
+          "suspects": 1
+        },
+        {
+          "path": "scripts/gen_mapfiles.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 4,
+      "occurrences": 4,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "doc/conf.py",
+          "suspects": 1
+        },
+        {
+          "path": "scripts/debug_lexer.py",
+          "suspects": 1
+        },
+        {
+          "path": "scripts/gen_mapfiles.py",
+          "suspects": 1
+        },
+        {
+          "path": "scripts/update_contrasts.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 34
+  },
+  "unreached": {
+    "share": 0.6,
+    "suspect_files": 10,
+    "unreached_suspect_files": 6
+  }
+}

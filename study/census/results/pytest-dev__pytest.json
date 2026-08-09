@@ -1,0 +1,184 @@
+{
+  "counts": {
+    "conftests": 18,
+    "files": 663,
+    "graph_edges": 2335,
+    "graph_nodes": 789,
+    "modules": 131,
+    "python_files": 270,
+    "test_files": 121,
+    "unparseable": 11
+  },
+  "fat_init": {
+    "max": 0.9752,
+    "per_init": [
+      {
+        "path": "src/_pytest/__init__.py",
+        "share": 0.9752
+      },
+      {
+        "path": "src/pytest/__init__.py",
+        "share": 0.9752
+      },
+      {
+        "path": "testing/example_scripts/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "testing/example_scripts/collect/collect_init_tests/tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "testing/example_scripts/collect/package_infinite_recursion/tests/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "testing/example_scripts/collect/package_init_given_as_arg/pkg/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "testing/example_scripts/fixtures/custom_item/foo/__init__.py",
+        "share": 0.0083
+      },
+      {
+        "path": "testing/example_scripts/fixtures/fill_fixtures/test_conftest_funcargs_only_available_in_subdir/sub1/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "testing/example_scripts/fixtures/fill_fixtures/test_conftest_funcargs_only_available_in_subdir/sub2/__init__.py",
+        "share": 0.0
+      },
+      {
+        "path": "testing/example_scripts/fixtures/fill_fixtures/test_extend_fixture_conftest_conftest/pkg/__init__.py",
+        "share": 0.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "pytest-dev/pytest",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": [
+      "doc/en/conftest.py",
+      "doc/en/example/conftest.py",
+      "doc/en/example/nonpython/conftest.py",
+      "testing/example_scripts/collect/package_infinite_recursion/conftest.py",
+      "testing/example_scripts/fixtures/custom_item/conftest.py",
+      "testing/example_scripts/fixtures/fill_fixtures/test_conftest_funcargs_only_available_in_subdir/sub1/conftest.py",
+      "testing/example_scripts/fixtures/fill_fixtures/test_conftest_funcargs_only_available_in_subdir/sub2/conftest.py",
+      "testing/example_scripts/fixtures/fill_fixtures/test_extend_fixture_conftest_conftest/conftest.py",
+      "testing/example_scripts/fixtures/fill_fixtures/test_extend_fixture_conftest_conftest/pkg/conftest.py",
+      "testing/example_scripts/issue88_initial_file_multinodes/conftest.py"
+    ]
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.9917,
+      "files": 18,
+      "occurrences": 40,
+      "reached_files": 13,
+      "top_offenders": [
+        {
+          "path": "testing/test_assertrewrite.py",
+          "suspects": 8
+        },
+        {
+          "path": "testing/code/test_source.py",
+          "suspects": 6
+        },
+        {
+          "path": "testing/code/test_excinfo.py",
+          "suspects": 5
+        },
+        {
+          "path": "testing/code/test_code.py",
+          "suspects": 3
+        },
+        {
+          "path": "doc/en/example/assertion/failure_demo.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.9752,
+      "files": 13,
+      "occurrences": 39,
+      "reached_files": 11,
+      "top_offenders": [
+        {
+          "path": "src/_pytest/pathlib.py",
+          "suspects": 7
+        },
+        {
+          "path": "testing/test_pytester.py",
+          "suspects": 7
+        },
+        {
+          "path": "src/_pytest/_py/path.py",
+          "suspects": 6
+        },
+        {
+          "path": "src/_pytest/config/__init__.py",
+          "suspects": 5
+        },
+        {
+          "path": "testing/test_pathlib.py",
+          "suspects": 3
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.9752,
+      "files": 28,
+      "occurrences": 80,
+      "reached_files": 26,
+      "top_offenders": [
+        {
+          "path": "testing/test_pathlib.py",
+          "suspects": 14
+        },
+        {
+          "path": "testing/test_monkeypatch.py",
+          "suspects": 9
+        },
+        {
+          "path": "testing/test_assertrewrite.py",
+          "suspects": 6
+        },
+        {
+          "path": "testing/test_pluginmanager.py",
+          "suspects": 6
+        },
+        {
+          "path": "testing/python/fixtures.py",
+          "suspects": 5
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 0.9917,
+    "tainted_reachers": 120
+  },
+  "unreached": {
+    "share": 0.1429,
+    "suspect_files": 42,
+    "unreached_suspect_files": 6
+  }
+}

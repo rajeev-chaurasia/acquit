@@ -1,0 +1,115 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 642,
+    "graph_edges": 254,
+    "graph_nodes": 680,
+    "modules": 24,
+    "python_files": 49,
+    "test_files": 23,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": null,
+    "per_init": []
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "yaml/pyyaml",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": [
+      "tests/legacy_tests/conftest.py"
+    ]
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.4783,
+      "files": 5,
+      "occurrences": 6,
+      "reached_files": 5,
+      "top_offenders": [
+        {
+          "path": "tests/legacy_tests/test_constructor.py",
+          "suspects": 2
+        },
+        {
+          "path": "tests/legacy_tests/test_errors.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/legacy_tests/test_multi_constructor.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/legacy_tests/test_recursive.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/legacy_tests/test_structure.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.0,
+      "files": 2,
+      "occurrences": 5,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "lib/yaml/constructor.py",
+          "suspects": 4
+        },
+        {
+          "path": "packaging/_pyyaml_pep517.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 1,
+      "occurrences": 2,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "setup.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.087,
+      "files": 2,
+      "occurrences": 4,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "tests/legacy_tests/test_build.py",
+          "suspects": 2
+        },
+        {
+          "path": "tests/legacy_tests/test_build_ext.py",
+          "suspects": 2
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 0.4783,
+    "tainted_reachers": 11
+  },
+  "unreached": {
+    "share": 0.3,
+    "suspect_files": 10,
+    "unreached_suspect_files": 3
+  }
+}

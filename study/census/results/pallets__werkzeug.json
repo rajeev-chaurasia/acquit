@@ -1,0 +1,114 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 291,
+    "graph_edges": 1168,
+    "graph_nodes": 399,
+    "modules": 112,
+    "python_files": 138,
+    "test_files": 25,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "src/werkzeug/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "tests/sansio/__init__.py",
+        "share": 0.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "pallets/werkzeug",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 3,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "src/werkzeug/routing/rules.py",
+          "suspects": 2
+        },
+        {
+          "path": "src/werkzeug/debug/console.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 4,
+      "occurrences": 6,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "src/werkzeug/utils.py",
+          "suspects": 3
+        },
+        {
+          "path": "examples/coolmagic/application.py",
+          "suspects": 1
+        },
+        {
+          "path": "src/werkzeug/debug/__init__.py",
+          "suspects": 1
+        },
+        {
+          "path": "tests/live_apps/run.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.04,
+      "files": 1,
+      "occurrences": 2,
+      "reached_files": 1,
+      "top_offenders": [
+        {
+          "path": "tests/test_utils.py",
+          "suspects": 2
+        }
+      ]
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 1,
+      "occurrences": 1,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "examples/manage-webpylike.py",
+          "suspects": 1
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 25
+  },
+  "unreached": {
+    "share": 0.375,
+    "suspect_files": 8,
+    "unreached_suspect_files": 3
+  }
+}

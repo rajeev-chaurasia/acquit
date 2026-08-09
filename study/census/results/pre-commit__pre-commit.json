@@ -1,0 +1,82 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 203,
+    "graph_edges": 1283,
+    "graph_nodes": 254,
+    "modules": 77,
+    "python_files": 134,
+    "test_files": 54,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "pre_commit/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "testing/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 0.0
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "pre-commit/pre-commit",
+  "standing": {
+    "doctest_modules": false,
+    "doctest_source": null,
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    }
+  },
+  "taint": {
+    "blast_radius": 0.0,
+    "tainted_reachers": 0
+  },
+  "unreached": {
+    "share": null,
+    "suspect_files": 0,
+    "unreached_suspect_files": 0
+  }
+}

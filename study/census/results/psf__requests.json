@@ -1,0 +1,92 @@
+{
+  "counts": {
+    "conftests": 1,
+    "files": 130,
+    "graph_edges": 315,
+    "graph_nodes": 185,
+    "modules": 26,
+    "python_files": 37,
+    "test_files": 9,
+    "unparseable": 0
+  },
+  "fat_init": {
+    "max": 1.0,
+    "per_init": [
+      {
+        "path": "src/requests/__init__.py",
+        "share": 1.0
+      },
+      {
+        "path": "tests/__init__.py",
+        "share": 0.4444
+      }
+    ]
+  },
+  "schema": "acquit/census-repo-v1",
+  "slug": "psf/requests",
+  "standing": {
+    "doctest_modules": true,
+    "doctest_source": "pyproject.toml",
+    "r006_files": []
+  },
+  "suspects": {
+    "exec-eval": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "lazy-module-getattr": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "non-literal-dynamic-import": {
+      "blast_radius": 1.0,
+      "files": 2,
+      "occurrences": 7,
+      "reached_files": 2,
+      "top_offenders": [
+        {
+          "path": "src/requests/packages.py",
+          "suspects": 6
+        },
+        {
+          "path": "src/requests/compat.py",
+          "suspects": 1
+        }
+      ]
+    },
+    "sys-path-mutation": {
+      "blast_radius": 0.0,
+      "files": 0,
+      "occurrences": 0,
+      "reached_files": 0,
+      "top_offenders": []
+    },
+    "sys-path-mutation-import-time": {
+      "blast_radius": 0.0,
+      "files": 1,
+      "occurrences": 2,
+      "reached_files": 0,
+      "top_offenders": [
+        {
+          "path": "docs/conf.py",
+          "suspects": 2
+        }
+      ]
+    }
+  },
+  "taint": {
+    "blast_radius": 1.0,
+    "tainted_reachers": 9
+  },
+  "unreached": {
+    "share": 0.3333,
+    "suspect_files": 3,
+    "unreached_suspect_files": 1
+  }
+}
