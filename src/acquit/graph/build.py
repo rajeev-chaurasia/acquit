@@ -24,6 +24,7 @@ from acquit.graph.model import (
 )
 from acquit.graph.parse import ImportStmt, ModuleFacts
 from acquit.graph.resolve import resolve_import
+from acquit.graph.resolvers.folding import AnchoredName
 from acquit.graph.resolvers.framework import Decline, HazardSite, ResolveContext
 from acquit.graph.resolvers.reexport import PureInit, reexport_consumer_edges
 from acquit.graph.resolvers.registry import REGISTRY
@@ -65,8 +66,12 @@ def assemble_graph(
     acc = _Acc()
     acc.tainted.update(unparseable)
     pure = _proven_reexports(facts, index)
+    dotted_by_path: dict[str, list[str]] = {}
+    for dotted, paths in index.by_dotted.items():
+        for path in paths:
+            dotted_by_path.setdefault(path, []).append(dotted)
     for module in facts.values():
-        _collect_module(module, index, pure, acc)
+        _collect_module(module, index, pure, acc, dotted_by_path)
 
     file_paths = sorted(set(files))
     tests = [path for path in file_paths if kinds[path] is NodeKind.TEST]
@@ -98,7 +103,7 @@ def assemble_graph(
             if stub in present:
                 acc.edges.add(Edge(src=path, dst=stub, kind=EdgeKind.STUB_OF))
 
-    return _build(file_paths, kinds, index, acc, pure)
+    return _build(file_paths, kinds, acc, pure, dotted_by_path)
 
 
 def _absolute_import(name: str) -> ImportStmt:
@@ -125,7 +130,11 @@ def _proven_reexports(facts: Mapping[str, ModuleFacts], index: ModuleIndex) -> d
 
 
 def _collect_module(
-    module: ModuleFacts, index: ModuleIndex, pure: Mapping[str, PureInit], acc: _Acc
+    module: ModuleFacts,
+    index: ModuleIndex,
+    pure: Mapping[str, PureInit],
+    acc: _Acc,
+    dotted_by_path: Mapping[str, Sequence[str]],
 ) -> None:
     src = module.path
     if module.suspects:
@@ -152,18 +161,81 @@ def _collect_module(
             for dst in reexport_consumer_edges(stmt, src, index, pure):
                 acc.edges.add(Edge(src=src, dst=dst, kind=EdgeKind.IMPORTS))
     for name in module.dyn_literal_imports:
-        if not name:
-            continue
-        dyn_stmt = _absolute_import(name)
-        resolution = resolve_import(dyn_stmt, src, index)
-        for dst, _ in resolution.edges:
-            acc.edges.add(Edge(src=src, dst=dst, kind=EdgeKind.DYNAMIC_IMPORT))
-        for top_level in resolution.external_top_levels:
-            acc.external_edge(src, top_level, EdgeKind.DYNAMIC_IMPORT)
-        if resolution.broken_first_party:
-            acc.tainted.add(src)
-        for dst in reexport_consumer_edges(dyn_stmt, src, index, pure):
-            acc.edges.add(Edge(src=src, dst=dst, kind=EdgeKind.DYNAMIC_IMPORT))
+        _dynamic_name_edges(name, src, index, pure, acc)
+    # ADR 0009: folded names ride the literal dynamic-import path unchanged;
+    # anchored forms resolve against the module's identities first and fail
+    # closed into taint when they cannot.
+    identities = dotted_by_path.get(src, ())
+    for fold in module.folded_dynamic_imports:
+        for name in fold.names:
+            _dynamic_name_edges(name, src, index, pure, acc)
+        for anchored in fold.anchored:
+            targets = _anchored_targets(anchored, src, identities)
+            if targets is None:
+                acc.tainted.add(src)
+                continue
+            for name in targets:
+                _dynamic_name_edges(name, src, index, pure, acc)
+
+
+def _dynamic_name_edges(
+    name: str, src: str, index: ModuleIndex, pure: Mapping[str, PureInit], acc: _Acc
+) -> None:
+    if not name:
+        return
+    dyn_stmt = _absolute_import(name)
+    resolution = resolve_import(dyn_stmt, src, index)
+    for dst, _ in resolution.edges:
+        acc.edges.add(Edge(src=src, dst=dst, kind=EdgeKind.DYNAMIC_IMPORT))
+    for top_level in resolution.external_top_levels:
+        acc.external_edge(src, top_level, EdgeKind.DYNAMIC_IMPORT)
+    if resolution.broken_first_party:
+        acc.tainted.add(src)
+    for dst in reexport_consumer_edges(dyn_stmt, src, index, pure):
+        acc.edges.add(Edge(src=src, dst=dst, kind=EdgeKind.DYNAMIC_IMPORT))
+
+
+def _anchored_targets(
+    anchored: AnchoredName, src: str, identities: Sequence[str]
+) -> tuple[str, ...] | None:
+    """Absolute names for one anchored fold, or None to fail closed.
+
+    Fail-closed union across the module's identities, like relative static
+    imports: no identity under any root, an ascent past the anchor, or a
+    still-relative result all decline into taint.
+    """
+    values = _anchor_values(anchored.anchor, src, identities)
+    if not values:
+        return None
+    out: list[str] = []
+    for value in values:
+        parts = value.split(".") if value else []
+        if anchored.ascend:
+            if len(parts) <= anchored.ascend:
+                return None
+            parts = parts[: len(parts) - anchored.ascend]
+        name = ".".join(parts) + anchored.suffix
+        if not name or name.startswith("."):
+            return None
+        if name not in out:
+            out.append(name)
+    return tuple(out)
+
+
+def _anchor_values(anchor: str, src: str, identities: Sequence[str]) -> tuple[str, ...]:
+    if anchor == "__name__":
+        return tuple(identities)
+    if anchor != "__package__":
+        return ()
+    if src.rsplit("/", 1)[-1] == "__init__.py":
+        # An __init__.py's __package__ is its own dotted name.
+        return tuple(identities)
+    out: list[str] = []
+    for identity in identities:
+        package = identity.rpartition(".")[0]
+        if package not in out:
+            out.append(package)
+    return tuple(out)
 
 
 def _plugin_targets(name: str, index: ModuleIndex, pure: Mapping[str, PureInit]) -> tuple[str, ...]:
@@ -182,15 +254,10 @@ def _plugin_targets(name: str, index: ModuleIndex, pure: Mapping[str, PureInit])
 def _build(
     file_paths: Sequence[str],
     kinds: Mapping[str, NodeKind],
-    index: ModuleIndex,
     acc: _Acc,
     pure: Mapping[str, PureInit],
+    dotted_by_path: Mapping[str, Sequence[str]],
 ) -> BuiltGraph:
-    dotted_by_path: dict[str, list[str]] = {}
-    for dotted, paths in index.by_dotted.items():
-        for path in paths:
-            dotted_by_path.setdefault(path, []).append(dotted)
-
     node_list = [
         Node(
             path=path,

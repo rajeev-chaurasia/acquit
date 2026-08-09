@@ -291,3 +291,93 @@ def test_hash_stable_under_input_permutations() -> None:
     assert first.graph_hash == second.graph_hash
     assert list(first.digraph.nodes()) == list(second.digraph.nodes())
     assert list(first.digraph.weighted_edge_list()) == list(second.digraph.weighted_edge_list())
+
+
+def _with_module(path: str, source: str) -> BuiltGraph:
+    sources = dict(SOURCES) | {path: source}
+    return assemble(files=sorted([*FILES, path]), sources=sources)
+
+
+def test_folded_site_yields_dynamic_import_edges_and_no_suspect_taint() -> None:
+    # ADR 0009: the folded names ride the literal dynamic-import edge path.
+    graph = _with_module(
+        "src/app/folded.py",
+        "from importlib import import_module\n"
+        "for name in ('app.core', 'tomllib'):\n"
+        "    import_module(name)\n",
+    )
+    edges = edge_set(graph)
+    assert ("src/app/folded.py", "src/app/core.py", EdgeKind.DYNAMIC_IMPORT) in edges
+    assert ("src/app/folded.py", "src/app/__init__.py", EdgeKind.DYNAMIC_IMPORT) in edges
+    assert ("src/app/folded.py", "ext:tomllib", EdgeKind.DYNAMIC_IMPORT) in edges
+    assert not graph.nodes["src/app/folded.py"].tainted
+
+
+def test_declined_site_keeps_the_taint() -> None:
+    graph = _with_module(
+        "src/app/declined.py",
+        "from importlib import import_module\ndef load(name):\n    return import_module(name)\n",
+    )
+    assert graph.nodes["src/app/declined.py"].tainted
+
+
+def test_mixed_module_keeps_both_the_edges_and_the_taint() -> None:
+    graph = _with_module(
+        "src/app/mixed.py",
+        "from importlib import import_module\n"
+        "MOD = 'app.core'\n"
+        "import_module(MOD)\n"
+        "def load(name):\n"
+        "    return import_module(name)\n",
+    )
+    edges = edge_set(graph)
+    assert ("src/app/mixed.py", "src/app/core.py", EdgeKind.DYNAMIC_IMPORT) in edges
+    assert graph.nodes["src/app/mixed.py"].tainted
+
+
+def test_dunder_name_anchor_resolves_to_a_self_edge() -> None:
+    graph = _with_module("src/app/selfref.py", "import sys\nmod = sys.modules[__name__]\n")
+    edges = edge_set(graph)
+    assert ("src/app/selfref.py", "src/app/selfref.py", EdgeKind.DYNAMIC_IMPORT) in edges
+    assert not graph.nodes["src/app/selfref.py"].tainted
+
+
+def test_dunder_package_anchor_resolves_against_every_identity() -> None:
+    graph = _with_module(
+        "src/app/anchored.py",
+        "from importlib import import_module\nimport_module(f'{__package__}.core')\n",
+    )
+    edges = edge_set(graph)
+    # Roots are ("src", ""), so the fail-closed union covers both package
+    # identities; both resolve to the same files here.
+    assert ("src/app/anchored.py", "src/app/core.py", EdgeKind.DYNAMIC_IMPORT) in edges
+    assert not graph.nodes["src/app/anchored.py"].tainted
+
+
+def test_empty_package_anchor_fails_closed_into_taint() -> None:
+    # A top-level module's __package__ is "", leaving a relative residue.
+    graph = _with_module(
+        "rootmod.py",
+        "from importlib import import_module\nimport_module(f'{__package__}.core')\n",
+    )
+    assert graph.nodes["rootmod.py"].tainted
+
+
+def test_anchor_ascent_past_the_root_fails_closed_into_taint() -> None:
+    graph = _with_module(
+        "src/app/deep.py",
+        "from importlib import import_module\nimport_module('..outside', __package__)\n",
+    )
+    assert graph.nodes["src/app/deep.py"].tainted
+
+
+def test_broken_first_party_folded_name_keeps_the_taint() -> None:
+    # A folded name that looks first-party but does not resolve behaves
+    # exactly like its literal counterpart: the importer stays tainted.
+    graph = _with_module(
+        "src/app/foldbroken.py",
+        "from importlib import import_module\n"
+        "for name in ('app.nothing',):\n"
+        "    import_module(name)\n",
+    )
+    assert graph.nodes["src/app/foldbroken.py"].tainted

@@ -48,6 +48,22 @@ def test_round_trip(tmp_path: Path) -> None:
     assert cache.get(SHA) == facts
 
 
+def test_round_trip_preserves_folded_dynamic_imports(tmp_path: Path) -> None:
+    source = (
+        b"import sys\n"
+        b"from importlib import import_module\n"
+        b"for n in ('pkg.a', 'pkg.b'):\n"
+        b"    import_module(n)\n"
+        b"mod = sys.modules[__name__]\n"
+    )
+    facts = parse_module_facts(source, "pkg/loader.py")
+    assert len(facts.folded_dynamic_imports) == 2
+    assert any(fold.anchored for fold in facts.folded_dynamic_imports)
+    cache = ParseCache(tmp_path / "parse")
+    cache.put(SHA, facts)
+    assert cache.get(SHA) == facts
+
+
 def test_round_trip_preserves_both_sys_path_suspect_kinds(tmp_path: Path) -> None:
     source = b"import sys\nsys.path.insert(0, 'v')\n\ndef late():\n    sys.path.append('r')\n"
     facts = parse_module_facts(source, "pkg/paths.py")
@@ -223,6 +239,25 @@ def _dyn_imports_with_int(data: dict[str, Any]) -> None:
     data["dyn_literal_imports"] = ["ok", 3]
 
 
+def _folded_not_a_list(data: dict[str, Any]) -> None:
+    data["folded_dynamic_imports"] = "none"
+
+
+def _folded_lineno_as_str(data: dict[str, Any]) -> None:
+    data["folded_dynamic_imports"] = [{"lineno": "3", "patterns": [], "names": [], "anchored": []}]
+
+
+def _folded_anchor_ascend_as_str(data: dict[str, Any]) -> None:
+    data["folded_dynamic_imports"] = [
+        {
+            "lineno": 3,
+            "patterns": [],
+            "names": [],
+            "anchored": [{"anchor": "__name__", "ascend": "0", "suffix": ""}],
+        }
+    ]
+
+
 def _drop_reexport(data: dict[str, Any]) -> None:
     del data["reexport"]
 
@@ -248,6 +283,9 @@ def _reexport_local_names_with_int(data: dict[str, Any]) -> None:
         _lineno_as_bool,
         _getattr_flag_as_str,
         _dyn_imports_with_int,
+        _folded_not_a_list,
+        _folded_lineno_as_str,
+        _folded_anchor_ascend_as_str,
         _drop_reexport,
         _reexport_not_an_object,
         _reexport_local_names_with_int,

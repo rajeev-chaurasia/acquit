@@ -46,6 +46,7 @@ def poison_cache(cache_dir: Path, blob_sha: str, path: str) -> Path:
         path=path,
         imports=(),
         dyn_literal_imports=(),
+        folded_dynamic_imports=(),
         suspects=(),
         defines_module_getattr=False,
         pytest_plugins_decl=(),

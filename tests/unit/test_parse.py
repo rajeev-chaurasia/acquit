@@ -5,6 +5,7 @@ import pytest
 from acquit.errors import GraphError, ParseFailure
 from acquit.graph.parse import ImportStmt, ModuleFacts, Suspect, SuspectKind, parse_module_facts
 from acquit.graph.resolvers.checkers import ReexportScan
+from acquit.graph.resolvers.folding import AnchoredName
 
 
 def facts(source: str) -> ModuleFacts:
@@ -379,6 +380,70 @@ def test_sys_modules_get_with_variable_is_a_suspect() -> None:
     assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
 
 
+def test_folded_dynamic_import_is_not_a_suspect() -> None:
+    # ADR 0009: a proven site records a fold instead of tainting.
+    source = "from importlib import import_module\nfor n in ('a.x', 'a.y'):\n    import_module(n)\n"
+    result = facts(source)
+    assert result.suspects == ()
+    (fold,) = result.folded_dynamic_imports
+    assert fold.lineno == 3
+    assert fold.names == ("a.x", "a.y")
+    assert fold.anchored == ()
+    assert result.dyn_literal_imports == ()
+
+
+def test_declined_dynamic_import_keeps_its_suspect() -> None:
+    result = facts(
+        "from importlib import import_module\ndef load(n):\n    return import_module(n)\n"
+    )
+    assert result.folded_dynamic_imports == ()
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=3),)
+
+
+def test_mixed_module_keeps_fold_and_suspect_apart() -> None:
+    source = (
+        "from importlib import import_module\n"
+        "MOD = 'pkg.a'\n"
+        "import_module(MOD)\n"
+        "import_module('pkg.lit')\n"
+        "def load(name):\n"
+        "    return import_module(name)\n"
+    )
+    result = facts(source)
+    assert result.dyn_literal_imports == ("pkg.lit",)
+    assert [(fold.lineno, fold.names) for fold in result.folded_dynamic_imports] == [
+        (3, ("pkg.a",))
+    ]
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=6),)
+
+
+def test_sys_modules_dunder_name_folds_to_an_anchor() -> None:
+    result = facts("import sys\nmod = sys.modules[__name__]\n")
+    assert result.suspects == ()
+    (fold,) = result.folded_dynamic_imports
+    assert fold.names == ()
+    assert fold.anchored == (AnchoredName(anchor="__name__", ascend=0, suffix=""),)
+
+
+def test_sys_modules_in_annotation_is_still_detected() -> None:
+    # The folder's walk must reach every expression the old visitor did.
+    result = facts("import sys\ndef f(x: sys.modules[key]) -> None:\n    pass\n")
+    assert result.suspects == (Suspect(kind=SuspectKind.NON_LITERAL_DYNAMIC_IMPORT, lineno=2),)
+
+
+def test_facts_are_deterministic_for_folded_modules() -> None:
+    source = (
+        "import sys\n"
+        "from importlib import import_module\n"
+        "for n in ('pkg.a', 'pkg.b'):\n"
+        "    import_module(n)\n"
+        "mod = sys.modules[__name__]\n"
+        "def load(name):\n"
+        "    return import_module(name)\n"
+    )
+    assert facts(source) == facts(source)
+
+
 def test_nested_getattr_is_not_module_level() -> None:
     source = """\
 class Proxy:
@@ -433,6 +498,7 @@ def test_empty_module() -> None:
         path="pkg/mod.py",
         imports=(),
         dyn_literal_imports=(),
+        folded_dynamic_imports=(),
         suspects=(),
         defines_module_getattr=False,
         pytest_plugins_decl=(),

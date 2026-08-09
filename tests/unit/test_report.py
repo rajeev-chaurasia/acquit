@@ -105,7 +105,7 @@ def test_build_report_full_shape() -> None:
 
     assert report["schema"] == REPORT_SCHEMA
     assert report["tool"]["name"] == "acquit"
-    assert report["tool"]["graph_schema"] == 2
+    assert report["tool"]["graph_schema"] == 3
     assert report["run"] == {
         "base_sha": "b" * 40,
         "head_sha": "h" * 40,

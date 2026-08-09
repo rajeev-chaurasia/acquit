@@ -17,8 +17,9 @@ from acquit.graph.resolvers.checkers import ReexportTier
 # Bump whenever the canonical (nodes, edges) form changes meaning: hashes
 # anchor witnesses and replay, so old graphs must not verify against new
 # semantics. Version 2 added INIT_REEXPORT edges for pure re-exporter inits
-# (ADR 0008); edge kinds are hashed.
-GRAPH_SCHEMA_VERSION: Final = 2
+# (ADR 0008); edge kinds are hashed. Version 3 folds provable dynamic-import
+# sites into DYNAMIC_IMPORT edges (ADR 0009), moving both edges and taint.
+GRAPH_SCHEMA_VERSION: Final = 3
 
 
 class NodeKind(StrEnum):

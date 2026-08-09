@@ -11,7 +11,7 @@ shrink, they only gain annotation.
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Final
+from typing import ClassVar, Final
 
 from acquit.graph.index import ModuleIndex
 from acquit.graph.parse import ImportStmt, ModuleFacts
@@ -59,6 +59,10 @@ class PureInit:
 class ReexportResolver:
     """Recognizes package inits and proves them pure re-exporters."""
 
+    # The narrowed claim is relational: base and head must agree, and replay
+    # re-verifies the witness against two snapshots.
+    axis: ClassVar[str] = "relational"
+
     def recognize(self, site: HazardSite) -> ReexportCandidate | None:
         # A repo-root __init__.py names no importable package. A miss here
         # is never a risk: unrecognized sites keep today's behavior.
@@ -70,8 +74,9 @@ class ReexportResolver:
 
     def prove(self, candidate: ReexportCandidate, ctx: ResolveContext) -> PureInit | Decline:
         facts = candidate.facts
-        if facts.suspects or facts.dyn_literal_imports:
+        if facts.suspects or facts.dyn_literal_imports or facts.folded_dynamic_imports:
             # Only reachable through a TYPE_CHECKING body; debatable, decline.
+            # A folded site is still a dynamic import, so it declines too.
             return Decline(reason="suspect-construct")
         if facts.defines_module_getattr:
             return Decline(reason="module-getattr")

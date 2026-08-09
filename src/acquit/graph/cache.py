@@ -25,6 +25,7 @@ from acquit.graph.resolvers.checkers import (
     ReexportScan,
     StarImport,
 )
+from acquit.graph.resolvers.folding import AnchoredName, FoldedImport
 
 # Bump whenever parser semantics change: cached ModuleFacts for an unchanged
 # blob must never outlive the rules that produced them. Version 4 split the
@@ -32,7 +33,9 @@ from acquit.graph.resolvers.checkers import (
 # monkeypatch.syspath_prepend and pytester.syspathinsert as sys.path mutations.
 # Version 6 added the re-export scan for ADR 0008 narrowing. Version 7 added
 # the inertness verdict and bound-name set for the narrowed witness claim.
-CACHE_FORMAT_VERSION: Final = 7
+# Version 8 moved dynamic-import extraction into the ADR 0009 folder and
+# added the folded_dynamic_imports field.
+CACHE_FORMAT_VERSION: Final = 8
 
 
 def parse_cache_dir(repo_root: Path) -> Path:
@@ -68,6 +71,18 @@ def facts_to_dict(facts: ModuleFacts) -> dict[str, Any]:
             for stmt in facts.imports
         ],
         "dyn_literal_imports": list(facts.dyn_literal_imports),
+        "folded_dynamic_imports": [
+            {
+                "lineno": fold.lineno,
+                "patterns": list(fold.patterns),
+                "names": list(fold.names),
+                "anchored": [
+                    {"anchor": item.anchor, "ascend": item.ascend, "suffix": item.suffix}
+                    for item in fold.anchored
+                ],
+            }
+            for fold in facts.folded_dynamic_imports
+        ],
         "suspects": [
             {"kind": suspect.kind.value, "lineno": suspect.lineno} for suspect in facts.suspects
         ],
@@ -105,6 +120,9 @@ def facts_from_dict(data: dict[str, Any]) -> ModuleFacts:
             path=_expect_str(data["path"]),
             imports=tuple(_import_from_dict(item) for item in _expect_items(data["imports"])),
             dyn_literal_imports=_expect_str_tuple(data["dyn_literal_imports"]),
+            folded_dynamic_imports=tuple(
+                _fold_from_dict(item) for item in _expect_items(data["folded_dynamic_imports"])
+            ),
             suspects=tuple(_suspect_from_dict(item) for item in _expect_items(data["suspects"])),
             defines_module_getattr=_expect_bool(data["defines_module_getattr"]),
             pytest_plugins_decl=_expect_str_tuple(data["pytest_plugins_decl"]),
@@ -193,6 +211,22 @@ def _import_from_dict(item: Mapping[str, Any]) -> ImportStmt:
 
 def _suspect_from_dict(item: Mapping[str, Any]) -> Suspect:
     return Suspect(kind=SuspectKind(_expect_str(item["kind"])), lineno=_expect_int(item["lineno"]))
+
+
+def _fold_from_dict(item: Mapping[str, Any]) -> FoldedImport:
+    return FoldedImport(
+        lineno=_expect_int(item["lineno"]),
+        patterns=_expect_str_tuple(item["patterns"]),
+        names=_expect_str_tuple(item["names"]),
+        anchored=tuple(
+            AnchoredName(
+                anchor=_expect_str(entry["anchor"]),
+                ascend=_expect_int(entry["ascend"]),
+                suffix=_expect_str(entry["suffix"]),
+            )
+            for entry in _expect_items(item["anchored"])
+        ),
+    )
 
 
 def _expect_str(value: object) -> str:
