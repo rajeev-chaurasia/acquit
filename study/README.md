@@ -77,6 +77,42 @@ study table in the summary (and anything quoted in the README) is generated
 from that json by this command and is never hand-edited. Aggregate exits
 nonzero if any PR recorded an unsafe skip or a skipped new test.
 
+## Mutation arm
+
+Outcome diffing alone has near-zero power against a subtly wrong skip:
+merged PRs had green CI, so the changed-outcome set is almost always empty
+and a selection that wrongly skipped a consumer looks identical to a correct
+one. The mutation arm manufactures the missing signal. With `--mutants N`,
+after the normal replay of each PR the runner injects up to N first-order
+mutants into the PR's changed .py files (comparison and arithmetic operator
+flips, integer boundary tweaks, boolean flips, negation of boolean-shaped
+return values, string-constant tweaks), enumerated deterministically, capped
+per file, evenly spaced through the enumeration, and drawn round-robin
+across files. Each mutant then gets two runs in the existing head venv: the
+acquit-selected set (the already-computed head selection applied through the
+real pytest plugin via `ACQUIT_SELECTION_FILE`, re-bound to the mutated
+tree; deselection does the narrowing) and the full suite with `-x`. A mutant
+the full suite kills must also be killed by the selected set. Detection
+parity per PR is the share of full-suite kills the selected set caught, 1.0
+when the full suite killed none, and any mutant killed by full but missed by
+selected is listed in the summary by PR, file, and location and fails
+`acquit-study aggregate`, same as an unsafe skip.
+
+```
+uv run acquit-study run --manifest study/manifests/flask.json \
+  --workdir .study-work --results-dir study/results/flask \
+  --pr 5432 --mutants 6
+```
+
+Mutants multiply suite runs: each one costs a selected-set run plus a capped
+full-suite run (10 minutes each at most), so `--mutants` on a full manifest
+roughly multiplies the study's cost by N+1. Use it on subsamples: a single
+shard, a handful of PRs via `--pr`, or a small N. PRs whose head suite is
+not green record the arm as skipped, because a pre-existing failure would
+count as a kill for every mutant, and per-mutant apply or run failures are
+recorded and skipped, never fatal to the PR. Results without mutant data
+render as "not run" in the summary.
+
 ## Results
 
 Per-repo summaries live in `study/results/*-summary.md`, each generated from

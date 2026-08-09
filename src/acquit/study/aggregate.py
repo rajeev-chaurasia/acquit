@@ -23,10 +23,34 @@ from typing import Any, Final
 from acquit.errors import AcquitError
 from acquit.report import to_canonical_json
 from acquit.study import EXCLUSION_SCHEMA, RESULT_SCHEMA, SUMMARY_SCHEMA
+from acquit.study.mutate import detection_parity
 
 # The one blocker a repo config can neutralize: R001 flags changed resource
 # files, and an assume_inert glob vouches that the named files feed no test.
 _RECOVERABLE_RULE: Final = "R001"
+
+
+@dataclass(frozen=True, slots=True)
+class MutantRecord:
+    """One injected mutant's verdicts, as recorded by the runner."""
+
+    file: str
+    line: int
+    col: int
+    kind: str
+    killed_by_selected: bool
+    killed_by_full: bool
+
+
+@dataclass(frozen=True, slots=True)
+class MissedMutant:
+    """A mutant the full suite killed and the selected set let live."""
+
+    pr: int
+    file: str
+    line: int
+    col: int
+    kind: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,6 +70,8 @@ class PrResult:
     replay_verified: bool
     analysis_seconds: float
     per_file_durations: Mapping[str, float]
+    # None means the mutation arm was not run for this PR.
+    mutants: tuple[MutantRecord, ...] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -82,6 +108,11 @@ class StudySummary:
     replay_selective_verified: int
     analysis_p50: float | None
     analysis_p95: float | None
+    mutant_prs: int
+    mutant_total: int
+    mutant_killed_by_full: int
+    mutant_missed: tuple[MissedMutant, ...]
+    mutant_parity: Quartiles | None
 
 
 def percentile(values: Sequence[float], q: float) -> float:
@@ -149,6 +180,31 @@ def _durations(data: Mapping[str, Any]) -> Mapping[str, float]:
     return out
 
 
+def _mutant_records(data: Mapping[str, Any]) -> tuple[MutantRecord, ...] | None:
+    """The mutants block of one result; None distinguishes not-run from empty."""
+    block = data.get("mutants")
+    if not isinstance(block, Mapping):
+        return None
+    raw = block.get("entries")
+    if not isinstance(raw, list):
+        return ()
+    records: list[MutantRecord] = []
+    for entry in raw:
+        if not isinstance(entry, Mapping):
+            continue
+        records.append(
+            MutantRecord(
+                file=str(entry.get("file", "?")),
+                line=_int_field(entry, "line"),
+                col=_int_field(entry, "col"),
+                kind=str(entry.get("kind", "?")),
+                killed_by_selected=entry.get("killed_by_selected") is True,
+                killed_by_full=entry.get("killed_by_full") is True,
+            )
+        )
+    return tuple(records)
+
+
 def _pr_result(data: Mapping[str, Any]) -> PrResult:
     return PrResult(
         number=_int_field(data, "number"),
@@ -164,6 +220,7 @@ def _pr_result(data: Mapping[str, Any]) -> PrResult:
         replay_verified=data.get("replay_verified") is True,
         analysis_seconds=_float_field(data, "analysis_seconds"),
         per_file_durations=_durations(data),
+        mutants=_mutant_records(data),
     )
 
 
@@ -253,6 +310,23 @@ def summarize(results: Sequence[PrResult], exclusions: Sequence[ExclusionRecord]
             sole_blockers[blocker] += 1
     recoverable = sole_blockers.get(_RECOVERABLE_RULE, 0)
     analysis = [result.analysis_seconds for result in results]
+    mutant_prs = 0
+    mutant_records: list[tuple[int, MutantRecord]] = []
+    parity_values: list[float] = []
+    for result in results:
+        records = result.mutants
+        if records is None:
+            continue
+        mutant_prs += 1
+        parity_values.append(
+            detection_parity((entry.killed_by_selected, entry.killed_by_full) for entry in records)
+        )
+        mutant_records.extend((result.number, entry) for entry in records)
+    missed = tuple(
+        MissedMutant(pr=number, file=entry.file, line=entry.line, col=entry.col, kind=entry.kind)
+        for number, entry in mutant_records
+        if entry.killed_by_full and not entry.killed_by_selected
+    )
     return StudySummary(
         analyzed=len(results),
         excluded=len(exclusions),
@@ -273,6 +347,11 @@ def summarize(results: Sequence[PrResult], exclusions: Sequence[ExclusionRecord]
         replay_selective_verified=sum(1 for result in selective if result.replay_verified),
         analysis_p50=percentile(analysis, 0.5) if analysis else None,
         analysis_p95=percentile(analysis, 0.95) if analysis else None,
+        mutant_prs=mutant_prs,
+        mutant_total=len(mutant_records),
+        mutant_killed_by_full=sum(1 for _, entry in mutant_records if entry.killed_by_full),
+        mutant_missed=missed,
+        mutant_parity=_quartiles(parity_values),
     )
 
 
@@ -306,6 +385,22 @@ def summary_to_dict(summary: StudySummary) -> dict[str, Any]:
             "selective_verified": summary.replay_selective_verified,
         },
         "analysis_seconds": {"p50": summary.analysis_p50, "p95": summary.analysis_p95},
+        "mutation_arm": {
+            "prs_with_mutants": summary.mutant_prs,
+            "mutants": summary.mutant_total,
+            "killed_by_full": summary.mutant_killed_by_full,
+            "missed": [
+                {
+                    "pr": entry.pr,
+                    "file": entry.file,
+                    "line": entry.line,
+                    "col": entry.col,
+                    "kind": entry.kind,
+                }
+                for entry in summary.mutant_missed
+            ],
+            "parity": _quartiles_dict(summary.mutant_parity),
+        },
     }
 
 
@@ -323,6 +418,31 @@ def _quartile_rows(label: str, quartiles: Quartiles | None) -> list[str]:
     return [
         f"| {label} | {_pct(quartiles.p25)} | {_pct(quartiles.median)} | {_pct(quartiles.p75)} |"
     ]
+
+
+def _mutation_lines(summary: StudySummary) -> list[str]:
+    """The Mutation arm section; absent mutant data renders as not run."""
+    lines = ["", "## Mutation arm", ""]
+    if summary.mutant_prs == 0:
+        lines.append("Not run. Re-run the study with `--mutants N` to populate this section.")
+        return lines
+    lines += [
+        f"- PRs with injected mutants: {summary.mutant_prs}",
+        f"- Mutants run: {summary.mutant_total}",
+        f"- Killed by the full suite: {summary.mutant_killed_by_full}",
+        f"- Missed by the selected set: {len(summary.mutant_missed)} (must be 0)",
+    ]
+    parity = summary.mutant_parity
+    if parity is not None:
+        lines.append(
+            f"- Detection parity per PR: p25 {_pct(parity.p25)}, "
+            f"median {_pct(parity.median)}, p75 {_pct(parity.p75)}"
+        )
+    if summary.mutant_missed:
+        lines += ["", "| PR | File | Location | Kind |", "| --- | --- | --- | --- |"]
+        for entry in summary.mutant_missed:
+            lines.append(f"| {entry.pr} | {entry.file} | {entry.line}:{entry.col} | {entry.kind} |")
+    return lines
 
 
 def render_markdown(summary: StudySummary) -> str:
@@ -378,6 +498,9 @@ def render_markdown(summary: StudySummary) -> str:
         f"- Unsafe skips: {summary.unsafe_skips_total} (must be 0)",
         f"- PRs where a new test was skipped: {summary.new_test_violations} (must be 0)",
         f"- Replay verification: {replay_cell}",
+    ]
+    lines += _mutation_lines(summary)
+    lines += [
         "",
         "## Analysis overhead",
         "",
@@ -408,6 +531,14 @@ def run_aggregate(results_dir: Path, out_markdown: Path) -> int:
     out_json.write_text(to_canonical_json(summary_to_dict(summary)), encoding="utf-8")
     out_markdown.write_text(render_markdown(summary), encoding="utf-8")
     print(f"study: wrote {out_markdown} and {out_json}")
+    missed_mutants = len(summary.mutant_missed)
+    if missed_mutants:
+        # a mutant only the full suite caught is an unsafe skip in waiting
+        print(
+            f"study: FAILED: {missed_mutants} mutant(s) killed by the full suite "
+            "but missed by the selected set",
+            file=sys.stderr,
+        )
     if summary.unsafe_skips_total or summary.new_test_violations:
         print(
             f"study: FAILED: {summary.unsafe_skips_total} unsafe skip(s), "
@@ -415,4 +546,4 @@ def run_aggregate(results_dir: Path, out_markdown: Path) -> int:
             file=sys.stderr,
         )
         return 1
-    return 0
+    return 1 if missed_mutants else 0

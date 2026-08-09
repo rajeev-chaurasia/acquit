@@ -58,6 +58,13 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="append run failures to the manifest excluded list",
     )
+    run.add_argument(
+        "--mutants",
+        type=int,
+        default=0,
+        help="inject up to N first-order mutants per PR into its changed .py files and "
+        "check the selected set kills what the full suite kills (0 = off)",
+    )
 
     aggregate = subcommands.add_parser("aggregate", help="fold per-PR results into a summary")
     aggregate.add_argument("--results-dir", required=True, help="tree containing result files")
@@ -125,6 +132,7 @@ def _run_run(args: argparse.Namespace) -> int:
         only_pr=args.pr,
         shard=parse_shard(args.shard),
         record_exclusions=bool(args.record_exclusion),
+        mutants=max(int(args.mutants), 0),
     )
     return run_study(settings)
 

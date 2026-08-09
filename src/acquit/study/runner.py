@@ -19,7 +19,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final
 
-from acquit.constants import ENV_CACHE_DIR
+import acquit
+from acquit import vcs
+from acquit.constants import ENV_CACHE_DIR, ENV_CANARY, ENV_SELECTION_FILE
 from acquit.errors import AcquitError
 from acquit.report import digest_report, to_canonical_json
 from acquit.study import EXCLUSION_SCHEMA, RESULT_SCHEMA
@@ -33,10 +35,14 @@ from acquit.study.manifest import (
     with_exclusion,
     write_manifest,
 )
-from acquit.study.outcomes import SuiteOutcomes, parse_junit
+from acquit.study.mutate import Mutant, detection_parity, enumerate_mutants
+from acquit.study.outcomes import Outcome, SuiteOutcomes, parse_junit
 
 SUITE_TIMEOUT_SECONDS: Final = 1800.0
 _STEP_TIMEOUT_SECONDS: Final = 1800.0
+# The per-suite timeout scaled down for mutant runs: a mutant that hangs the
+# suite is recorded as a failed run and skipped, never fatal to the PR.
+_MUTANT_TIMEOUT_SECONDS: Final = 600.0
 
 # Suite runs must not pick up ambient nondeterminism from the runner host.
 _DETERMINISTIC_ENV: Final = {
@@ -67,6 +73,8 @@ class RunSettings:
     only_pr: int | None
     shard: tuple[int, int]
     record_exclusions: bool
+    # Mutation-injection arm: up to this many first-order mutants per PR.
+    mutants: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -300,6 +308,252 @@ def run_acquit(head_tree: Path, pr: PrRecord, settings: RunSettings) -> SelectRu
     )
 
 
+def _changed_python_files(head_tree: Path, pr: PrRecord) -> tuple[str, ...]:
+    """The PR's changed .py files still present at head: the mutation targets."""
+    changes = vcs.changed_files(pr.base_sha, pr.head_sha, head_tree)
+    return tuple(
+        sorted(
+            change.path
+            for change in changes
+            if change.status is not vcs.ChangeStatus.DELETED
+            and change.path.endswith(".py")
+            and (head_tree / change.path).is_file()
+        )
+    )
+
+
+def plan_mutants(
+    per_file: Mapping[str, Sequence[Mutant]], budget: int
+) -> tuple[tuple[str, Mutant], ...]:
+    """Interleave files round-robin so one mutant-rich file cannot eat the budget."""
+    ordered = [(path, tuple(per_file[path])) for path in sorted(per_file) if per_file[path]]
+    picked: list[tuple[str, Mutant]] = []
+    depth = 0
+    while len(picked) < budget:
+        row = [(path, mutants[depth]) for path, mutants in ordered if depth < len(mutants)]
+        if not row:
+            break
+        picked.extend(row[: budget - len(picked)])
+        depth += 1
+    return tuple(picked)
+
+
+def _suite_is_green(outcomes: SuiteOutcomes) -> bool:
+    bad = {Outcome.FAILED, Outcome.ERROR}
+    return all(not (values & bad) for values in outcomes.by_test.values())
+
+
+def _acquit_project_root() -> Path | None:
+    """The acquit checkout this study is running from, when there is one.
+
+    The suite venv deliberately excludes acquit, but applying a selection
+    needs the pytest plugin importable there. The study normally runs via uv
+    from the repo, so the package sits in src/ next to pyproject.toml; a
+    wheel install has nothing to build from and the arm declines loudly.
+    """
+    package_file = acquit.__file__
+    if package_file is None:
+        return None
+    source_root = Path(package_file).resolve().parent.parent
+    project = source_root.parent
+    marker = project / "pyproject.toml"
+    if source_root.name != "src" or not marker.is_file():
+        return None
+    try:
+        named = 'name = "acquit"' in marker.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    return project if named else None
+
+
+def _install_selection_plugin(python: Path, worktree: Path) -> None:
+    project = _acquit_project_root()
+    if project is None:
+        raise StepFailure(
+            "mutants", "acquit is not running from a src checkout; cannot install the plugin"
+        )
+    args = ["uv", "pip", "install", "--python", str(python), str(project)]
+    _checked("mutants", args, cwd=worktree)
+
+
+def _rebound_selection(selection: Mapping[str, Any], head_tree: Path, out_path: Path) -> None:
+    """Write a copy of the captured selection bound to the mutated tree.
+
+    The plugin refuses a selection whose tree fingerprint has moved on, which
+    is right in production and wrong here: the mutant is the divergence under
+    test. Only the fingerprint is recomputed, with the plugin's own exclusion
+    semantics; the skip set stays exactly what acquit proved for the PR.
+    """
+    artifacts = selection.get("artifacts")
+    exclude = (
+        frozenset(value for value in artifacts.values() if isinstance(value, str))
+        if isinstance(artifacts, Mapping)
+        else frozenset()
+    )
+    root = vcs.repo_root(head_tree).resolve()
+    fingerprint = vcs.working_tree_fingerprint(root, exclude)
+    document = dict(selection)
+    tree = document.get("tree")
+    rebound = dict(tree) if isinstance(tree, Mapping) else {}
+    rebound["fingerprint"] = fingerprint
+    document["tree"] = rebound
+    out_path.write_text(to_canonical_json(document), encoding="utf-8")
+
+
+def _run_mutant_suite(
+    stage: str,
+    worktree: Path,
+    python: Path,
+    workdir: Path,
+    selection_file: Path | None,
+    stop_on_first: bool,
+) -> tuple[bool, float, str]:
+    """One pytest run against the mutated tree: (killed, seconds, stdout).
+
+    Exit 0 means the mutant survived. Exit 1 (test failures) and exit 2
+    (collection interrupted, the import-breaking mutants) both mean the run
+    caught it. Anything else is a broken run, which excludes the mutant.
+    """
+    env = _suite_env(workdir)
+    # a fresh .pyc would change the tree between rebinding and verification
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    env.pop(ENV_CANARY, None)
+    env.pop(ENV_SELECTION_FILE, None)
+    if selection_file is not None:
+        env[ENV_SELECTION_FILE] = str(selection_file)
+    args = [str(python), "-m", "pytest", "-q", "--tb=no", "-p", "no:cacheprovider"]
+    if stop_on_first:
+        args.append("-x")
+    started = time.monotonic()
+    completed = _run_step(stage, args, cwd=worktree, env=env, timeout=_MUTANT_TIMEOUT_SECONDS)
+    seconds = time.monotonic() - started
+    stdout = completed.stdout.decode("utf-8", errors="replace")
+    if completed.returncode not in (0, 1, 2):
+        tail = stdout.strip()[-2000:]
+        raise StepFailure(stage, f"pytest exited with {completed.returncode}: {tail}")
+    return completed.returncode != 0, seconds, stdout
+
+
+def _applied_status(stdout: str) -> str | None:
+    """The plugin's one status line, printed even under -q; None if absent."""
+    for line in stdout.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("acquit:") and "selection" in stripped:
+            return stripped
+    return None
+
+
+def _mutants_block(
+    requested: int, entries: list[dict[str, Any]], errors: list[dict[str, Any]]
+) -> dict[str, Any]:
+    kills = [
+        (bool(entry["killed_by_selected"]), bool(entry["killed_by_full"])) for entry in entries
+    ]
+    return {
+        "requested": requested,
+        "entries": entries,
+        "errors": errors,
+        "detection_parity": round(detection_parity(kills), 4),
+    }
+
+
+def run_mutation_arm(
+    head_tree: Path,
+    python: Path,
+    pr: PrRecord,
+    head_run: SuiteRun,
+    select_run: SelectRun,
+    settings: RunSettings,
+) -> dict[str, Any]:
+    """Inject up to --mutants first-order mutants and record who kills them.
+
+    Per mutant: the acquit-selected set runs first (the captured head
+    selection applied through the real pytest plugin, re-bound to the mutated
+    tree), then the full suite with -x. The selected set must kill whatever
+    the full suite kills. Per-mutant failures are recorded and skipped.
+    """
+    entries: list[dict[str, Any]] = []
+    errors: list[dict[str, Any]] = []
+    if not _suite_is_green(head_run.outcomes):
+        # a pre-existing failure would count as a kill for every mutant
+        errors.append({"stage": "mutants", "reason": "head suite is not green, kills ambiguous"})
+        return _mutants_block(settings.mutants, entries, errors)
+    try:
+        per_file: dict[str, list[Mutant]] = {}
+        for path in _changed_python_files(head_tree, pr):
+            try:
+                source = (head_tree / path).read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError) as error:
+                errors.append({"stage": "mutant-read", "file": path, "reason": str(error)})
+                continue
+            per_file[path] = enumerate_mutants(source)
+        plan = plan_mutants(per_file, settings.mutants)
+        if plan:
+            _install_selection_plugin(python, head_tree)
+    except (StepFailure, AcquitError) as error:
+        errors.append({"stage": "mutants", "reason": str(error)})
+        return _mutants_block(settings.mutants, entries, errors)
+    selective = select_run.selection.get("mode") == "selective"
+    rebound_path = settings.workdir / f"pr-{pr.number:06d}-mutant-selection.json"
+    for path, mutant in plan:
+        target_file = head_tree / path
+        record: dict[str, Any] = {
+            "file": path,
+            "line": mutant.line,
+            "col": mutant.col,
+            "kind": str(mutant.kind),
+        }
+        try:
+            original = target_file.read_bytes()
+        except OSError as error:
+            errors.append({**record, "stage": "mutant-apply", "reason": str(error)})
+            continue
+        outcome: tuple[bool, float, bool, float] | None = None
+        restored = True
+        try:
+            target_file.write_text(mutant.source, encoding="utf-8")
+            _rebound_selection(select_run.selection, head_tree, rebound_path)
+            selected_killed, selected_seconds, stdout = _run_mutant_suite(
+                "mutant-selected", head_tree, python, settings.workdir, rebound_path, False
+            )
+            status = _applied_status(stdout)
+            if selective and (status is None or "applied" not in status):
+                # a refused selection runs everything and would fake parity
+                raise StepFailure(
+                    "mutant-selected",
+                    f"selection was not applied: {status or 'no acquit status line'}",
+                )
+            full_killed, full_seconds, _ = _run_mutant_suite(
+                "mutant-full", head_tree, python, settings.workdir, None, True
+            )
+            outcome = (selected_killed, selected_seconds, full_killed, full_seconds)
+        except (StepFailure, AcquitError, OSError) as error:
+            errors.append({**record, "stage": "mutant-run", "reason": str(error)})
+        finally:
+            try:
+                target_file.write_bytes(original)
+            except OSError as error:
+                errors.append({**record, "stage": "mutant-restore", "reason": str(error)})
+                restored = False
+        if not restored:
+            # a tree stuck mutated would poison every following measurement
+            break
+        if outcome is None:
+            continue
+        selected_killed, selected_seconds, full_killed, full_seconds = outcome
+        entries.append(
+            {
+                **record,
+                "description": mutant.description,
+                "killed_by_selected": selected_killed,
+                "killed_by_full": full_killed,
+                "selected_seconds": round(selected_seconds, 3),
+                "full_seconds": round(full_seconds, 3),
+            }
+        )
+    return _mutants_block(settings.mutants, entries, errors)
+
+
 def _skip_paths(selection: Mapping[str, Any]) -> tuple[str, ...]:
     entries = selection.get("skip")
     if not isinstance(entries, list):
@@ -332,10 +586,11 @@ def _payload(
     select_run: SelectRun,
     skip_paths: tuple[str, ...],
     safety: SafetyResult,
+    mutants: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     digest = digest_report(select_run.report)
     durations = base_run.outcomes.file_durations
-    return {
+    payload: dict[str, Any] = {
         "schema": RESULT_SCHEMA,
         "number": pr.number,
         "base_sha": pr.base_sha,
@@ -356,6 +611,9 @@ def _payload(
         "head_suite_seconds": round(head_run.seconds, 3),
         "per_file_durations": {path: round(durations[path], 3) for path in sorted(durations)},
     }
+    if mutants is not None:
+        payload["mutants"] = mutants
+    return payload
 
 
 def replay_pr(
@@ -365,6 +623,7 @@ def replay_pr(
     fetch_pr_commits(mirror, pr)
     base_tree = settings.workdir / f"wt-{pr.number}-base"
     head_tree = settings.workdir / f"wt-{pr.number}-head"
+    mutants_block: dict[str, Any] | None = None
     try:
         add_worktree(mirror, pr.base_sha, base_tree)
         base_python = make_venv(
@@ -377,6 +636,10 @@ def replay_pr(
         )
         head_run = run_suite("head-suite", head_tree, head_python, settings.workdir)
         select_run = run_acquit(head_tree, pr, settings)
+        if settings.mutants > 0:
+            mutants_block = run_mutation_arm(
+                head_tree, head_python, pr, head_run, select_run, settings
+            )
     finally:
         remove_worktree(mirror, base_tree)
         remove_worktree(mirror, head_tree)
@@ -387,7 +650,7 @@ def replay_pr(
         skip_paths,
         settings.quarantine,
     )
-    return _payload(pr, base_run, head_run, select_run, skip_paths, safety)
+    return _payload(pr, base_run, head_run, select_run, skip_paths, safety, mutants_block)
 
 
 def _verify_constraints(manifest: Manifest, constraints: Path | None) -> None:
@@ -468,6 +731,20 @@ def run_study(settings: RunSettings) -> int:
             f"study: pr {pr.number}: mode={payload['mode']} "
             f"skipped={payload['skipped']}/{payload['total']} replay={verdict}"
         )
+        block = payload.get("mutants")
+        if isinstance(block, dict):
+            ran = [entry for entry in block.get("entries", []) if isinstance(entry, Mapping)]
+            full_kills = sum(1 for entry in ran if entry.get("killed_by_full") is True)
+            missed = sum(
+                1
+                for entry in ran
+                if entry.get("killed_by_full") is True
+                and entry.get("killed_by_selected") is not True
+            )
+            print(
+                f"study: pr {pr.number}: mutants ran={len(ran)} "
+                f"killed_by_full={full_kills} missed={missed}"
+            )
     if unsafe_prs:
         print(
             f"study: FAILED: {unsafe_prs} pr(s) had an unsafe skip or a skipped new test",
