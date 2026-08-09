@@ -55,13 +55,22 @@ def _explain_skipped(path: str, witness_id: str, result: SelectResult) -> tuple[
     witness = next(w for w in result.decision.witnesses if w.id == witness_id)
     closure = result.decision.closures[witness.closure_hash]
     changed = ", ".join(witness.changed) if witness.changed else "(empty)"
-    return (
+    lines = [
         f"{path}: skipped",
         f"  witness: {witness.id}",
         f"  claim: {witness.claim}",
         f"  closure: {len(closure)} files, hash {witness.closure_hash}",
         f"  changed: {changed}",
-    )
+    ]
+    if witness.narrowed:
+        lines.append(f"  narrowed: {len(witness.narrowed)} import-time-only file(s)")
+        for entry in witness.narrowed:
+            crossed = ", ".join(f"{init.path} [{init.head_tier}]" for init in entry.inits)
+            lines.append(
+                f"    {entry.path}: blob {entry.base_blob[:12]} -> {entry.head_blob[:12]} "
+                f"via {crossed}"
+            )
+    return tuple(lines)
 
 
 def _explain_selected(path: str, reasons: tuple[str, ...], graph: BuiltGraph) -> tuple[str, ...]:

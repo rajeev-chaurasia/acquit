@@ -2,14 +2,21 @@
 
 import json
 import shutil
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import pytest
-from conftest import ScenarioRepo
+from conftest import ScenarioRepo, commit_all, init_repo, module_test_source, write_files
 
 from acquit.cli import main
+from acquit.config import load_config
 from acquit.errors import ExitCode
+from acquit.pipeline import snapshot_tree
+from acquit.pytestmap.pytestcfg import load_pytest_config
+from acquit.select import import_closure
+from acquit.vcs import blob_shas
+from acquit.witness import CLAIM_NARROWED, closure_hash
 
 pytestmark = pytest.mark.skipif(shutil.which("git") is None, reason="git is not available")
 
@@ -232,3 +239,235 @@ def test_replay_missing_witnesses_file_is_a_usage_error(
     exit_code = main(["replay", str(report), "--witnesses", str(tmp_path / "missing.json")])
 
     assert exit_code == ExitCode.USAGE
+
+
+# ---------------------------------------------------------------------------
+# Narrowed witnesses (ADR 0008): replay rebuilds both snapshots
+# ---------------------------------------------------------------------------
+
+PKG_INIT = (
+    '"""Pure re-exporter."""\n\nfrom .console import Console\nfrom .table import Table\n\n'
+    '__all__ = ["Console", "Table"]\n'
+)
+PKG_TABLE = (
+    '"""Inert sibling."""\n\n\nclass Table:\n    def render(self) -> str:\n        return "table"\n'
+)
+PKG_TABLE_EDIT = (
+    '"""Inert sibling."""\n\n\nclass Table:\n    def render(self) -> str:\n        return "grid"\n'
+)
+PKG_CONSOLE = (
+    '"""Not inert."""\n\nSTATE = dict(fancy="*")\n\n\nclass Console:\n'
+    '    def banner(self) -> str:\n        return "console"\n'
+)
+PKG_CONSOLE_EDIT = (
+    '"""Not inert."""\n\nSTATE = dict(fancy="!")\n\n\nclass Console:\n'
+    '    def banner(self) -> str:\n        return "console"\n'
+)
+
+
+@dataclass(frozen=True)
+class NarrowedRepo:
+    """A commit chain exercising narrowed selection: base, inert edit, busy edit."""
+
+    path: Path
+    base: str
+    table_edit: str
+    console_edit: str
+
+
+@pytest.fixture(scope="module")
+def narrowed_repo(tmp_path_factory: pytest.TempPathFactory) -> NarrowedRepo:
+    if shutil.which("git") is None:
+        pytest.skip("git is not available")
+    repo = init_repo(tmp_path_factory.mktemp("narrowed"))
+    write_files(
+        repo,
+        {
+            ".acquit.toml": "narrowing = true\n",
+            "pkg/__init__.py": PKG_INIT,
+            "pkg/table.py": PKG_TABLE,
+            "pkg/console.py": PKG_CONSOLE,
+            "free.py": "FREE = 1\n",
+            "test_console.py": (
+                "from pkg import Console\n\n\ndef test_console():\n    assert Console\n"
+            ),
+            "test_table.py": "from pkg import Table\n\n\ndef test_table():\n    assert Table\n",
+            "test_free.py": module_test_source("free"),
+        },
+    )
+    base = commit_all(repo, "base")
+    write_files(repo, {"pkg/table.py": PKG_TABLE_EDIT})
+    table_edit = commit_all(repo, "edit inert sibling body")
+    write_files(repo, {"pkg/console.py": PKG_CONSOLE_EDIT})
+    console_edit = commit_all(repo, "edit busy sibling")
+    return NarrowedRepo(path=repo, base=base, table_edit=table_edit, console_edit=console_edit)
+
+
+def _select_into(repo: Path, base: str, head: str, out: Path) -> tuple[Path, Path]:
+    report = out / "report.json"
+    witnesses = out / "witnesses.json"
+    with pytest.MonkeyPatch.context() as patcher:
+        patcher.chdir(repo)
+        exit_code = main(
+            [
+                "select",
+                "--base",
+                base,
+                "--head",
+                head,
+                "--report",
+                str(report),
+                "--selection",
+                str(out / "selection.json"),
+                "--witnesses",
+                str(witnesses),
+            ]
+        )
+    assert exit_code == ExitCode.OK
+    return report, witnesses
+
+
+@pytest.fixture(scope="module")
+def narrowed_docs(
+    narrowed_repo: NarrowedRepo, tmp_path_factory: pytest.TempPathFactory
+) -> tuple[Path, Path]:
+    out = tmp_path_factory.mktemp("narrowed-docs")
+    return _select_into(narrowed_repo.path, narrowed_repo.base, narrowed_repo.table_edit, out)
+
+
+def _narrowed_witness_entry(document: dict[str, Any]) -> dict[str, Any]:
+    entry = next(w for w in document["witnesses"] if w.get("narrowed"))
+    assert isinstance(entry, dict)
+    return entry
+
+
+def test_replay_verifies_narrowed_witnesses(
+    narrowed_docs: tuple[Path, Path],
+    narrowed_repo: NarrowedRepo,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    report, witnesses = narrowed_docs
+    document = _load(witnesses)
+    entry = _narrowed_witness_entry(document)
+    assert entry["test"] == "test_console.py"
+    assert entry["claim"] == CLAIM_NARROWED
+    monkeypatch.chdir(narrowed_repo.path)
+
+    exit_code = main(["replay", str(report), "--witnesses", str(witnesses)])
+
+    assert exit_code == ExitCode.OK
+    assert capsys.readouterr().out.strip() == "replay ok: 2 witnesses verified"
+
+
+def test_replay_detects_a_tampered_narrowed_blob_sha(
+    narrowed_docs: tuple[Path, Path],
+    narrowed_repo: NarrowedRepo,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    report, witnesses = narrowed_docs
+    document = _load(witnesses)
+    _narrowed_witness_entry(document)["narrowed"][0]["base_blob"] = "0" * 40
+    tampered = _dump(document, tmp_path / "witnesses.json")
+    monkeypatch.chdir(narrowed_repo.path)
+
+    exit_code = main(["replay", str(report), "--witnesses", str(tampered)])
+
+    assert exit_code == ExitCode.REPLAY_MISMATCH
+    assert "blob sha mismatch for pkg/table.py" in capsys.readouterr().err
+
+
+def test_replay_detects_a_tampered_init_tier(
+    narrowed_docs: tuple[Path, Path],
+    narrowed_repo: NarrowedRepo,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    report, witnesses = narrowed_docs
+    document = _load(witnesses)
+    entry = _narrowed_witness_entry(document)
+    entry["narrowed"][0]["inits"][0]["base_tier"] = "star-over-literal-all"
+    tampered = _dump(document, tmp_path / "witnesses.json")
+    monkeypatch.chdir(narrowed_repo.path)
+
+    exit_code = main(["replay", str(report), "--witnesses", str(tampered)])
+
+    assert exit_code == ExitCode.REPLAY_MISMATCH
+    assert "relied inits mismatch for pkg/table.py (condition 5)" in capsys.readouterr().err
+
+
+def test_replay_rejects_a_narrowed_report_without_a_base_sha(
+    narrowed_docs: tuple[Path, Path],
+    narrowed_repo: NarrowedRepo,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    report, witnesses = narrowed_docs
+    document = _load(report)
+    document["run"]["base_sha"] = None
+    tampered = _dump(document, tmp_path / "report.json")
+    monkeypatch.chdir(narrowed_repo.path)
+
+    exit_code = main(["replay", str(tampered), "--witnesses", str(witnesses)])
+
+    assert exit_code == ExitCode.REPLAY_MISMATCH
+    assert "need a base sha" in capsys.readouterr().err
+
+
+def test_replay_rejects_forged_inertness_for_a_busy_sibling(
+    narrowed_repo: NarrowedRepo,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # A genuine run over the console edit refuses narrowing (condition 2).
+    # Forge the skip anyway: internally consistent documents claiming the
+    # non-inert sibling was import-time-only. Replay must re-derive and refuse.
+    repo = narrowed_repo.path
+    base, head = narrowed_repo.table_edit, narrowed_repo.console_edit
+    report_path, witnesses_path = _select_into(repo, base, head, tmp_path)
+    report = _load(report_path)
+    witnesses = _load(witnesses_path)
+
+    snapshot = snapshot_tree(head, repo, load_config(repo), load_pytest_config(repo), None)
+    closure = import_closure(snapshot.graph, "test_table.py")
+    forged_hash = closure_hash(closure)
+    witnesses["closures"][forged_hash] = sorted(closure)
+    witnesses["witnesses"].append(
+        {
+            "id": "w-000099",
+            "test": "test_table.py",
+            "closure": forged_hash,
+            "changed": ["pkg/console.py"],
+            "claim": CLAIM_NARROWED,
+            "narrowed": [
+                {
+                    "path": "pkg/console.py",
+                    "base_blob": blob_shas(base, repo)["pkg/console.py"],
+                    "head_blob": blob_shas(head, repo)["pkg/console.py"],
+                    "inits": [
+                        {
+                            "path": "pkg/__init__.py",
+                            "base_tier": "strict",
+                            "head_tier": "strict",
+                        }
+                    ],
+                }
+            ],
+        }
+    )
+    report["tests"]["skipped"].append(
+        {"path": "test_table.py", "witness": "w-000099", "narrowed": True}
+    )
+    forged_report = _dump(report, tmp_path / "forged-report.json")
+    forged_witnesses = _dump(witnesses, tmp_path / "forged-witnesses.json")
+    monkeypatch.chdir(repo)
+
+    exit_code = main(["replay", str(forged_report), "--witnesses", str(forged_witnesses)])
+
+    assert exit_code == ExitCode.REPLAY_MISMATCH
+    assert "not-import-inert" in capsys.readouterr().err

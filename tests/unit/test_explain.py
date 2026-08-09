@@ -10,7 +10,7 @@ from acquit.cli import main
 from acquit.errors import ExitCode
 from acquit.explain import explain_lines
 from acquit.pipeline import SelectResult, run_select
-from acquit.witness import CLAIM_DISJOINT
+from acquit.witness import CLAIM_DISJOINT, CLAIM_NARROWED
 
 pytestmark = pytest.mark.skipif(shutil.which("git") is None, reason="git is not available")
 
@@ -58,6 +58,67 @@ def test_explain_skipped_prints_witness_details(chain_result: SelectResult) -> N
     assert f"  claim: {CLAIM_DISJOINT}" in lines
     assert any(line.startswith("  closure: 2 files, hash ") for line in lines)
     assert "  changed: leaf.py" in lines
+
+
+@pytest.fixture(scope="module")
+def narrowed_result(tmp_path_factory: pytest.TempPathFactory) -> SelectResult:
+    if shutil.which("git") is None:
+        pytest.skip("git is not available")
+    repo = init_repo(tmp_path_factory.mktemp("narrowed-explain"))
+    write_files(
+        repo,
+        {
+            ".acquit.toml": "narrowing = true\n",
+            "pkg/__init__.py": (
+                '"""Pure re-exporter."""\n\nfrom .console import Console\n'
+                'from .table import Table\n\n__all__ = ["Console", "Table"]\n'
+            ),
+            "pkg/table.py": (
+                '"""Inert sibling."""\n\n\nclass Table:\n'
+                '    def render(self) -> str:\n        return "table"\n'
+            ),
+            "pkg/console.py": (
+                '"""Not inert."""\n\nSTATE = dict(fancy="*")\n\n\nclass Console:\n    pass\n'
+            ),
+            "test_console.py": (
+                "from pkg import Console\n\n\ndef test_console():\n    assert True\n"
+            ),
+            "test_table.py": "from pkg import Table\n\n\ndef test_table():\n    assert Table\n",
+        },
+    )
+    base = commit_all(repo, "base")
+    write_files(
+        repo,
+        {
+            "pkg/table.py": (
+                '"""Inert sibling."""\n\n\nclass Table:\n'
+                '    def render(self) -> str:\n        return "grid"\n'
+            )
+        },
+    )
+    head = commit_all(repo, "edit inert sibling body")
+    return run_select(base, head, repo)
+
+
+def test_explain_narrowed_skip_renders_the_witness_block(narrowed_result: SelectResult) -> None:
+    lines, code = explain_lines("test_console.py", narrowed_result)
+
+    assert code == ExitCode.OK
+    assert lines[0] == "test_console.py: skipped"
+    assert f"  claim: {CLAIM_NARROWED}" in lines
+    assert "  narrowed: 1 import-time-only file(s)" in lines
+    assert any(
+        line.startswith("    pkg/table.py: blob ") and "via pkg/__init__.py [strict]" in line
+        for line in lines
+    )
+
+
+def test_explain_renders_narrowing_refused_reasons(narrowed_result: SelectResult) -> None:
+    lines, code = explain_lines("test_table.py", narrowed_result)
+
+    assert code == ExitCode.OK
+    assert lines[0] == "test_table.py: selected"
+    assert "  reason: narrowing-refused:inside-semantic-closure" in lines
 
 
 def test_explain_always_run_prints_the_finding(chain_result: SelectResult) -> None:

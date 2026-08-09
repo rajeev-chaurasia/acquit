@@ -2,21 +2,26 @@
 
 Replay rebuilds the head snapshot from scratch (no cache), recomputes every
 skipped test's import closure, and re-verifies every witness from first
-principles. This is what makes witnesses evidence rather than logs.
+principles. A report with narrowed witnesses (ADR 0008) additionally gets
+its base snapshot rebuilt, also cache-free, and every narrowing condition
+re-derived with the production checkers. This is what makes witnesses
+evidence rather than logs.
 """
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from acquit import vcs
 from acquit.config import load_config
 from acquit.constants import REPORT_SCHEMA, SELECTION_SCHEMA, WITNESSES_SCHEMA
-from acquit.errors import ExitCode, GraphError
+from acquit.errors import ExitCode, GraphError, VcsError
 from acquit.pipeline import Snapshot, snapshot_tree
 from acquit.pytestmap.pytestcfg import load_pytest_config
-from acquit.select import import_closure
-from acquit.witness import Witness, closure_hash, verify_witness
+from acquit.select import NarrowingContext, NarrowingJudge, NarrowingRefusal, import_closure
+from acquit.vcs import ChangedFile
+from acquit.witness import NarrowedFile, ReliedInit, Witness, closure_hash, verify_witness
 
 Lines = tuple[str, ...]
 
@@ -26,6 +31,26 @@ def _load_document(path: Path, schema: str) -> dict[str, Any]:
     if not isinstance(data, dict) or data.get("schema") != schema:
         raise ValueError(f"{path} is not a {schema} document")
     return data
+
+
+def _narrowed_from_entry(entry: dict[str, Any]) -> tuple[NarrowedFile, ...]:
+    blocks = entry.get("narrowed", [])
+    return tuple(
+        NarrowedFile(
+            path=item["path"],
+            base_blob=item["base_blob"],
+            head_blob=item["head_blob"],
+            inits=tuple(
+                ReliedInit(
+                    path=init["path"],
+                    base_tier=init["base_tier"],
+                    head_tier=init["head_tier"],
+                )
+                for init in item["inits"]
+            ),
+        )
+        for item in blocks
+    )
 
 
 def _witnesses_by_id(doc: dict[str, Any], failures: list[str]) -> dict[str, Witness]:
@@ -42,6 +67,7 @@ def _witnesses_by_id(doc: dict[str, Any], failures: list[str]) -> dict[str, Witn
                 closure_hash=entry["closure"],
                 changed=tuple(entry["changed"]),
                 claim=entry["claim"],
+                narrowed=_narrowed_from_entry(entry),
             )
         except (KeyError, TypeError) as error:
             failures.append(f"witnesses doc: malformed witness entry: {error!r}")
@@ -50,11 +76,63 @@ def _witnesses_by_id(doc: dict[str, Any], failures: list[str]) -> dict[str, Witn
     return out
 
 
+def _full_changed_paths(changed: tuple[ChangedFile, ...]) -> tuple[str, ...]:
+    """The changed set decide() records into witnesses: head plus base paths."""
+    paths = {change.path for change in changed}
+    paths.update(change.old_path for change in changed if change.old_path is not None)
+    return tuple(sorted(paths))
+
+
+@dataclass(frozen=True, slots=True)
+class _NarrowedReplay:
+    """Both-snapshot re-derivation for narrowed witnesses (ADR 0008)."""
+
+    judge: NarrowingJudge
+    changed: tuple[str, ...]
+
+    def check(self, path: str, witness: Witness, failures: list[str]) -> bool:
+        if witness.changed != self.changed:
+            failures.append(
+                f"{path}: witness {witness.id} changed set does not match the diff "
+                f"between the recorded commits"
+            )
+            return False
+        outcome = self.judge.judge(witness.test)
+        if isinstance(outcome, NarrowingRefusal):
+            failures.append(
+                f"{path}: witness {witness.id} narrowing does not re-derive: "
+                f"{outcome.reason} ({outcome.subject})"
+            )
+            return False
+        if tuple(entry.path for entry in outcome) != tuple(
+            entry.path for entry in witness.narrowed
+        ):
+            failures.append(
+                f"{path}: witness {witness.id} narrowed listing does not match "
+                f"the recomputed intersection"
+            )
+            return False
+        for recorded, derived in zip(witness.narrowed, outcome, strict=True):
+            if (recorded.base_blob, recorded.head_blob) != (derived.base_blob, derived.head_blob):
+                failures.append(
+                    f"{path}: witness {witness.id} blob sha mismatch for {recorded.path}"
+                )
+                return False
+            if recorded.inits != derived.inits:
+                failures.append(
+                    f"{path}: witness {witness.id} relied inits mismatch for {recorded.path} "
+                    f"(condition 5)"
+                )
+                return False
+        return True
+
+
 def _check_skipped(
     entry: dict[str, Any],
     snapshot: Snapshot,
     witnesses: dict[str, Witness],
     closures: dict[str, Any],
+    narrower: _NarrowedReplay | None,
     failures: list[str],
 ) -> bool:
     path, witness_id = entry["path"], entry["witness"]
@@ -84,6 +162,13 @@ def _check_skipped(
     if not verify_witness(witness, closure, witness.changed):
         failures.append(f"{path}: witness {witness_id} failed verification")
         return False
+    if witness.narrowed:
+        if narrower is None:
+            failures.append(
+                f"{path}: witness {witness_id} is narrowed but no base snapshot is available"
+            )
+            return False
+        return narrower.check(path, witness, failures)
     return True
 
 
@@ -145,9 +230,9 @@ def run_replay(
         return ((message,), ExitCode.USAGE)
 
     repo = vcs.repo_root(cwd)
-    snapshot = snapshot_tree(
-        head_sha, repo, load_config(repo), load_pytest_config(repo), cache=None
-    )
+    acquit_config = load_config(repo)
+    pytest_config = load_pytest_config(repo)
+    snapshot = snapshot_tree(head_sha, repo, acquit_config, pytest_config, cache=None)
 
     failures: list[str] = []
     fresh_hash = snapshot.graph.graph_hash
@@ -171,9 +256,36 @@ def run_replay(
         failures.append("witnesses doc: 'closures' is not an object")
         closures = {}
 
+    # Narrowed witnesses need both commits: rebuild the base snapshot with no
+    # cache and re-derive every condition from the trees, not the record.
+    narrower: _NarrowedReplay | None = None
+    if any(witness.narrowed for witness in witnesses.values()):
+        base_sha = report.get("run", {}).get("base_sha")
+        if not isinstance(base_sha, str):
+            failures.append("narrowed witnesses need a base sha in the report run block")
+        else:
+            try:
+                base_snapshot = snapshot_tree(
+                    base_sha, repo, acquit_config, pytest_config, cache=None
+                )
+                changed = vcs.changed_files(base_sha, head_sha, repo)
+            except VcsError as error:
+                failures.append(f"narrowed witnesses: cannot rebuild the base commit: {error}")
+            else:
+                ctx = NarrowingContext(
+                    head_facts=snapshot.facts,
+                    base_facts=base_snapshot.facts,
+                    head_blobs=snapshot.blob_shas,
+                    base_blobs=base_snapshot.blob_shas,
+                )
+                narrower = _NarrowedReplay(
+                    judge=NarrowingJudge(snapshot.graph, base_snapshot.graph, ctx, changed),
+                    changed=_full_changed_paths(changed),
+                )
+
     verified = 0
     for entry in report.get("tests", {}).get("skipped", []):
-        if _check_skipped(entry, snapshot, witnesses, closures, failures):
+        if _check_skipped(entry, snapshot, witnesses, closures, narrower, failures):
             verified += 1
 
     if failures:

@@ -14,7 +14,7 @@ from acquit.policy.model import RuleId
 from acquit.pytestmap.pytestcfg import PytestConfig, load_pytest_config
 from acquit.report import SelectionMode
 from acquit.select import Decision, import_closure
-from acquit.witness import verify_witness
+from acquit.witness import CLAIM_NARROWED, ReliedInit, verify_witness
 
 pytestmark = pytest.mark.skipif(shutil.which("git") is None, reason="git is not available")
 
@@ -264,6 +264,97 @@ def test_identical_files_keep_their_own_paths_through_the_cache(
     graph = snapshot.graph
     assert graph.digraph.has_edge(graph.index_of["a.py"], graph.index_of["shared.py"])
     assert graph.digraph.has_edge(graph.index_of["b.py"], graph.index_of["shared.py"])
+
+
+PKG_INIT = (
+    '"""Pure re-exporter."""\n\nfrom .console import Console\nfrom .table import Table\n\n'
+    '__all__ = ["Console", "Table"]\n'
+)
+PKG_TABLE = (
+    '"""Inert sibling."""\n\n\nclass Table:\n    def render(self) -> str:\n        return "table"\n'
+)
+PKG_TABLE_EDIT = (
+    '"""Inert sibling."""\n\n\nclass Table:\n    def render(self) -> str:\n        return "grid"\n'
+)
+PKG_CONSOLE = (
+    '"""Not inert."""\n\nSTATE = dict(fancy="*")\n\n\nclass Console:\n'
+    '    def banner(self) -> str:\n        return "console"\n'
+)
+
+
+def write_reexport_repo(builder: RepoBuilder, *, narrowing: bool) -> str:
+    files = {
+        "pkg/__init__.py": PKG_INIT,
+        "pkg/table.py": PKG_TABLE,
+        "pkg/console.py": PKG_CONSOLE,
+        "free.py": "FREE = 1\n",
+        "test_console.py": "from pkg import Console\n\n\ndef test_console():\n    assert Console\n",
+        "test_table.py": "from pkg import Table\n\n\ndef test_table():\n    assert Table\n",
+        "test_free.py": module_test_source("free"),
+    }
+    if narrowing:
+        files[".acquit.toml"] = "narrowing = true\n"
+    builder.write(files)
+    return builder.commit("base")
+
+
+def test_narrowing_enabled_skips_the_other_symbol_consumer(repo_builder: RepoBuilder) -> None:
+    base = write_reexport_repo(repo_builder, narrowing=True)
+    repo_builder.write({"pkg/table.py": PKG_TABLE_EDIT})
+    head = repo_builder.commit("edit table body")
+
+    result = run_select(base, head, repo_builder.path)
+
+    assert result.decision.mode is SelectionMode.SELECTIVE
+    assert selected_paths(result.decision) == {"test_table.py"}
+    assert reasons_of(result.decision, "test_table.py") == (
+        "narrowing-refused:inside-semantic-closure",
+        "reachable-from:pkg/table.py",
+    )
+    skipped = {entry.path: entry for entry in result.decision.skipped}
+    assert set(skipped) == {"test_console.py", "test_free.py"}
+    assert skipped["test_console.py"].narrowed
+    assert not skipped["test_free.py"].narrowed
+
+    witness = next(w for w in result.decision.witnesses if w.test == "test_console.py")
+    assert witness.claim == CLAIM_NARROWED
+    (block,) = witness.narrowed
+    assert block.path == "pkg/table.py"
+    assert block.base_blob == vcs.blob_shas(base, repo_builder.path)["pkg/table.py"]
+    assert block.head_blob == vcs.blob_shas(head, repo_builder.path)["pkg/table.py"]
+    assert block.inits == (
+        ReliedInit(path="pkg/__init__.py", base_tier="strict", head_tier="strict"),
+    )
+    closure = import_closure(result.head.graph, "test_console.py")
+    assert verify_witness(witness, closure, {"pkg/table.py"})
+
+
+def test_narrowing_disabled_selects_both_consumers(repo_builder: RepoBuilder) -> None:
+    base = write_reexport_repo(repo_builder, narrowing=False)
+    repo_builder.write({"pkg/table.py": PKG_TABLE_EDIT})
+    head = repo_builder.commit("edit table body")
+
+    result = run_select(base, head, repo_builder.path)
+
+    assert selected_paths(result.decision) == {"test_console.py", "test_table.py"}
+    for entry in result.decision.selected:
+        assert all(not reason.startswith("narrowing") for reason in entry.reasons)
+    assert skipped_paths(result.decision) == {"test_free.py"}
+    assert all(not entry.narrowed for entry in result.decision.skipped)
+    assert all(not witness.narrowed for witness in result.decision.witnesses)
+
+
+def test_narrowing_never_engages_on_the_working_tree(repo_builder: RepoBuilder) -> None:
+    base = write_reexport_repo(repo_builder, narrowing=True)
+    repo_builder.write({"pkg/table.py": PKG_TABLE_EDIT})
+
+    result = run_select(base, None, repo_builder.path)
+
+    assert result.head_sha is None
+    assert selected_paths(result.decision) == {"test_console.py", "test_table.py"}
+    for entry in result.decision.selected:
+        assert all(not reason.startswith("narrowing") for reason in entry.reasons)
+    assert all(not entry.narrowed for entry in result.decision.skipped)
 
 
 def test_unparseable_file_taints_and_forces_its_reachers(repo_builder: RepoBuilder) -> None:

@@ -6,7 +6,7 @@ Everything downstream of the I/O boundary stays deterministic.
 """
 
 from collections.abc import Mapping
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 from acquit import vcs
@@ -22,7 +22,7 @@ from acquit.policy.model import ScopeKind
 from acquit.pytestmap.conftree import UNPARSEABLE_MARKER, ConftestFacts, inspect_conftest
 from acquit.pytestmap.discover import classify_file, discover_test_files
 from acquit.pytestmap.pytestcfg import PytestConfig, load_pytest_config
-from acquit.select import Decision, decide, escalated_findings
+from acquit.select import Decision, NarrowingContext, decide, escalated_findings
 from acquit.vcs import ChangedFile, ChangeStatus
 
 
@@ -38,6 +38,9 @@ class Snapshot:
     index: ModuleIndex
     conftest_facts: Mapping[str, ConftestFacts]
     graph: BuiltGraph
+    # Blob shas of the analyzed .py files; the narrowed witness records them
+    # per intersecting file and replay checks them against fresh snapshots.
+    blob_shas: Mapping[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -150,6 +153,7 @@ def snapshot_tree(
         index=index,
         conftest_facts=conftest_facts,
         graph=graph,
+        blob_shas=shas,
     )
 
 
@@ -236,20 +240,44 @@ def run_select(
     needs_base = any(
         change.status in (ChangeStatus.DELETED, ChangeStatus.RENAMED) for change in changed
     )
+    # Narrowing needs the whole base snapshot (facts and blob shas for the
+    # relational conditions), not just the graph. Working trees never narrow:
+    # replay must be able to rebuild both commits.
+    narrowing_wanted = (
+        acquit_config.narrowing
+        and head is not None
+        and any(change.status is ChangeStatus.MODIFIED for change in changed)
+    )
     # A run bound for run-all never consults the base graph, so skip that
     # snapshot: plain GLOBAL findings force run-all, and an escalated
     # GLOBAL_IF_REACHED finding does the same (decide re-applies this check).
     run_all_bound = any(
         finding.scope.kind is ScopeKind.GLOBAL for finding in outcome.findings
     ) or bool(escalated_findings(head_snapshot.graph, outcome.findings))
-    base_graph: BuiltGraph | None = None
-    if needs_base and not run_all_bound:
+    base_snapshot: Snapshot | None = None
+    if (needs_base or narrowing_wanted) and not run_all_bound:
         # The base graph reuses the head pytest and acquit config: sound, because
         # a changed config fires a GLOBAL rule and selective mode is never
         # reached when configs differ.
-        base_graph = snapshot_tree(base, repo, acquit_config, pytest_config, cache).graph
+        base_snapshot = snapshot_tree(base, repo, acquit_config, pytest_config, cache)
+    narrowing = (
+        NarrowingContext(
+            head_facts=head_snapshot.facts,
+            base_facts=base_snapshot.facts,
+            head_blobs=head_snapshot.blob_shas,
+            base_blobs=base_snapshot.blob_shas,
+        )
+        if narrowing_wanted and base_snapshot is not None
+        else None
+    )
 
-    decision = decide(head_snapshot.graph, base_graph, changed, outcome.findings)
+    decision = decide(
+        head_snapshot.graph,
+        None if base_snapshot is None else base_snapshot.graph,
+        changed,
+        outcome.findings,
+        narrowing=narrowing,
+    )
     return SelectResult(
         decision=decision,
         outcome=outcome,

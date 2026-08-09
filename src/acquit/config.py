@@ -12,7 +12,7 @@ from typing import Any
 
 from acquit.errors import PolicyError
 
-_KNOWN_KEYS = frozenset({"roots", "assume_inert", "waive"})
+_KNOWN_KEYS = frozenset({"roots", "assume_inert", "narrowing", "waive"})
 _WAIVER_KEYS = ("rule", "glob", "justification")
 
 
@@ -30,6 +30,9 @@ class AcquitConfig:
     # Globs of resource files the user vouches never affect tests.
     assume_inert: tuple[str, ...] = ()
     waivers: tuple[Waiver, ...] = ()
+    # Re-export narrowing (ADR 0008). Ships disabled; the rollout is
+    # evidence-gated, and working-tree selections never narrow either way.
+    narrowing: bool = False
 
 
 def load_config(repo_root: Path) -> AcquitConfig:
@@ -69,6 +72,7 @@ def _parse(data: dict[str, Any], source: str) -> AcquitConfig:
         roots=_string_tuple(data.get("roots", []), key="roots", source=source),
         assume_inert=_string_tuple(data.get("assume_inert", []), key="assume_inert", source=source),
         waivers=_parse_waivers(data.get("waive", []), source=source),
+        narrowing=_flag(data.get("narrowing", False), key="narrowing", source=source),
     )
 
 
@@ -76,6 +80,12 @@ def _string_tuple(value: Any, key: str, source: str) -> tuple[str, ...]:
     if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
         raise PolicyError(f"{source}: {key!r} must be an array of strings")
     return tuple(value)
+
+
+def _flag(value: Any, key: str, source: str) -> bool:
+    if not isinstance(value, bool):
+        raise PolicyError(f"{source}: {key!r} must be a boolean")
+    return value
 
 
 def _parse_waivers(value: Any, source: str) -> tuple[Waiver, ...]:

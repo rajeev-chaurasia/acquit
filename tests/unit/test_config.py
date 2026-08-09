@@ -155,6 +155,34 @@ def test_invalid_waiver_names_entry(tmp_path: Path, body: str, fragment: str) ->
     assert fragment in str(excinfo.value)
 
 
+def test_narrowing_defaults_to_disabled(tmp_path: Path) -> None:
+    _write(tmp_path / ".acquit.toml", 'roots = ["src"]\n')
+    assert load_config(tmp_path).narrowing is False
+    assert AcquitConfig().narrowing is False
+
+
+def test_narrowing_flag_parses_from_acquit_toml(tmp_path: Path) -> None:
+    _write(tmp_path / ".acquit.toml", "narrowing = true\n")
+    assert load_config(tmp_path).narrowing is True
+
+
+def test_narrowing_flag_parses_from_pyproject(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "pyproject.toml",
+        """
+        [tool.acquit]
+        narrowing = true
+        """,
+    )
+    assert load_config(tmp_path).narrowing is True
+
+
+def test_non_boolean_narrowing_raises(tmp_path: Path) -> None:
+    _write(tmp_path / ".acquit.toml", 'narrowing = "yes"\n')
+    with pytest.raises(PolicyError, match="'narrowing' must be a boolean"):
+        load_config(tmp_path)
+
+
 def test_unknown_top_level_key_raises(tmp_path: Path) -> None:
     _write(tmp_path / ".acquit.toml", 'rootz = ["src"]\n')
     with pytest.raises(PolicyError, match="rootz"):
