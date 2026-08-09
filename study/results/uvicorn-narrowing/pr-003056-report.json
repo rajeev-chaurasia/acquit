@@ -1,0 +1,76 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "docs/release-notes.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "uvicorn/__init__.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "docs/release-notes.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/release-notes.md"
+      },
+      {
+        "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "uvicorn/importer.py"
+      },
+      {
+        "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_main.py"
+      },
+      {
+        "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "uvicorn/main.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 795,
+    "hash": "9bc7d1c73465a0014d2c1730f0e325de2f815e961d1882532886bc0014df7f31",
+    "nodes": 188,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "b57926d3f46348b5773b184cdf53ae8588300b77",
+    "created_at": "2026-08-09T15:08:57+00:00",
+    "head_sha": "e0145a641b13441f6c1515d9eacb9e7de5d6d9ba"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

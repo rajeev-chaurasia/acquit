@@ -1,0 +1,71 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": "uv.lock",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "uv.lock is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "uv.lock"
+      },
+      {
+        "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "uvicorn/importer.py"
+      },
+      {
+        "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_main.py"
+      },
+      {
+        "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "uvicorn/main.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 795,
+    "hash": "9bc7d1c73465a0014d2c1730f0e325de2f815e961d1882532886bc0014df7f31",
+    "nodes": 188,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "ee8e45ca472db17b4aef1d539f209539062d002e",
+    "created_at": "2026-08-09T15:09:13+00:00",
+    "head_sha": "decdd3e80f0f40e0b58dd3aa978f9209f33d50d1"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

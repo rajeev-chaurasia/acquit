@@ -131,7 +131,28 @@ There is a sharper point underneath, and I want it on the record: replay verifie
 
 The narrowing campaign is running now across five repos: the three from the replay study plus uvicorn and black, added because their measured inert rates (30 to 44 percent of submodules) are where narrowing should actually engage. Same harness, same mechanical safety check, plus the mutation arm: synthetic diffs that flip constants and replace function bodies in import-time-only files, asserting that consumers of the mutated file's symbols are selected and that no outcome-changed test hides in a skipped file. As with every other number in this writeup, the table regenerates from committed manifests, and aggregation fails on any unsafe skip.
 
-NARROWING_TABLE_PENDING
+| Repo | PRs analyzed | Excluded | Narrowed skips | Unsafe skips (all) | Replay | Mutation parity |
+| --- | --- | --- | --- | --- | --- | --- |
+| pallets/flask | 41 | 0 | 0 | 0 | 0/0 | not run |
+| Textualize/rich | 64 | 0 | 0 | 0 | 4/4 | not run |
+| encode/httpx | 83 | 0 | 0 | 0 | 4/4 | not run |
+| psf/black | 60 | 0 | 0 | 0 | 1/1 | 100% (105 mutants, 58 killed by full, 0 missed) |
+| encode/uvicorn | 11 | 49 (base suite red under the frozen env) | 0 | 0 | 0/0 | 0 eligible mutants |
+| Total | 259 | 49 | **0** | **0** | 9/9 | 0 missed |
+
+The number that matters most in this table is the one I did not want: zero
+narrowed skips across 259 analyzed PRs, including black, the repo chosen
+because its inert-module rate made it the best case. The refusal histograms
+say why: on rich and httpx the changed files themselves fail inertness (423
+and 566 refusals); on flask and black taint pins the candidates before
+narrowing is even consulted. The static applicability number counted files
+that could narrow in isolation; a real pull request narrows only when every
+intersecting file passes every condition at once, and on real history that
+joint event never occurred. Exposure is not recoverability, and static
+recoverability is not real-PR yield. The machinery stays: it is sound,
+tested, adversarially hardened, and free when it does not fire; and the
+constant folder (a per-revision proof, no joint conditions) shows the same
+pipeline delivering wins that do survive contact with history.
 
 ### What this says about precision work
 

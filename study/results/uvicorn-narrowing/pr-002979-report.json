@@ -1,0 +1,169 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "docs/concepts/http-protocols.md",
+      "status": "added"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/settings.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "mkdocs.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "pyproject.toml",
+      "status": "modified"
+    },
+    {
+      "kind": "conftest",
+      "path": "tests/conftest.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/protocols/test_http.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/protocols/test_zttp.py",
+      "status": "added"
+    },
+    {
+      "kind": "config",
+      "path": "uv.lock",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "uvicorn/config.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "uvicorn/protocols/http/zttp_impl.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "uvicorn/server.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "docs/concepts/http-protocols.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/concepts/http-protocols.md"
+      },
+      {
+        "reason": "docs/settings.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/settings.md"
+      },
+      {
+        "reason": "mkdocs.yml is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "mkdocs.yml"
+      },
+      {
+        "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "pyproject.toml"
+      },
+      {
+        "reason": "uv.lock is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "uv.lock"
+      },
+      {
+        "reason": "tests/conftest.py changed, and pytest applies it to every test under tests/.",
+        "rule": "R005",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "uvicorn/importer.py"
+      },
+      {
+        "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_main.py"
+      },
+      {
+        "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "uvicorn/main.py"
+      },
+      {
+        "reason": "tests/conftest.py is a conftest, so the tests it configures must run.",
+        "rule": "R014",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/protocols/test_http.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/protocols/test_http.py"
+      },
+      {
+        "reason": "tests/protocols/test_zttp.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/protocols/test_zttp.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 804,
+    "hash": "23b1b42c62a8fa5da18c3c87dc49c8374ab67ed9278eca3c99a815f7a45c9a60",
+    "nodes": 189,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "d26c85c27bb8ea66237ff43f90ca23b774a3c1ce",
+    "created_at": "2026-08-09T15:09:46+00:00",
+    "head_sha": "10a0c9d8dbcc71ac2630de5208c5fd91ba7fc74b"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

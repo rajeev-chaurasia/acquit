@@ -1,0 +1,100 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.79,
+  "base_sha": "8f1b884cd4a5298539ce77c44d96c7aebd512dff",
+  "base_suite_seconds": 14.925,
+  "changed_outcomes": [
+    "tests/protocols/test_http.py::test_bodyless_response_with_transfer_encoding"
+  ],
+  "findings": [
+    {
+      "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+      "rule": "R002",
+      "scope": "global",
+      "subject": "pyproject.toml"
+    },
+    {
+      "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "uvicorn/importer.py"
+    },
+    {
+      "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_main.py"
+    },
+    {
+      "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "uvicorn/main.py"
+    },
+    {
+      "reason": "tests/protocols/test_http.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/protocols/test_http.py"
+    },
+    {
+      "reason": "tests/protocols/test_zttp.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/protocols/test_zttp.py"
+    }
+  ],
+  "head_sha": "1af9fa3df5c4d3e9ea33fd10546234224e201cd9",
+  "head_suite_seconds": 14.361,
+  "mode": "run-all",
+  "mutants": {
+    "detection_parity": 1.0,
+    "entries": [],
+    "errors": [
+      {
+        "reason": "head suite is not green, kills ambiguous",
+        "stage": "mutants"
+      }
+    ],
+    "requested": 3
+  },
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {},
+  "new_tests_selected": true,
+  "number": 3046,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/benchmarks/test_http.py": 0.084,
+    "tests/benchmarks/test_ws.py": 0.004,
+    "tests/importer/test_importer.py": 0.009,
+    "tests/middleware/test_logging.py": 2.441,
+    "tests/middleware/test_message_logger.py": 0.004,
+    "tests/middleware/test_proxy_headers.py": 1.785,
+    "tests/middleware/test_wsgi.py": 0.202,
+    "tests/protocols/test_http.py": 1.72,
+    "tests/protocols/test_utils.py": 0.002,
+    "tests/protocols/test_websocket.py": 20.855,
+    "tests/supervisors/test_multiprocess.py": 10.839,
+    "tests/supervisors/test_reload.py": 1.137,
+    "tests/supervisors/test_signal.py": 2.107,
+    "tests/test_auto_detection.py": 0.005,
+    "tests/test_cli.py": 0.049,
+    "tests/test_compat.py": 0.003,
+    "tests/test_config.py": 0.185,
+    "tests/test_default_headers.py": 1.137,
+    "tests/test_lifespan.py": 0.031,
+    "tests/test_main.py": 0.938,
+    "tests/test_server.py": 2.985,
+    "tests/test_ssl.py": 0.006,
+    "tests/test_subprocess.py": 0.004
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

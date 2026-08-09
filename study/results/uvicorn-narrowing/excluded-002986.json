@@ -1,0 +1,6 @@
+{
+  "number": 2986,
+  "reason": "base-suite: /home/runner/work/acquit/acquit/workdir/wt-2986-base/.study-venv/bin/python timed out after 1800s",
+  "schema": "acquit/study-exclusion-v1",
+  "stage": "base-suite"
+}

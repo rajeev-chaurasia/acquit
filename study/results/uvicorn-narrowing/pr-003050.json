@@ -1,0 +1,90 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.852,
+  "base_sha": "e16a69b6c8f186d76ca45b08de2cacba8472edd8",
+  "base_suite_seconds": 14.12,
+  "changed_outcomes": [
+    "tests/protocols/test_websocket.py::test_connection_lost_unblocks_paused_send",
+    "tests/protocols/test_websocket.py::test_send_after_peer_close_raises_client_disconnected"
+  ],
+  "findings": [
+    {
+      "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "uvicorn/importer.py"
+    },
+    {
+      "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_main.py"
+    },
+    {
+      "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "uvicorn/main.py"
+    },
+    {
+      "reason": "tests/protocols/test_websocket.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/protocols/test_websocket.py"
+    }
+  ],
+  "head_sha": "2a332266bc689e96b084d279681d835f216a732c",
+  "head_suite_seconds": 14.684,
+  "mode": "run-all",
+  "mutants": {
+    "detection_parity": 1.0,
+    "entries": [],
+    "errors": [
+      {
+        "reason": "head suite is not green, kills ambiguous",
+        "stage": "mutants"
+      }
+    ],
+    "requested": 3
+  },
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {
+    "tainted-closure": 23
+  },
+  "new_tests_selected": true,
+  "number": 3050,
+  "per_file_durations": {
+    "tests/benchmarks/test_http.py": 0.085,
+    "tests/benchmarks/test_ws.py": 0.004,
+    "tests/importer/test_importer.py": 0.008,
+    "tests/middleware/test_logging.py": 2.394,
+    "tests/middleware/test_message_logger.py": 0.005,
+    "tests/middleware/test_proxy_headers.py": 1.735,
+    "tests/middleware/test_wsgi.py": 0.195,
+    "tests/protocols/test_http.py": 1.715,
+    "tests/protocols/test_utils.py": 0.0,
+    "tests/protocols/test_websocket.py": 20.578,
+    "tests/supervisors/test_multiprocess.py": 10.841,
+    "tests/supervisors/test_reload.py": 1.177,
+    "tests/supervisors/test_signal.py": 2.238,
+    "tests/test_auto_detection.py": 0.007,
+    "tests/test_cli.py": 0.069,
+    "tests/test_compat.py": 0.0,
+    "tests/test_config.py": 0.195,
+    "tests/test_default_headers.py": 1.096,
+    "tests/test_lifespan.py": 0.02,
+    "tests/test_main.py": 0.92,
+    "tests/test_server.py": 2.949,
+    "tests/test_ssl.py": 0.005,
+    "tests/test_subprocess.py": 0.002
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 23,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 23,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

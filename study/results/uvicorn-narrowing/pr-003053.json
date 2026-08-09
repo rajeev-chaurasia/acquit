@@ -1,0 +1,96 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 1.079,
+  "base_sha": "8c59d55b92b94fd5bee5960d1456ff8cb3072a32",
+  "base_suite_seconds": 15.909,
+  "changed_outcomes": [
+    "tests/protocols/test_websocket.py::test_close_gives_up_when_the_peer_never_replies",
+    "tests/protocols/test_websocket.py::test_close_resumes_reads_paused_on_an_unconsumed_message",
+    "tests/protocols/test_websocket.py::test_close_waits_for_the_peer_close_frame",
+    "tests/protocols/test_websocket.py::test_connection_lost_cancels_the_pending_close_timer",
+    "tests/protocols/test_websocket.py::test_data_frame_and_peer_close_frame_in_one_read",
+    "tests/protocols/test_websocket.py::test_data_frame_while_closing_does_not_pause_reads",
+    "tests/protocols/test_websocket.py::test_ping_while_closing",
+    "tests/protocols/test_websocket.py::test_shutdown_while_the_close_reply_is_pending"
+  ],
+  "findings": [
+    {
+      "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "uvicorn/importer.py"
+    },
+    {
+      "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_main.py"
+    },
+    {
+      "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "uvicorn/main.py"
+    },
+    {
+      "reason": "tests/protocols/test_websocket.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/protocols/test_websocket.py"
+    }
+  ],
+  "head_sha": "c30707b2fb9882fd72c0166f76038498c58388a6",
+  "head_suite_seconds": 14.671,
+  "mode": "run-all",
+  "mutants": {
+    "detection_parity": 1.0,
+    "entries": [],
+    "errors": [
+      {
+        "reason": "head suite is not green, kills ambiguous",
+        "stage": "mutants"
+      }
+    ],
+    "requested": 3
+  },
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {
+    "tainted-closure": 23
+  },
+  "new_tests_selected": true,
+  "number": 3053,
+  "per_file_durations": {
+    "tests/benchmarks/test_http.py": 0.073,
+    "tests/benchmarks/test_ws.py": 0.005,
+    "tests/importer/test_importer.py": 0.015,
+    "tests/middleware/test_logging.py": 2.406,
+    "tests/middleware/test_message_logger.py": 0.005,
+    "tests/middleware/test_proxy_headers.py": 1.775,
+    "tests/middleware/test_wsgi.py": 0.227,
+    "tests/protocols/test_http.py": 1.776,
+    "tests/protocols/test_utils.py": 0.003,
+    "tests/protocols/test_websocket.py": 20.906,
+    "tests/supervisors/test_multiprocess.py": 10.778,
+    "tests/supervisors/test_reload.py": 1.156,
+    "tests/supervisors/test_signal.py": 2.269,
+    "tests/test_auto_detection.py": 0.01,
+    "tests/test_cli.py": 0.074,
+    "tests/test_compat.py": 0.003,
+    "tests/test_config.py": 0.47,
+    "tests/test_default_headers.py": 1.239,
+    "tests/test_lifespan.py": 0.035,
+    "tests/test_main.py": 0.929,
+    "tests/test_server.py": 2.973,
+    "tests/test_ssl.py": 0.006,
+    "tests/test_subprocess.py": 0.002
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 23,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 23,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

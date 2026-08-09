@@ -1,0 +1,104 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": ".github/workflows/benchmark.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/main.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/publish.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/zizmor.yml",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".github/workflows/benchmark.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/benchmark.yml"
+      },
+      {
+        "reason": ".github/workflows/main.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/main.yml"
+      },
+      {
+        "reason": ".github/workflows/publish.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/publish.yml"
+      },
+      {
+        "reason": ".github/workflows/zizmor.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/zizmor.yml"
+      },
+      {
+        "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "uvicorn/importer.py"
+      },
+      {
+        "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_main.py"
+      },
+      {
+        "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "uvicorn/main.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 794,
+    "hash": "8dd91ce03348c2c76b2beede08aed0ccecfa13cb3cdd3f2ce92d1a3ad16c1e1e",
+    "nodes": 188,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "e148451dd97c321b71abd029f01e6eabebe4958c",
+    "created_at": "2026-08-09T15:09:13+00:00",
+    "head_sha": "597b4c200818d6573f55d271eb20a76dae3f4502"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

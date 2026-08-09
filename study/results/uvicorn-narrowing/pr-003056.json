@@ -1,0 +1,85 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.488,
+  "base_sha": "b57926d3f46348b5773b184cdf53ae8588300b77",
+  "base_suite_seconds": 13.51,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": "docs/release-notes.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/release-notes.md"
+    },
+    {
+      "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "uvicorn/importer.py"
+    },
+    {
+      "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_main.py"
+    },
+    {
+      "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "uvicorn/main.py"
+    }
+  ],
+  "head_sha": "e0145a641b13441f6c1515d9eacb9e7de5d6d9ba",
+  "head_suite_seconds": 13.077,
+  "mode": "run-all",
+  "mutants": {
+    "detection_parity": 1.0,
+    "entries": [],
+    "errors": [
+      {
+        "reason": "head suite is not green, kills ambiguous",
+        "stage": "mutants"
+      }
+    ],
+    "requested": 3
+  },
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {},
+  "new_tests_selected": true,
+  "number": 3056,
+  "per_file_durations": {
+    "tests/benchmarks/test_http.py": 0.029,
+    "tests/benchmarks/test_ws.py": 0.003,
+    "tests/importer/test_importer.py": 0.004,
+    "tests/middleware/test_logging.py": 2.236,
+    "tests/middleware/test_message_logger.py": 0.003,
+    "tests/middleware/test_proxy_headers.py": 1.453,
+    "tests/middleware/test_wsgi.py": 0.069,
+    "tests/protocols/test_http.py": 1.481,
+    "tests/protocols/test_utils.py": 0.001,
+    "tests/protocols/test_websocket.py": 21.462,
+    "tests/supervisors/test_multiprocess.py": 10.678,
+    "tests/supervisors/test_reload.py": 1.174,
+    "tests/supervisors/test_signal.py": 2.082,
+    "tests/test_auto_detection.py": 0.003,
+    "tests/test_cli.py": 0.097,
+    "tests/test_compat.py": 0.002,
+    "tests/test_config.py": 0.089,
+    "tests/test_default_headers.py": 1.008,
+    "tests/test_lifespan.py": 0.015,
+    "tests/test_main.py": 0.863,
+    "tests/test_server.py": 2.921,
+    "tests/test_ssl.py": 0.001,
+    "tests/test_subprocess.py": 0.001
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

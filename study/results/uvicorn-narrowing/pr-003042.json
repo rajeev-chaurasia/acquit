@@ -1,0 +1,86 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.786,
+  "base_sha": "f6833dbac8c3923c6c2915fe996cd06ceecd125b",
+  "base_suite_seconds": 14.267,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": "uv.lock is a dependency manifest, so the environment of every test may change.",
+      "rule": "R002",
+      "scope": "global",
+      "subject": "uv.lock"
+    },
+    {
+      "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "uvicorn/importer.py"
+    },
+    {
+      "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_main.py"
+    },
+    {
+      "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "uvicorn/main.py"
+    }
+  ],
+  "head_sha": "4ffb1b3bc67d8b6b05a656589040f97b933168cb",
+  "head_suite_seconds": 14.315,
+  "mode": "run-all",
+  "mutants": {
+    "detection_parity": 1.0,
+    "entries": [],
+    "errors": [
+      {
+        "reason": "head suite is not green, kills ambiguous",
+        "stage": "mutants"
+      }
+    ],
+    "requested": 3
+  },
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {},
+  "new_tests_selected": true,
+  "number": 3042,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/benchmarks/test_http.py": 0.101,
+    "tests/benchmarks/test_ws.py": 0.008,
+    "tests/importer/test_importer.py": 0.009,
+    "tests/middleware/test_logging.py": 2.376,
+    "tests/middleware/test_message_logger.py": 0.005,
+    "tests/middleware/test_proxy_headers.py": 1.891,
+    "tests/middleware/test_wsgi.py": 0.197,
+    "tests/protocols/test_http.py": 1.707,
+    "tests/protocols/test_utils.py": 0.004,
+    "tests/protocols/test_websocket.py": 20.822,
+    "tests/supervisors/test_multiprocess.py": 10.971,
+    "tests/supervisors/test_reload.py": 1.182,
+    "tests/supervisors/test_signal.py": 2.093,
+    "tests/test_auto_detection.py": 0.003,
+    "tests/test_cli.py": 0.054,
+    "tests/test_compat.py": 0.004,
+    "tests/test_config.py": 0.188,
+    "tests/test_default_headers.py": 1.13,
+    "tests/test_lifespan.py": 0.046,
+    "tests/test_main.py": 0.956,
+    "tests/test_server.py": 2.961,
+    "tests/test_ssl.py": 0.004,
+    "tests/test_subprocess.py": 0.003
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

@@ -1,0 +1,290 @@
+{
+  "changed": [
+    {
+      "kind": "test",
+      "path": "tests/protocols/test_websocket.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "uvicorn/protocols/websockets/websockets_sansio_impl.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "uvicorn/protocols/websockets/wsproto_impl.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "uvicorn/importer.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "uvicorn/importer.py"
+      },
+      {
+        "reason": "tests/test_main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_main.py"
+      },
+      {
+        "reason": "uvicorn/main.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "uvicorn/main.py"
+      },
+      {
+        "reason": "tests/protocols/test_websocket.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/protocols/test_websocket.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 794,
+    "hash": "8dd91ce03348c2c76b2beede08aed0ccecfa13cb3cdd3f2ce92d1a3ad16c1e1e",
+    "nodes": 188,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "8c59d55b92b94fd5bee5960d1456ff8cb3072a32",
+    "created_at": "2026-08-09T15:09:16+00:00",
+    "head_sha": "c30707b2fb9882fd72c0166f76038498c58388a6"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 23,
+    "skipped": 0,
+    "total": 23
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/benchmarks/test_http.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/benchmarks/test_ws.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/importer/test_importer.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/middleware/test_logging.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/middleware/test_message_logger.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/middleware/test_proxy_headers.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/middleware/test_wsgi.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/protocols/test_http.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/protocols/test_utils.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/protocols/test_websocket.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/protocols/test_websocket.py",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R014"
+        ]
+      },
+      {
+        "path": "tests/supervisors/test_multiprocess.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/supervisors/test_reload.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/supervisors/test_signal.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_auto_detection.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_cli.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_compat.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_config.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_default_headers.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_lifespan.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_main.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_server.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_ssl.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      },
+      {
+        "path": "tests/test_subprocess.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:uvicorn/protocols/websockets/websockets_sansio_impl.py",
+          "reachable-from:uvicorn/protocols/websockets/wsproto_impl.py",
+          "rule:R007"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}
