@@ -2,7 +2,7 @@
 
 Provably skip unaffected pytest tests on every pull request. Static analysis, fail-closed, with evidence for every skip.
 
-> Status: alpha. The engine works: on real pull requests acquit makes selective decisions, and every skip ships with a machine-checkable witness that is re-verified by replay before pytest honors it. Every failure mode still converges on "run everything". The CLI is on PyPI (`pip install acquit==0.0.1`), so the analysis itself pins cleanly. The GitHub Action is not yet on the Marketplace; that arrives with 0.1.0, and until then the action is used via `@main`.
+> Status: alpha. The engine works: on real pull requests acquit makes selective decisions, and every skip ships with a machine-checkable witness that is re-verified by replay before pytest honors it. Every failure mode still converges on "run everything". The CLI is on PyPI (`pip install acquit==0.0.1`), so the analysis itself pins cleanly. The GitHub Action is not yet on the Marketplace; that arrives with 0.1.0, and until then the action is used via `@main`. Re-export narrowing for fat package inits exists and ships disabled: it survived an adversarial break-and-fix cycle before anyone relied on it, and its measured applicability where it engages is 6.7 percent of submodules ([docs/study.md](docs/study.md) has the full story).
 
 ## What it does
 
