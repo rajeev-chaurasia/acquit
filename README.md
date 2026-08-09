@@ -7,7 +7,7 @@
 
 Provably skip unaffected pytest tests on every pull request. Static analysis, fail-closed, with evidence for every skip.
 
-> Status: alpha. The engine works: on real pull requests acquit makes selective decisions, and every skip ships with a machine-checkable witness that is re-verified by replay before pytest honors it. Every failure mode still converges on "run everything". The CLI is on PyPI (`pip install acquit==0.0.1`), so the analysis itself pins cleanly. The GitHub Action is not yet on the Marketplace; that arrives with 0.1.0, and until then the action is used via `@main`. Re-export narrowing for fat package inits exists and ships disabled: it survived an adversarial break-and-fix cycle before anyone relied on it, and its measured applicability where it engages is 6.7 percent of submodules ([docs/study.md](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/study.md) has the full story).
+> Status: alpha. The engine works: on real pull requests acquit makes selective decisions, and every skip ships with a machine-checkable witness that is re-verified by replay before pytest honors it. Every failure mode still converges on "run everything". The CLI is on PyPI (`pip install acquit==0.1.0`), so the analysis itself pins cleanly. Both the CLI and the GitHub Action pin cleanly to v0.1.0. Re-export narrowing for fat package inits exists and ships disabled: it survived an adversarial break-and-fix cycle before anyone relied on it, and its measured applicability where it engages is 6.7 percent of submodules ([docs/study.md](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/study.md) has the full story).
 
 ## What it does
 
@@ -53,7 +53,7 @@ jobs:
           # The base ref must exist locally; shallow clones always fall back to run-all.
           fetch-depth: 0
 
-      - uses: rajeev-chaurasia/acquit@main
+      - uses: rajeev-chaurasia/acquit@v0.1.0
         with:
           mode: report
 
@@ -70,7 +70,7 @@ jobs:
       - run: pytest
 ```
 
-Report mode never skips a test: the action analyzes the diff, verifies the evidence with a replay, posts a sticky PR comment explaining the decision, and sets outputs. `mode: canary` also runs everything, but verifies the selection against reality: every would-be-skipped test still executes, a failure among them raises a loud alarm, and it is the recommended step between `report` and `enforce`. Switch to `mode: enforce` once you trust what the comments say, and the pytest plugin will skip the provably unaffected files; any unrecognized `mode` value means `report`. The `pip install acquit` line (or its uv equivalent, `uv pip install acquit`) is what puts the plugin into the environment that runs pytest. Version pinning arrives with the first release; until then `@main` is the way in.
+Report mode never skips a test: the action analyzes the diff, verifies the evidence with a replay, posts a sticky PR comment explaining the decision, and sets outputs. `mode: canary` also runs everything, but verifies the selection against reality: every would-be-skipped test still executes, a failure among them raises a loud alarm, and it is the recommended step between `report` and `enforce`. Switch to `mode: enforce` once you trust what the comments say, and the pytest plugin will skip the provably unaffected files; any unrecognized `mode` value means `report`. The `pip install acquit` line (or its uv equivalent, `uv pip install acquit`) is what puts the plugin into the environment that runs pytest.
 
 ## Run it locally
 
