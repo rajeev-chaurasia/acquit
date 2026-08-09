@@ -1,0 +1,434 @@
+{
+  "constraints_sha256": null,
+  "excluded": [],
+  "prs": [
+    {
+      "base_sha": "928f50354512b3857ca07c1085076286035e4a56",
+      "head_sha": "cd56ef3da1861e9e3dccd596af348ac648b87c65",
+      "merge_sha": "74371e2041a3120a049ced8f1cab0e7a6bc8ecd3",
+      "number": 5237,
+      "title": "Report parse errors as file:line:column"
+    },
+    {
+      "base_sha": "5706d79984dacb40cc1a3b26c0a987269384f602",
+      "head_sha": "6e024d5fc530ae6ef592843915c0770ff1dc8893",
+      "merge_sha": "928f50354512b3857ca07c1085076286035e4a56",
+      "number": 5288,
+      "title": "docs: mention Vim PEP 8 indentation plugin"
+    },
+    {
+      "base_sha": "c7801d9e24fe28b9c85742722cdcb97e1582a94d",
+      "head_sha": "8c317deed3583c1f50847bd17930cde31bbf2016",
+      "merge_sha": "011942a84347316f60ab1b3fe7f9563f8210f2cc",
+      "number": 5271,
+      "title": "Don't hug brackets when it would merge two `type: ignore` comments"
+    },
+    {
+      "base_sha": "006b2a74d4deac01fa16e85ccc9f5810b53a7391",
+      "head_sha": "5b7146a554a36b3412f3a2832b2db94c28ba5d49",
+      "merge_sha": "e744e77f4983c65101937931947862403ed75718",
+      "number": 5294,
+      "title": "docs: fix typos in docstrings, and remove some unused code"
+    },
+    {
+      "base_sha": "d3b151ceba67b62264cd4ba700e92f4d6fbc9c8e",
+      "head_sha": "ea078066dcb207a822e75770e135652dece94935",
+      "merge_sha": "5b7146a554a36b3412f3a2832b2db94c28ba5d49",
+      "number": 5277,
+      "title": "remove unused RARROW constant"
+    },
+    {
+      "base_sha": "d3b151ceba67b62264cd4ba700e92f4d6fbc9c8e",
+      "head_sha": "31ba99492d179e7c11bd7768fa7c31afb97388c6",
+      "merge_sha": "816b97ffb428a8f688921fee2efe303fb42699d0",
+      "number": 5278,
+      "title": "remove duplicate syms.for_stmt entry"
+    },
+    {
+      "base_sha": "006b2a74d4deac01fa16e85ccc9f5810b53a7391",
+      "head_sha": "75fbfac578e471dc857dbb149586798aa8eaf4c0",
+      "merge_sha": "d3b151ceba67b62264cd4ba700e92f4d6fbc9c8e",
+      "number": 5283,
+      "title": "docs: fix typo in StringParser comment"
+    },
+    {
+      "base_sha": "006b2a74d4deac01fa16e85ccc9f5810b53a7391",
+      "head_sha": "60cd6235977ed37c814d7a11ff34e4deecdd457b",
+      "merge_sha": "bf572553d3984bda0e9c1d3542d58c7d60e5e7f7",
+      "number": 5279,
+      "title": "docs: correct normalize_numeric_literal docstring"
+    },
+    {
+      "base_sha": "006b2a74d4deac01fa16e85ccc9f5810b53a7391",
+      "head_sha": "422ab295ce012983f26e07b4d81cbdbd10cccc9b",
+      "merge_sha": "7ae0cc3933e417ebb506a6bcadff02a1dfcf539c",
+      "number": 5280,
+      "title": "docs: fix typo in visit_stmt docstring"
+    },
+    {
+      "base_sha": "006b2a74d4deac01fa16e85ccc9f5810b53a7391",
+      "head_sha": "572a19f4222051ca37800f8b7eb57c8edc326ca2",
+      "merge_sha": "02ce2d924f196837bb8b0a0ab80280862973d2f6",
+      "number": 5281,
+      "title": "docs: fix typo in prev_siblings_are docstring"
+    },
+    {
+      "base_sha": "006b2a74d4deac01fa16e85ccc9f5810b53a7391",
+      "head_sha": "c177bc41adfe44929316a4fddf525d8b28870cee",
+      "merge_sha": "473670e8c6834e685bad2a5891d20adf097ccbaf",
+      "number": 5282,
+      "title": "docs: fix typo in StringParenWrapper docstring"
+    },
+    {
+      "base_sha": "c7801d9e24fe28b9c85742722cdcb97e1582a94d",
+      "head_sha": "85055d1344bb2f8835354c03fa87e587e1ed84a6",
+      "merge_sha": "006b2a74d4deac01fa16e85ccc9f5810b53a7391",
+      "number": 5272,
+      "title": "Keep the required trailing comma of a one-element subscript under --skip-magic-trailing-comma"
+    },
+    {
+      "base_sha": "9076219c7a5a4c1b3960db532d4b197e5e406033",
+      "head_sha": "737b660d861c4a3d01462bd13f17d4679bccb144",
+      "merge_sha": "fa72105efac5c15c3a3c83c21ec6e6097c525325",
+      "number": 5264,
+      "title": "Bump actions/setup-python from 6.3.0 to 7.0.0"
+    },
+    {
+      "base_sha": "a61e98a2f7d6987dfe93b4d6b25e04416a2314d6",
+      "head_sha": "e0c489909f62f616f81604e2c5c6c32955af339a",
+      "merge_sha": "9076219c7a5a4c1b3960db532d4b197e5e406033",
+      "number": 5290,
+      "title": "Bump zizmorcore/zizmor-action from 0.5.7 to 0.6.2"
+    },
+    {
+      "base_sha": "a61e98a2f7d6987dfe93b4d6b25e04416a2314d6",
+      "head_sha": "6340440180d79914f48c89c9921f354764d05520",
+      "merge_sha": "b48a411b658eb412428f1afb4300b004cfad6d35",
+      "number": 5291,
+      "title": "Bump pypa/gh-action-pypi-publish from 1.14.1 to 1.14.2"
+    },
+    {
+      "base_sha": "a61e98a2f7d6987dfe93b4d6b25e04416a2314d6",
+      "head_sha": "7325b1513eb7b36ed22f5af758763a703d6a92b4",
+      "merge_sha": "d90b38d552ad1b26b6a2f68b9618af02662c8fde",
+      "number": 5292,
+      "title": "Bump docker/login-action from 4.4.0 to 4.6.0"
+    },
+    {
+      "base_sha": "a61e98a2f7d6987dfe93b4d6b25e04416a2314d6",
+      "head_sha": "32534548c9dfe6d4ae2f2959e4e00b9fdf59a4b3",
+      "merge_sha": "33de18721670b006e81a9f6761fd99b87aaf3efc",
+      "number": 5293,
+      "title": "fix PIP_UPLOADED_PRIOR_TO in Dockerfile"
+    },
+    {
+      "base_sha": "c7801d9e24fe28b9c85742722cdcb97e1582a94d",
+      "head_sha": "f710811651e854031d543701a8fa9d9eacafdf3d",
+      "merge_sha": "f2dc344b437f29feaed186f27a66a8de4ffab7be",
+      "number": 5220,
+      "title": "avoid quadratic per-leaf copy in StringMerger.do_transform"
+    },
+    {
+      "base_sha": "c7801d9e24fe28b9c85742722cdcb97e1582a94d",
+      "head_sha": "df7827587593988e3f51ee71a6d9926de6730a84",
+      "merge_sha": "5706d79984dacb40cc1a3b26c0a987269384f602",
+      "number": 5287,
+      "title": "don't treat a t-string in docstring position as a docstring"
+    },
+    {
+      "base_sha": "ba7debff26632c612ee5bc173faf54a7399c3f46",
+      "head_sha": "c2d12ecefcf11b53debabad99b12a568598a9f53",
+      "merge_sha": "c7801d9e24fe28b9c85742722cdcb97e1582a94d",
+      "number": 5265,
+      "title": "don't escape nested quotes inside t-string replacement fields"
+    },
+    {
+      "base_sha": "db2e3e7b317b40685ba4618235a8388c7c6ea5e2",
+      "head_sha": "690a50a3fdc4de418dc11813543b0b15381d63a6",
+      "merge_sha": "ba7debff26632c612ee5bc173faf54a7399c3f46",
+      "number": 5262,
+      "title": "don't re-escape an already escaped quote in normalize_string_quotes"
+    },
+    {
+      "base_sha": "244897da45ffb10e848c4eeff75b28e2290112a8",
+      "head_sha": "e67c4d40b79793930d026b1ba52ec9a2d7b409d2",
+      "merge_sha": "dff8d9106369b2dde5085d4a38cc00a987c6a022",
+      "number": 5247,
+      "title": "Bump mypy to 2.3.0"
+    },
+    {
+      "base_sha": "db2e3e7b317b40685ba4618235a8388c7c6ea5e2",
+      "head_sha": "6b3def309cd1dbfed33b38bd27276da46f824099",
+      "merge_sha": "8276940aff57862bed7389dcca32340f35ce77db",
+      "number": 5263,
+      "title": "Bump pypa/gh-action-pypi-publish from 1.14.0 to 1.14.1"
+    },
+    {
+      "base_sha": "8049246eddaed76bb36501100a1fd79a80bad5bc",
+      "head_sha": "183ef41c315579a60988d2e7c094593d26f054b8",
+      "merge_sha": "db2e3e7b317b40685ba4618235a8388c7c6ea5e2",
+      "number": 5258,
+      "title": "Ignore permission errors when reading cache"
+    },
+    {
+      "base_sha": "65e95768ea960d2a69847128c77c44b4062b25d0",
+      "head_sha": "d76fe6078f50b2dd5979ba7972e6849f0224af1e",
+      "merge_sha": "8049246eddaed76bb36501100a1fd79a80bad5bc",
+      "number": 5257,
+      "title": "Bump actions/checkout from 7.0.0 to 7.0.1"
+    },
+    {
+      "base_sha": "8960ab0457803c310bf2f3550e1d96c598ca8f70",
+      "head_sha": "b15b3425062fd7f1ce7ee79572d3f27a0f02e67f",
+      "merge_sha": "65e95768ea960d2a69847128c77c44b4062b25d0",
+      "number": 5255,
+      "title": "Bump myst-parser to 5.1.0"
+    },
+    {
+      "base_sha": "8960ab0457803c310bf2f3550e1d96c598ca8f70",
+      "head_sha": "a3369728cec2b6bca81da290a52255f9b41bd93e",
+      "merge_sha": "ef04d6b7067a7e8108e073e2f3b263a3b6ffabda",
+      "number": 5254,
+      "title": "Bump cibuildwheel to 4.1.0"
+    },
+    {
+      "base_sha": "354c61aad99ee26eb7794d91f92d837afefa0f25",
+      "head_sha": "1440719d964be12c27f6bc7499a64348622cbca3",
+      "merge_sha": "8960ab0457803c310bf2f3550e1d96c598ca8f70",
+      "number": 5253,
+      "title": "docs: fix grammar typo '.pyi file that are' -> '.pyi files that are' \u2026"
+    },
+    {
+      "base_sha": "244897da45ffb10e848c4eeff75b28e2290112a8",
+      "head_sha": "cd980d58df3c50e42bcd4d6bb878d32d2983c9dd",
+      "merge_sha": "354c61aad99ee26eb7794d91f92d837afefa0f25",
+      "number": 5248,
+      "title": "Bump prettier to 3.9.6"
+    },
+    {
+      "base_sha": "244897da45ffb10e848c4eeff75b28e2290112a8",
+      "head_sha": "c8f5587b88250dd5f184421dfbf17b266210d29e",
+      "merge_sha": "7aaaeb27c15d0c8c19ed24bcba9ee5f185940b0d",
+      "number": 5238,
+      "title": "Preserve blank lines before fmt-off classes"
+    },
+    {
+      "base_sha": "42ed836d80fe8fab2e40de84627cb77ece7cc33f",
+      "head_sha": "f20397c6ab814a952ecde4c96fdb81e9bf468bfb",
+      "merge_sha": "244897da45ffb10e848c4eeff75b28e2290112a8",
+      "number": 5246,
+      "title": "Preserve single-element tuple comma under --skip-magic-trailing-comma"
+    },
+    {
+      "base_sha": "51abf53080b09eab12143727641ff1e2cd39d8c9",
+      "head_sha": "44263388c54e4314f3b399141052a8c8d6639edc",
+      "merge_sha": "42ed836d80fe8fab2e40de84627cb77ece7cc33f",
+      "number": 5241,
+      "title": "Fix unstable formatting with comments on optional parens"
+    },
+    {
+      "base_sha": "51abf53080b09eab12143727641ff1e2cd39d8c9",
+      "head_sha": "94cfff8b4885208e78137a042015fab99f7e5aae",
+      "merge_sha": "a20a0168eab6c9269989cce48273ae8ccd87dd2a",
+      "number": 5244,
+      "title": "Respect the magic trailing comma in starred type parameter lists"
+    },
+    {
+      "base_sha": "8140f6e47ed15762ec0bf0d03ee03869fa655ce2",
+      "head_sha": "1a9784c6210501ccbbce13911f74093efb469e48",
+      "merge_sha": "106b148d1dd5bbed90c4fe2fd02fbd7ad380b5dd",
+      "number": 5200,
+      "title": "Keep nested parens around lambda/ternary comprehension iterables (preview)"
+    },
+    {
+      "base_sha": "308e2ee7dce7435f844ef3517cfe41f7b05f023c",
+      "head_sha": "424814a6469c1192d6488f6f3a70fefa4afa6bf0",
+      "merge_sha": "f90421166726f7de6208002c185d26960a1b9240",
+      "number": 5242,
+      "title": "avoid quadratic leaf re-adding in get_leaves_inside_matching_brackets"
+    },
+    {
+      "base_sha": "fcab6484062fbf1ded2333900ea600b9bc21ac69",
+      "head_sha": "ea54c1b28b248776c75c89a4a5d8ca729027f90e",
+      "merge_sha": "308e2ee7dce7435f844ef3517cfe41f7b05f023c",
+      "number": 5239,
+      "title": "avoid quadratic per-leaf subtree walk in is_complex_subscript"
+    },
+    {
+      "base_sha": "51abf53080b09eab12143727641ff1e2cd39d8c9",
+      "head_sha": "03b754baea3d34029f965c4a6ec9e8510ac5f6ce",
+      "merge_sha": "e46a84dab42c54d3b5f71fd37d1d3d3deab99755",
+      "number": 5240,
+      "title": "docs: clarify GitHub Action pyproject.toml version lookup for Poetry users"
+    },
+    {
+      "base_sha": "51abf53080b09eab12143727641ff1e2cd39d8c9",
+      "head_sha": "faaeb515330c8832b02c0b5bc960e3124841174b",
+      "merge_sha": "fcab6484062fbf1ded2333900ea600b9bc21ac69",
+      "number": 5235,
+      "title": "avoid quadratic tree traversal in pre_order/post_order/leaves"
+    },
+    {
+      "base_sha": "d7587ce9f52f36eb41bc505e529540fd8cbdcd3e",
+      "head_sha": "47869c6305fb5c6993f749f56dbba2fa87bf6e54",
+      "merge_sha": "51abf53080b09eab12143727641ff1e2cd39d8c9",
+      "number": 5223,
+      "title": "fix: add conditional stripping for Linux executables"
+    },
+    {
+      "base_sha": "d7587ce9f52f36eb41bc505e529540fd8cbdcd3e",
+      "head_sha": "1841fc15a422e679fd55ac1804c6949657d91b51",
+      "merge_sha": "513058f032123cb5892549c0b981aa98f3376ffc",
+      "number": 5232,
+      "title": "avoid quadratic node removal when converting fmt: off/on blocks"
+    },
+    {
+      "base_sha": "d7587ce9f52f36eb41bc505e529540fd8cbdcd3e",
+      "head_sha": "af4fabab57ab1c9bb5d05e6d2ab0c14c5d7c0360",
+      "merge_sha": "2def970c03ccc47c9aaef1bd42daa63ab08ab001",
+      "number": 5231,
+      "title": "Bump docker/login-action from 4.2.0 to 4.4.0"
+    },
+    {
+      "base_sha": "d7587ce9f52f36eb41bc505e529540fd8cbdcd3e",
+      "head_sha": "6acb150b278c6e12f814208e073ce89b234d8131",
+      "merge_sha": "00353ea9ee83bdf5d38b9c20c0e6a96b422e0373",
+      "number": 5230,
+      "title": "Bump docker/setup-buildx-action from 4.1.0 to 4.2.0"
+    },
+    {
+      "base_sha": "d7587ce9f52f36eb41bc505e529540fd8cbdcd3e",
+      "head_sha": "cded78094b139003ae844ae07a8116687f1ee911",
+      "merge_sha": "7d6d3cccc10a2d320553add86d5877eb35c3fc64",
+      "number": 5228,
+      "title": "Bump docker/build-push-action from 7.2.0 to 7.3.0"
+    },
+    {
+      "base_sha": "d7587ce9f52f36eb41bc505e529540fd8cbdcd3e",
+      "head_sha": "4715488d28829afae6df08bc7100c726a1026cf2",
+      "merge_sha": "42bc212d7702c1f4bdcb9117971888a95cd091ad",
+      "number": 5224,
+      "title": "Bump stefanzweifel/git-auto-commit-action from 7.1.0 to 7.2.0"
+    },
+    {
+      "base_sha": "56ba38a484dae93f9793e70c4a136331284bdcc5",
+      "head_sha": "874c0ba24f0e7b6d91d2dc29e36954caccf49e56",
+      "merge_sha": "d7587ce9f52f36eb41bc505e529540fd8cbdcd3e",
+      "number": 5211,
+      "title": "Validate BLACK_NUM_WORKERS values"
+    },
+    {
+      "base_sha": "451316b955a34e4c9dd96375866dc65aa100dd17",
+      "head_sha": "a4d4f79afee5b8561a7d23245c7095ef534275e1",
+      "merge_sha": "0a6396ba56d2d7fac4ce4fef5ea15c97e82b299b",
+      "number": 5213,
+      "title": "batch --line-ranges node conversion to avoid quadratic removal"
+    },
+    {
+      "base_sha": "ce441f2a5b02fe84aac731194615fb6b2337dd65",
+      "head_sha": "30e2f72b2d70795eb55f5a508a74a2199fec8d86",
+      "merge_sha": "56ba38a484dae93f9793e70c4a136331284bdcc5",
+      "number": 5192,
+      "title": "Handle empty cache files"
+    },
+    {
+      "base_sha": "c4c9a93111309459a3f0e1e268160f7ef2159077",
+      "head_sha": "ae54097c10d8cb331d23afbd2d300d0f21c7c6f2",
+      "merge_sha": "a618e3c96f81b635135ed5b08921c4c9d16cdc4b",
+      "number": 5212,
+      "title": "Standardize ReadTheDocs links"
+    },
+    {
+      "base_sha": "c4c9a93111309459a3f0e1e268160f7ef2159077",
+      "head_sha": "fa3d0dbf77f6ce72f297ae71bd4e8e9d6f476eb7",
+      "merge_sha": "ce441f2a5b02fe84aac731194615fb6b2337dd65",
+      "number": 5205,
+      "title": "Bump actions/cache from 5.0.5 to 6.1.0"
+    },
+    {
+      "base_sha": "c4c9a93111309459a3f0e1e268160f7ef2159077",
+      "head_sha": "5b20bfe3bddaaa3e1ebd1d0abb0f18d94a44060a",
+      "merge_sha": "8ed5983e8f299a5754968c4a0dbd6a8be2a14f51",
+      "number": 5217,
+      "title": "Fix typo and macOS capitalization in the basics documentation"
+    },
+    {
+      "base_sha": "c4c9a93111309459a3f0e1e268160f7ef2159077",
+      "head_sha": "d82ed820c1f07ef4d52b9e7df032b69e0afd49d6",
+      "merge_sha": "451316b955a34e4c9dd96375866dc65aa100dd17",
+      "number": 5206,
+      "title": "Bump actions/setup-python from 6.2.0 to 6.3.0"
+    },
+    {
+      "base_sha": "b74b23013fe6d0f7e0cee430a472ac70c5ba1334",
+      "head_sha": "2db81d2723241accd8a3cd11b47e5c80647c1e96",
+      "merge_sha": "2d174df7cb16f5dbdbb188da15fdb2059adb30d6",
+      "number": 5193,
+      "title": "Validate include and force-exclude config types"
+    },
+    {
+      "base_sha": "8140f6e47ed15762ec0bf0d03ee03869fa655ce2",
+      "head_sha": "26d965ccf8e9b278f02dbf4eeed7fd1ec4315dfd",
+      "merge_sha": "ea5e8f85e1f4b2d3dfc13d1633b57f0a9d6b97dc",
+      "number": 5202,
+      "title": "Bump zizmorcore/zizmor-action from 0.5.6 to 0.5.7"
+    },
+    {
+      "base_sha": "8140f6e47ed15762ec0bf0d03ee03869fa655ce2",
+      "head_sha": "7faebf68c358b1acc434e9d6e06c0b9a72a752a5",
+      "merge_sha": "c4c9a93111309459a3f0e1e268160f7ef2159077",
+      "number": 5199,
+      "title": "avoid quadratic child rescan in append_leaves"
+    },
+    {
+      "base_sha": "7cd074962f9534ab8558db959faec81acb14bcdd",
+      "head_sha": "b692c3ad83643c85648f142f9538e0205025fc9f",
+      "merge_sha": "8140f6e47ed15762ec0bf0d03ee03869fa655ce2",
+      "number": 5190,
+      "title": "avoid quadratic suite scan per fmt: skip in compound-statement check"
+    },
+    {
+      "base_sha": "46c2abc37cd74a974cf9820ab07c98274d2a267e",
+      "head_sha": "b983801f729d8fccd51c97d4815083c53174c851",
+      "merge_sha": "7cd074962f9534ab8558db959faec81acb14bcdd",
+      "number": 5194,
+      "title": "avoid full children-list and sibling-map rebuild in Node.replace"
+    },
+    {
+      "base_sha": "bf83d5f10563ed454b57fd88de63c6e8062453c0",
+      "head_sha": "c67c92761177e71e89d13e633881eac05bf43994",
+      "merge_sha": "46c2abc37cd74a974cf9820ab07c98274d2a267e",
+      "number": 5188,
+      "title": "avoid quadratic multiline-string context scan in is_line_short_enough"
+    },
+    {
+      "base_sha": "b74b23013fe6d0f7e0cee430a472ac70c5ba1334",
+      "head_sha": "558d44cf219e68da1377413c42ee6904815a9ddf",
+      "merge_sha": "a51a0be79ca241ee97be920639d88f36eb1fc0bd",
+      "number": 5189,
+      "title": "Fix fmt off block before with statement"
+    },
+    {
+      "base_sha": "b74b23013fe6d0f7e0cee430a472ac70c5ba1334",
+      "head_sha": "2e6c260fc4f44e0008b775ab0ea2c86c490b3888",
+      "merge_sha": "d883a7da0ba341d87fcc6357be53c9d7e4ac1905",
+      "number": 5197,
+      "title": "Bump actions/checkout from 6.0.3 to 7.0.0"
+    },
+    {
+      "base_sha": "b74b23013fe6d0f7e0cee430a472ac70c5ba1334",
+      "head_sha": "622cbcefb85f2d937124a53a84f16e9223985930",
+      "merge_sha": "69dcf870137791a3126e53c7ce4a6a2a6318dcde",
+      "number": 5198,
+      "title": "Bump sphinxcontrib-programoutput from 0.19 to 0.20"
+    }
+  ],
+  "python_version": "3.12",
+  "repo_slug": "psf/black",
+  "repo_url": "https://github.com/psf/black.git",
+  "schema": "acquit/study-manifest-v1",
+  "suite_deps": [
+    "aiohttp"
+  ],
+  "window_months": 18
+}
