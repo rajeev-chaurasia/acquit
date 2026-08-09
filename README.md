@@ -78,7 +78,7 @@ jobs:
       - run: pytest
 ```
 
-Report mode never skips a test: the action analyzes the diff, verifies the evidence with a replay, posts a sticky PR comment explaining the decision, and sets outputs. Switch to `mode: enforce` once you trust what the comments say, and the pytest plugin will skip the provably unaffected files; any unrecognized `mode` value means `report`. The `pip install acquit` line (or its uv equivalent, `uv pip install acquit`) is what puts the plugin into the environment that runs pytest. Version pinning arrives with the first release; until then `@main` is the way in.
+Report mode never skips a test: the action analyzes the diff, verifies the evidence with a replay, posts a sticky PR comment explaining the decision, and sets outputs. `mode: canary` also runs everything, but verifies the selection against reality: every would-be-skipped test still executes, a failure among them raises a loud alarm, and it is the recommended step between `report` and `enforce`. Switch to `mode: enforce` once you trust what the comments say, and the pytest plugin will skip the provably unaffected files; any unrecognized `mode` value means `report`. The `pip install acquit` line (or its uv equivalent, `uv pip install acquit`) is what puts the plugin into the environment that runs pytest. Version pinning arrives with the first release; until then `@main` is the way in.
 
 ## Run it locally
 

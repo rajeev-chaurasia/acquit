@@ -1,9 +1,11 @@
 # Acquit running on its own pull requests: the public demo.
 #
-# Report mode by default: the action analyzes the diff, replays the evidence,
-# posts the sticky PR comment, and sets outputs, but pytest still runs the
-# full suite. Set the repository variable ACQUIT_ENFORCE to 'true' to let the
-# plugin honor the verified selection and actually skip tests.
+# Canary is the default live mode: the action analyzes the diff, replays the
+# evidence, posts the sticky PR comment, and pytest still runs the full suite
+# while the plugin classifies every outcome against the verified selection.
+# A failing test acquit called unaffected surfaces as a loud alarm, at zero
+# risk, because nothing was actually skipped. Set the repository variable
+# ACQUIT_ENFORCE to 'true' to let the plugin skip tests for real.
 
 name: acquit-selfhost
 
@@ -25,13 +27,20 @@ jobs:
       - id: acquit
         uses: ./
         with:
-          mode: report
+          # Enforce must not inherit canary's ACQUIT_CANARY export, so the
+          # mode follows the switch instead of a literal.
+          mode: ${{ vars.ACQUIT_ENFORCE == 'true' && 'enforce' || 'canary' }}
           acquit-source: local
 
       - uses: astral-sh/setup-uv@v9.0.0
 
-      - name: Run the full suite (report mode)
+      - name: Run the full suite (canary)
         if: ${{ vars.ACQUIT_ENFORCE != 'true' }}
+        env:
+          # The action already exported both through GITHUB_ENV; kept explicit
+          # here so the demo reads without opening action.yml.
+          ACQUIT_SELECTION_FILE: ${{ steps.acquit.outputs.selection-file }}
+          ACQUIT_CANARY: "1"
         run: uv run pytest
 
       - name: Run the selected suite (enforce)

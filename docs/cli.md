@@ -179,6 +179,7 @@ all of it.
 | Variable | Read by | Meaning |
 | --- | --- | --- |
 | `ACQUIT_SELECTION_FILE` | the pytest plugin | Path to a selection document. Unset or empty, the plugin is inert and pytest is untouched. Set, the plugin verifies the document once per session (schema, mode, graph hash, tree fingerprint) and deselects the listed files; any failure means every test runs, stated in the pytest header. Explicitly named files on the pytest command line always run. |
+| `ACQUIT_CANARY` | the pytest plugin | Set to a literal `1` alongside `ACQUIT_SELECTION_FILE`, switches the plugin to canary mode: the document is verified exactly as usual but nothing is deselected. Every test runs, and at session end the plugin classifies outcomes against the would-be-skipped files, printing a loud `acquit canary: ALARM:` line (with the witness id) for any that failed, or a `clean` line when all passed, and writing an `acquit/canary-v1` verdict document beside the selection file (its path with a `.canary.json` suffix). The exit status is never altered, and a refused document makes no canary claims. Any other value leaves ordinary enforce behavior untouched. |
 | `ACQUIT_CACHE_DIR` | `select`, `analyze`, `explain` | Base directory for the parse cache. Unset, the cache lives in the platform user cache directory (never inside the checkout), namespaced per repository root. Replay never uses a cache. |
 | `GITHUB_TOKEN` | `comment` | Token for the PR comment API calls. Required for `comment`; without it the comment is skipped with a warning and CI is unaffected. |
 | `GITHUB_REPOSITORY`, `GITHUB_REF`, `GITHUB_API_URL` | `comment` | The `owner/repo` slug (required), the PR ref used to infer the number when `--pr` is not given, and an optional API endpoint override. |
@@ -198,7 +199,7 @@ outputs mirror [action.yml](../action.yml).
 | `acquit-version` | `0.0.1` | Version of the acquit package to run. |
 | `acquit-source` | `pypi` | Where acquit itself is installed from. `pypi` pins `acquit==acquit-version`; `local` installs from the working-directory checkout, which is how acquit dogfoods unreleased code on its own PRs. |
 | `working-directory` | `.` | Directory containing the project to analyze. |
-| `mode` | `report` | `report`: analyze, verify, comment, and set outputs, but never skip a test. `enforce`: additionally export `ACQUIT_SELECTION_FILE` so the pytest plugin honors the verified selection. Anything unrecognized means `report`. |
+| `mode` | `report` | `report`: analyze, verify, comment, and set outputs, but never skip a test. `canary`: additionally export `ACQUIT_SELECTION_FILE` and `ACQUIT_CANARY` so the full suite still runs while the pytest plugin classifies outcomes against the verified selection; a failing would-be-skipped test raises a loud alarm at zero risk. `enforce`: export `ACQUIT_SELECTION_FILE` alone so the pytest plugin honors the verified selection and skips. Anything unrecognized means `report`. |
 | `comment` | `true` | Post a sticky PR comment with the decision (`true`/`false`). |
 
 ### Outputs
