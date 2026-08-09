@@ -12,6 +12,11 @@ on:
         description: number of shards
         type: string
         default: "20"
+      narrowing:
+        description: enable re-export narrowing (ADR 0008) for every select run
+        type: choice
+        options: ["false", "true"]
+        default: "false"
 
 permissions:
   contents: read
@@ -58,6 +63,9 @@ jobs:
           # Constraints are mandatory for the published study; debug manifests
           # may run without them while the frozen env is still being built.
           if [ -f "$CONSTRAINTS" ]; then ARGS+=(--constraints "$CONSTRAINTS"); fi
+          # The narrowing arm; per-PR results record the flag, so the
+          # aggregate job needs no change to distinguish arms.
+          if [ "${{ inputs.narrowing }}" = "true" ]; then ARGS+=(--narrowing); fi
           uv run acquit-study run \
             --manifest "study/manifests/${{ inputs.repo }}.json" \
             --workdir workdir \

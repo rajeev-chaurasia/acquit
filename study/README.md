@@ -113,6 +113,38 @@ count as a kill for every mutant, and per-mutant apply or run failures are
 recorded and skipped, never fatal to the PR. Results without mutant data
 render as "not run" in the summary.
 
+## Narrowing arm
+
+Re-export narrowing (ADR 0008) ships disabled by default and study targets
+carry no acquit configuration of their own, so `--narrowing` supplies it:
+before each select the runner enables `narrowing = true` in the head
+worktree's acquit config, then removes it once the PR completes. A repo with
+no config gets a minimal `.acquit.toml` containing only that key; a repo
+with an `.acquit.toml` or a `[tool.acquit]` section at that sha gets the key
+merged in, only if absent, without clobbering roots or waivers, and the
+original file is restored afterward. This is sound because select reads
+acquit config from the checkout's filesystem while both analyzed snapshots
+read blobs of the base and head shas, so the injected file never enters an
+analyzed tree, and the base worktree never receives it. Each per-PR result
+records `"narrowing": true`, the count of narrowed skips, and the
+refusal-reason histogram, so aggregates can distinguish arms; the summary
+gains a Narrowing section when any PR ran with the flag. Narrowed skips face
+the identical unsafe-skip bar as every other skip: a changed-outcome test or
+a brand-new test inside a narrowed skipped file fails the run just the same,
+and the summary merely reports narrowed skips in their own column. When
+`--mutants N` runs alongside, mutants for files excused by narrowed witness
+blocks are restricted to function-body and constant mutations, the ADR's
+protocol for import-time-only files, while every other changed file keeps
+the full enumeration; a mutant only the full suite kills stays fatal, which
+is exactly the ADR's directional check that consumers of a mutated narrowed
+file must still run.
+
+```
+uv run acquit-study run --manifest study/manifests/flask.json \
+  --workdir .study-work --results-dir study/results/flask-narrowing \
+  --narrowing --mutants 6
+```
+
 ## Results
 
 Per-repo summaries live in `study/results/*-summary.md`, each generated from
