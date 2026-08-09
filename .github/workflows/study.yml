@@ -17,6 +17,10 @@ on:
         type: choice
         options: ["false", "true"]
         default: "false"
+      mutants:
+        description: mutants per PR for the mutation arm (0 disables)
+        type: string
+        default: "0"
 
 permissions:
   contents: read
@@ -66,6 +70,7 @@ jobs:
           # The narrowing arm; per-PR results record the flag, so the
           # aggregate job needs no change to distinguish arms.
           if [ "${{ inputs.narrowing }}" = "true" ]; then ARGS+=(--narrowing); fi
+          if [ "${{ inputs.mutants }}" != "0" ]; then ARGS+=(--mutants "${{ inputs.mutants }}"); fi
           uv run acquit-study run \
             --manifest "study/manifests/${{ inputs.repo }}.json" \
             --workdir workdir \
