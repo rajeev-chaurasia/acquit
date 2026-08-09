@@ -116,6 +116,16 @@ From there:
 
 **My PRs all touch the changelog, so this will never skip anything.** That is rule R001 doing its job until you say otherwise. An `assume_inert` list under `[tool.acquit]` vouches that named docs or data files feed no test, and the sticky PR comment suggests the exact entry when docs files are the only blocker. The proof obligation for those files becomes yours; treat `.acquit.toml` diffs like CI config in review.
 
+## Documentation
+
+- [CLI reference](docs/cli.md): every subcommand, flag, document schema, exit code, and the action's inputs and outputs
+- [Rule reference](docs/rules.md): R001 to R018, with triggers, scopes, and the exact reason texts
+- [Soundness contract](docs/soundness.md): what "provably unaffected" means, its assumptions, and its limits
+- [Architecture decision records](docs/adr): fail-closed policy, static analysis, rustworkx, the action, the study, granularity, tree binding
+- [The replay study](docs/study.md): 198 replayed PRs, and [how to re-run it](study/README.md)
+- [Contributing](CONTRIBUTING.md): dev setup, the CI gate, and the bar for soundness-critical changes
+- [Security policy](SECURITY.md): what counts as a vulnerability here, and how to report one
+
 ## License
 
 Apache-2.0

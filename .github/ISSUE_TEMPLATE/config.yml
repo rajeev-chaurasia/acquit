@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security reports (private)
+    url: https://github.com/rajeev-chaurasia/acquit/security/advisories/new
+    about: Privately report anything exploitable before it is public. See SECURITY.md.
+  - name: What "provably unaffected" means
+    url: https://github.com/rajeev-chaurasia/acquit/blob/main/docs/soundness.md
+    about: The soundness contract, its assumptions, and its known limitations.
+  - name: Rule reference (R001 to R018)
+    url: https://github.com/rajeev-chaurasia/acquit/blob/main/docs/rules.md
+    about: Why acquit ran everything, rule by rule, with the exact reason texts.
+  - name: CLI and action reference
+    url: https://github.com/rajeev-chaurasia/acquit/blob/main/docs/cli.md
+    about: Every subcommand, flag, document schema, exit code, and action input.
