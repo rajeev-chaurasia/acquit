@@ -1,0 +1,87 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CONTRIBUTORS.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/pretty.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "CONTRIBUTORS.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CONTRIBUTORS.md"
+      },
+      {
+        "reason": "rich/_unicode_data/__init__.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "rich/_unicode_data/__init__.py"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1414,
+    "hash": "5ebaa4046723e833ae5eb40a80847ed1c3edbaa9f394e27c3f26f17df6b82abf",
+    "nodes": 619,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "ad669087b9fe4b48758b57cc80379518bea10ead",
+    "created_at": "2026-08-09T15:09:16+00:00",
+    "head_sha": "d350701f754db31995cf3d15194977bf30c3027f"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

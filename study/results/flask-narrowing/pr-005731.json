@@ -1,0 +1,145 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.765,
+  "base_sha": "e7e53807766ef1470bce546716a675ded4b08597",
+  "base_suite_seconds": 2.581,
+  "changed_outcomes": [],
+  "findings": [
+    {
+      "reason": "CHANGES.rst is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "CHANGES.rst"
+    },
+    {
+      "reason": "docs/extensiondev.rst is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/extensiondev.rst"
+    },
+    {
+      "reason": "docs/installation.rst is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/installation.rst"
+    },
+    {
+      "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+      "rule": "R002",
+      "scope": "global",
+      "subject": "pyproject.toml"
+    },
+    {
+      "reason": "uv.lock is a dependency manifest, so the environment of every test may change.",
+      "rule": "R002",
+      "scope": "global",
+      "subject": "uv.lock"
+    },
+    {
+      "reason": ".github/workflows/tests.yaml shapes the test environment, so every test could be affected.",
+      "rule": "R003",
+      "scope": "global",
+      "subject": ".github/workflows/tests.yaml"
+    },
+    {
+      "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/helpers.py"
+    },
+    {
+      "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "tests/conftest.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_cli.py"
+    },
+    {
+      "reason": "tests/test_instance_config.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_instance_config.py"
+    },
+    {
+      "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/config.py"
+    },
+    {
+      "reason": "tests/test_cli.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_cli.py"
+    }
+  ],
+  "head_sha": "52df9eed45d0b19c588662ed8492d8fbaa0e7098",
+  "head_suite_seconds": 2.563,
+  "mode": "run-all",
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {},
+  "new_tests_selected": true,
+  "number": 5731,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/test_appctx.py": 0.021,
+    "tests/test_basic.py": 0.271,
+    "tests/test_blueprints.py": 0.142,
+    "tests/test_cli.py": 0.125,
+    "tests/test_config.py": 0.029,
+    "tests/test_converters.py": 0.005,
+    "tests/test_helpers.py": 0.047,
+    "tests/test_instance_config.py": 0.014,
+    "tests/test_json.py": 0.05,
+    "tests/test_json_tag.py": 0.002,
+    "tests/test_logging.py": 0.012,
+    "tests/test_regression.py": 0.003,
+    "tests/test_reqctx.py": 0.042,
+    "tests/test_request.py": 0.005,
+    "tests/test_session_interface.py": 0.002,
+    "tests/test_signals.py": 0.015,
+    "tests/test_subclassing.py": 0.002,
+    "tests/test_templating.py": 0.066,
+    "tests/test_testing.py": 0.051,
+    "tests/test_user_error_handler.py": 0.033,
+    "tests/test_views.py": 0.034
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

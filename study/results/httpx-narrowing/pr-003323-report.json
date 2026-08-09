@@ -1,0 +1,74 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_transports/asgi.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_utils.py",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "pyproject.toml",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "pyproject.toml"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 421,
+    "hash": "d49f19c9a8dd8e633fc1a3cf606092c4fef37d808a1ec5998b4c5ac3576fb0d8",
+    "nodes": 183,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "5766bf58e20548f106e13e95d7064635a9b06941",
+    "created_at": "2026-08-09T15:14:49+00:00",
+    "head_sha": "4515254ffc0f955acfcf7d31b2a4b4515716e3cc"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

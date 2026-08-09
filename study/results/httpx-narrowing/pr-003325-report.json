@@ -1,0 +1,53 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "docs/third_party_packages.md",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "docs/third_party_packages.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/third_party_packages.md"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 426,
+    "hash": "352fb55cd3ed156bc005d8b241e5217e6911f8dd2a1a91f28bd5056a5abf7515",
+    "nodes": 183,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "3849e1518f342dd8cd08f8c0537b565d54e6d2a2",
+    "created_at": "2026-08-09T15:12:43+00:00",
+    "head_sha": "4483df5b353a82379f4cf50cb9592e160ba6b185"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

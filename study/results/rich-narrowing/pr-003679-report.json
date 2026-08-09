@@ -1,0 +1,70 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CONTRIBUTORS.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/style.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CONTRIBUTORS.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CONTRIBUTORS.md"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1371,
+    "hash": "8e46ceb47ebe794f2a956a74131e8dfb24fe21a827703028800603c683d97937",
+    "nodes": 595,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "d43db994181f91cfa996f2f3df3b557ba87494e4",
+    "created_at": "2026-08-09T15:10:00+00:00",
+    "head_sha": "dab648cc486025c8613fd5dd5761b67ac188dc35"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

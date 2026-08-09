@@ -1,0 +1,244 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/__main__.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_cell_widths.py",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/__init__.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/_versions.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode10-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode11-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode12-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode12-1-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode13-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode14-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode15-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode15-1-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode16-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode17-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode4-1-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode5-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode5-1-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode5-2-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode6-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode6-1-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode6-2-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode6-3-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode7-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode8-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_unicode_data/unicode9-0-0.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "rich/cells.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_cells.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_text.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_unicode_data.py",
+      "status": "added"
+    },
+    {
+      "kind": "module",
+      "path": "tools/make_terminal_widths.py",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "tools/make_width_tables.py",
+      "status": "added"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "rich/_unicode_data/__init__.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "rich/_unicode_data/__init__.py"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      },
+      {
+        "reason": "tests/test_cells.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_cells.py"
+      },
+      {
+        "reason": "tests/test_text.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_text.py"
+      },
+      {
+        "reason": "tests/test_unicode_data.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_unicode_data.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1414,
+    "hash": "5ebaa4046723e833ae5eb40a80847ed1c3edbaa9f394e27c3f26f17df6b82abf",
+    "nodes": 619,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "53757bc234cf18977cade41a5b64f3abaccb0b85",
+    "created_at": "2026-08-09T15:09:09+00:00",
+    "head_sha": "cbae9229af4391c0e8aea782956ce9b224cb80c2"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

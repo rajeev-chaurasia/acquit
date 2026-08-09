@@ -1,0 +1,53 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 426,
+    "hash": "1868501bd6883870a52fbed0becf787d23b54dbb7cf0c7b9e2307964b93f2788",
+    "nodes": 181,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "1bf1ba51242e6433f6a4cfa45a9338eb85bd7559",
+    "created_at": "2026-08-09T15:11:16+00:00",
+    "head_sha": "b73eda600919f888739556a8540e227fe2009418"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

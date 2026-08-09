@@ -1,0 +1,114 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGES.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/typing.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGES.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGES.rst"
+      },
+      {
+        "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/helpers.py"
+      },
+      {
+        "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "tests/conftest.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_cli.py"
+      },
+      {
+        "reason": "tests/test_instance_config.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_instance_config.py"
+      },
+      {
+        "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/config.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 516,
+    "hash": "a17ccd293945d5897fec5360bb7a8df22dc1dfc42c75b3f3121847d871178973",
+    "nodes": 322,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "bfffe87d4c2ea255b9a51432bebb3d28741245c4",
+    "created_at": "2026-08-09T15:08:38+00:00",
+    "head_sha": "410e5ab7ed0ef326fa8b5164a633863f137ffff5"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

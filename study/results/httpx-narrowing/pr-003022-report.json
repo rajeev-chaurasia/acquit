@@ -1,0 +1,187 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": ".github/CONTRIBUTING.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/advanced/ssl.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/compatibility.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/environment_variables.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/logging.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/__init__.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_api.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_client.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_config.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_main.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_transports/default.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_types.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_utils.py",
+      "status": "modified"
+    },
+    {
+      "kind": "conftest",
+      "path": "tests/conftest.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_config.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_utils.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".github/CONTRIBUTING.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".github/CONTRIBUTING.md"
+      },
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "docs/advanced/ssl.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/advanced/ssl.md"
+      },
+      {
+        "reason": "docs/compatibility.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/compatibility.md"
+      },
+      {
+        "reason": "docs/environment_variables.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/environment_variables.md"
+      },
+      {
+        "reason": "docs/logging.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/logging.md"
+      },
+      {
+        "reason": "tests/conftest.py changed, and pytest applies it to every test under tests/.",
+        "rule": "R005",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/conftest.py is a conftest, so the tests it configures must run.",
+        "rule": "R014",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/test_config.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_config.py"
+      },
+      {
+        "reason": "tests/test_utils.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_utils.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 423,
+    "hash": "cd90bd43f7d77dfee9920a76d542c0df367360224edacefdc767dedbe887838c",
+    "nodes": 183,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "5766bf58e20548f106e13e95d7064635a9b06941",
+    "created_at": "2026-08-09T15:13:03+00:00",
+    "head_sha": "cb71af3c28f30e08e874de367921091d5b4ba66d"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

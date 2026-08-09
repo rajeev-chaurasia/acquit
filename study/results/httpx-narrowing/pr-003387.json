@@ -1,0 +1,80 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.799,
+  "base_sha": "6212e8fa3bf90154b891c7721f6d29737caac861",
+  "base_suite_seconds": 10.95,
+  "changed_outcomes": [
+    "tests/models/test_headers.py::test_obfuscate_sensitive_headers",
+    "tests/models/test_headers.py::test_parse_header_links",
+    "tests/models/test_headers.py::test_parse_header_links_no_link"
+  ],
+  "findings": [
+    {
+      "reason": "scripts/lint is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "scripts/lint"
+    },
+    {
+      "reason": "tests/models/test_headers.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/models/test_headers.py"
+    },
+    {
+      "reason": "tests/test_utils.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_utils.py"
+    }
+  ],
+  "head_sha": "81bb8d117a80ae88bf8061c9f58877b83774f13d",
+  "head_suite_seconds": 11.178,
+  "mode": "run-all",
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {},
+  "new_tests_selected": true,
+  "number": 3387,
+  "per_file_durations": {
+    "tests/client/test_async_client.py": 0.854,
+    "tests/client/test_auth.py": 0.21,
+    "tests/client/test_client.py": 0.675,
+    "tests/client/test_cookies.py": 0.014,
+    "tests/client/test_event_hooks.py": 0.022,
+    "tests/client/test_headers.py": 0.022,
+    "tests/client/test_properties.py": 0.18,
+    "tests/client/test_proxies.py": 2.728,
+    "tests/client/test_queryparams.py": 0.062,
+    "tests/client/test_redirects.py": 0.08,
+    "tests/models/test_cookies.py": 0.009,
+    "tests/models/test_headers.py": 0.02,
+    "tests/models/test_queryparams.py": 0.02,
+    "tests/models/test_requests.py": 0.028,
+    "tests/models/test_responses.py": 0.173,
+    "tests/models/test_url.py": 0.13,
+    "tests/models/test_whatwg.py": 0.689,
+    "tests/test_api.py": 0.267,
+    "tests/test_asgi.py": 0.053,
+    "tests/test_auth.py": 0.016,
+    "tests/test_config.py": 0.326,
+    "tests/test_content.py": 0.087,
+    "tests/test_decoders.py": 0.069,
+    "tests/test_exceptions.py": 0.053,
+    "tests/test_exported_members.py": 0.001,
+    "tests/test_main.py": 0.022,
+    "tests/test_multipart.py": 0.075,
+    "tests/test_status_codes.py": 0.006,
+    "tests/test_timeouts.py": 0.253,
+    "tests/test_utils.py": 0.239,
+    "tests/test_wsgi.py": 0.688
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

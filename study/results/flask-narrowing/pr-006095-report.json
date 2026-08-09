@@ -1,0 +1,304 @@
+{
+  "changed": [
+    {
+      "kind": "conftest",
+      "path": "tests/conftest.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_cli.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "tests/conftest.py changed, and pytest applies it to every test under tests/.",
+        "rule": "R005",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/helpers.py"
+      },
+      {
+        "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "tests/conftest.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_cli.py"
+      },
+      {
+        "reason": "tests/test_instance_config.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_instance_config.py"
+      },
+      {
+        "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/config.py"
+      },
+      {
+        "reason": "tests/conftest.py is a conftest, so the tests it configures must run.",
+        "rule": "R014",
+        "scope": "subtree",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/test_cli.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_cli.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 515,
+    "hash": "f9facc8ca08bf809e4d89bc6866777822c1d684c54fade17ddc626f0e1d11528",
+    "nodes": 310,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "8285adf5a4f572dbf7a0a3b8f3a96ca0b19c50a4",
+    "created_at": "2026-08-09T15:08:14+00:00",
+    "head_sha": "5ce121dd841e2dc2594d0ed3954278f4101d3521"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 22,
+    "skipped": 0,
+    "total": 22
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/test_appctx.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_async.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_basic.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_blueprints.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_cli.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "reachable-from:tests/test_cli.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_config.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_converters.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_helpers.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_instance_config.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_json.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_json_tag.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_logging.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_regression.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_reqctx.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_request.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_session_interface.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_signals.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_subclassing.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_templating.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_testing.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_user_error_handler.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      },
+      {
+        "path": "tests/test_views.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:tests/conftest.py",
+          "rule:R005"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

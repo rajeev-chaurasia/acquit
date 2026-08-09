@@ -1,0 +1,152 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/source/live.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/source/progress.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "poetry.lock",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/console.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/live.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_console.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_live.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_markdown.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_syntax.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "docs/source/live.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/source/live.rst"
+      },
+      {
+        "reason": "docs/source/progress.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/source/progress.rst"
+      },
+      {
+        "reason": "poetry.lock is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "poetry.lock"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      },
+      {
+        "reason": "tests/test_console.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_console.py"
+      },
+      {
+        "reason": "tests/test_live.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_live.py"
+      },
+      {
+        "reason": "tests/test_markdown.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_markdown.py"
+      },
+      {
+        "reason": "tests/test_syntax.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_syntax.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1368,
+    "hash": "0a96ea3543a03cae39d18ff4933e26bed9e3d9ccc20d8e990403960d23d05882",
+    "nodes": 595,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "4309fd235e6c96c6d056a0007337fb78a1b30f3d",
+    "created_at": "2026-08-09T15:09:59+00:00",
+    "head_sha": "5a2db8fcc780487a76da9a9ab87a1b75fd3cfbab"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

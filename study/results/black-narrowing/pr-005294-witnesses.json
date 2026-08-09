@@ -1,0 +1,34 @@
+{
+  "closures": {
+    "c447e9dbb49be61044ba66039426181ef2bb60ee9320e23fcbb5f889b377abdb": [
+      "ext:_pytest",
+      "ext:functools",
+      "ext:importlib",
+      "ext:itertools",
+      "ext:logging",
+      "ext:pytest",
+      "ext:re",
+      "ext:typing",
+      "tests/__init__.py",
+      "tests/conftest.py",
+      "tests/optional.py",
+      "tests/test_schema.py"
+    ]
+  },
+  "graph_hash": "b5b7348717482239f4cc9e5eacc662e913c4ae5bd494a9b3fbf4505a3ac3b293",
+  "schema": "acquit/witnesses-v1",
+  "witnesses": [
+    {
+      "changed": [
+        "src/black/linegen.py",
+        "src/black/nodes.py",
+        "src/black/numerics.py",
+        "src/black/trans.py"
+      ],
+      "claim": "closure(test) does not intersect changed set",
+      "closure": "c447e9dbb49be61044ba66039426181ef2bb60ee9320e23fcbb5f889b377abdb",
+      "id": "w-000001",
+      "test": "tests/test_schema.py"
+    }
+  ]
+}

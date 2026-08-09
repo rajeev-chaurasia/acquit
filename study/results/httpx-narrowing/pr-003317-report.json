@@ -1,0 +1,85 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": ".github/workflows/test-suite.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_types.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_urls.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/models/test_url.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": ".github/workflows/test-suite.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/test-suite.yml"
+      },
+      {
+        "reason": "tests/models/test_url.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/models/test_url.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 426,
+    "hash": "352fb55cd3ed156bc005d8b241e5217e6911f8dd2a1a91f28bd5056a5abf7515",
+    "nodes": 183,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "f06171fd5a86cf89387f4ee860ea0da207160418",
+    "created_at": "2026-08-09T15:13:32+00:00",
+    "head_sha": "c362e199368862a8bb8c52729a975a7babc9df28"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

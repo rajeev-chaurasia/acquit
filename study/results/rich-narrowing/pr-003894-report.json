@@ -1,0 +1,92 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CONTRIBUTORS.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_inspect.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_inspect.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "CONTRIBUTORS.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CONTRIBUTORS.md"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      },
+      {
+        "reason": "tests/test_inspect.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_inspect.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1355,
+    "hash": "2264f8612dbeb6e30262bf36ab883eb88a0b3c5c1dde930b247c8099ec17bfaa",
+    "nodes": 595,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "4d6d631a3d2deddf8405522d4b8c976a6d35726c",
+    "created_at": "2026-08-09T15:09:08+00:00",
+    "head_sha": "0c271d5bb67292806b8fea1c2e08f9c5a7e7f928"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

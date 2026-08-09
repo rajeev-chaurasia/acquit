@@ -1,0 +1,164 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CONTRIBUTORS.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "docs/source/conf.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "examples/top_lite_simulator.py",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "poetry.lock",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "pyproject.toml",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/_ratio.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/align.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/box.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/console.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/control.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/emoji.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/live_render.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/markdown.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/progress.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_syntax.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "CONTRIBUTORS.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CONTRIBUTORS.md"
+      },
+      {
+        "reason": "poetry.lock is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "poetry.lock"
+      },
+      {
+        "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "pyproject.toml"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      },
+      {
+        "reason": "tests/test_syntax.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_syntax.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1350,
+    "hash": "1fa2ae7d0420a46d6a89774942db80092f73c8dd43c6181fc2335f93407c424f",
+    "nodes": 594,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "27d923023127ac66359a18b5b02b83c1e534db3e",
+    "created_at": "2026-08-09T15:09:42+00:00",
+    "head_sha": "6ae321ad86a093bcf4251e1784e43b0654cb3987"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

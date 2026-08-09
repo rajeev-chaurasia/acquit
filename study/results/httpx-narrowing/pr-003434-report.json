@@ -1,0 +1,53 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": "requirements.txt",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "requirements.txt is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "requirements.txt"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 416,
+    "hash": "75c7948d4ed050e2208ae0f503890d45c37f636c1767f92fc51350b9548aa8fe",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "15e21e9ea3cad4f06e22a7e704aabefdf43d2e29",
+    "created_at": "2026-08-09T15:10:05+00:00",
+    "head_sha": "bb070b52e62ca1d95427f1aab67d8d79f46f5411"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

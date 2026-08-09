@@ -1,0 +1,79 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_api.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_client.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_types.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/client/test_proxies.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "tests/client/test_proxies.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/client/test_proxies.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 424,
+    "hash": "ba33f5b8ae2ec418c6f1a6322e22c99fc38d9dd4b33829e4f79551fa78b6f463",
+    "nodes": 183,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "34e1110a9b3f8ff875fd2f61e1721cf68e18e564",
+    "created_at": "2026-08-09T15:11:27+00:00",
+    "head_sha": "3bba871cc8bdeac096ab27702b6743be3e869542"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

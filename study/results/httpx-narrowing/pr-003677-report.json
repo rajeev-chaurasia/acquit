@@ -1,0 +1,64 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": ".github/workflows/publish.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/test-suite.yml",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".github/workflows/publish.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/publish.yml"
+      },
+      {
+        "reason": ".github/workflows/test-suite.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/test-suite.yml"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 416,
+    "hash": "75c7948d4ed050e2208ae0f503890d45c37f636c1767f92fc51350b9548aa8fe",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "4b23574cf83307ce27d3b14b4a425dc58c57d28d",
+    "created_at": "2026-08-09T15:08:49+00:00",
+    "head_sha": "b4d5094df53c98146c17069216e316ef5006ddb1"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

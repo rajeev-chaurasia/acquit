@@ -1,0 +1,252 @@
+{
+  "artifacts": {
+    "report": null,
+    "selection": null,
+    "witnesses": null
+  },
+  "graph_hash": "7af1da7a0c8ca8a6ceeaad78ba8dc49b4bca3094e72fa7fc419f97b113c980b3",
+  "mode": "selective",
+  "schema": "acquit/selection-v2",
+  "skip": [
+    {
+      "path": "tests/test_align.py",
+      "witness": "w-000001"
+    },
+    {
+      "path": "tests/test_ansi.py",
+      "witness": "w-000002"
+    },
+    {
+      "path": "tests/test_bar.py",
+      "witness": "w-000003"
+    },
+    {
+      "path": "tests/test_block_bar.py",
+      "witness": "w-000004"
+    },
+    {
+      "path": "tests/test_box.py",
+      "witness": "w-000005"
+    },
+    {
+      "path": "tests/test_card.py",
+      "witness": "w-000006"
+    },
+    {
+      "path": "tests/test_cells.py",
+      "witness": "w-000007"
+    },
+    {
+      "path": "tests/test_color.py",
+      "witness": "w-000008"
+    },
+    {
+      "path": "tests/test_color_triplet.py",
+      "witness": "w-000009"
+    },
+    {
+      "path": "tests/test_columns.py",
+      "witness": "w-000010"
+    },
+    {
+      "path": "tests/test_columns_align.py",
+      "witness": "w-000011"
+    },
+    {
+      "path": "tests/test_console.py",
+      "witness": "w-000012"
+    },
+    {
+      "path": "tests/test_constrain.py",
+      "witness": "w-000013"
+    },
+    {
+      "path": "tests/test_containers.py",
+      "witness": "w-000014"
+    },
+    {
+      "path": "tests/test_control.py",
+      "witness": "w-000015"
+    },
+    {
+      "path": "tests/test_emoji.py",
+      "witness": "w-000016"
+    },
+    {
+      "path": "tests/test_file_proxy.py",
+      "witness": "w-000017"
+    },
+    {
+      "path": "tests/test_filesize.py",
+      "witness": "w-000018"
+    },
+    {
+      "path": "tests/test_getfileno.py",
+      "witness": "w-000019"
+    },
+    {
+      "path": "tests/test_highlighter.py",
+      "witness": "w-000020"
+    },
+    {
+      "path": "tests/test_inspect.py",
+      "witness": "w-000021"
+    },
+    {
+      "path": "tests/test_json.py",
+      "witness": "w-000022"
+    },
+    {
+      "path": "tests/test_jupyter.py",
+      "witness": "w-000023"
+    },
+    {
+      "path": "tests/test_layout.py",
+      "witness": "w-000024"
+    },
+    {
+      "path": "tests/test_live.py",
+      "witness": "w-000025"
+    },
+    {
+      "path": "tests/test_live_render.py",
+      "witness": "w-000026"
+    },
+    {
+      "path": "tests/test_log.py",
+      "witness": "w-000027"
+    },
+    {
+      "path": "tests/test_markdown.py",
+      "witness": "w-000028"
+    },
+    {
+      "path": "tests/test_markdown_no_hyperlinks.py",
+      "witness": "w-000029"
+    },
+    {
+      "path": "tests/test_markup.py",
+      "witness": "w-000030"
+    },
+    {
+      "path": "tests/test_measure.py",
+      "witness": "w-000031"
+    },
+    {
+      "path": "tests/test_null_file.py",
+      "witness": "w-000032"
+    },
+    {
+      "path": "tests/test_padding.py",
+      "witness": "w-000033"
+    },
+    {
+      "path": "tests/test_palette.py",
+      "witness": "w-000034"
+    },
+    {
+      "path": "tests/test_panel.py",
+      "witness": "w-000035"
+    },
+    {
+      "path": "tests/test_pick.py",
+      "witness": "w-000036"
+    },
+    {
+      "path": "tests/test_pretty.py",
+      "witness": "w-000037"
+    },
+    {
+      "path": "tests/test_progress.py",
+      "witness": "w-000038"
+    },
+    {
+      "path": "tests/test_prompt.py",
+      "witness": "w-000039"
+    },
+    {
+      "path": "tests/test_protocol.py",
+      "witness": "w-000040"
+    },
+    {
+      "path": "tests/test_ratio.py",
+      "witness": "w-000041"
+    },
+    {
+      "path": "tests/test_rich_print.py",
+      "witness": "w-000042"
+    },
+    {
+      "path": "tests/test_rule.py",
+      "witness": "w-000043"
+    },
+    {
+      "path": "tests/test_rule_in_table.py",
+      "witness": "w-000044"
+    },
+    {
+      "path": "tests/test_screen.py",
+      "witness": "w-000045"
+    },
+    {
+      "path": "tests/test_segment.py",
+      "witness": "w-000046"
+    },
+    {
+      "path": "tests/test_spinner.py",
+      "witness": "w-000047"
+    },
+    {
+      "path": "tests/test_stack.py",
+      "witness": "w-000048"
+    },
+    {
+      "path": "tests/test_status.py",
+      "witness": "w-000049"
+    },
+    {
+      "path": "tests/test_style.py",
+      "witness": "w-000050"
+    },
+    {
+      "path": "tests/test_styled.py",
+      "witness": "w-000051"
+    },
+    {
+      "path": "tests/test_syntax.py",
+      "witness": "w-000052"
+    },
+    {
+      "path": "tests/test_table.py",
+      "witness": "w-000053"
+    },
+    {
+      "path": "tests/test_text.py",
+      "witness": "w-000054"
+    },
+    {
+      "path": "tests/test_theme.py",
+      "witness": "w-000055"
+    },
+    {
+      "path": "tests/test_tools.py",
+      "witness": "w-000056"
+    },
+    {
+      "path": "tests/test_tree.py",
+      "witness": "w-000057"
+    },
+    {
+      "path": "tests/test_win32_console.py",
+      "witness": "w-000058"
+    },
+    {
+      "path": "tests/test_windows_renderer.py",
+      "witness": "w-000059"
+    }
+  ],
+  "tree": {
+    "fingerprint": "707f86a288e6ebf06b5d0cc20e5de5030e8d1d41c406f0fffc9992e99fcdd72c",
+    "head_sha": "f0626d32f243faf680696717f8a6451544358a87"
+  }
+}

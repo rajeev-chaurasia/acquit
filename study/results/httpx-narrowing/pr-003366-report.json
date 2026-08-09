@@ -1,0 +1,78 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "docs/compatibility.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/__init__.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_api.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_client.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_config.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_transports/default.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "docs/compatibility.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/compatibility.md"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 412,
+    "hash": "5587965cc3e26f9b55fc8683bea6d2e74f8ee3de72fc9f2dcc6d8165caeed7b1",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "9a0561eed7236c1fe5daeaf64bc9682aea424d16",
+    "created_at": "2026-08-09T15:12:22+00:00",
+    "head_sha": "8b9897b93cd285d24d7954fae2afdb7451cd319e"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

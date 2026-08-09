@@ -1,0 +1,15 @@
+{
+  "artifacts": {
+    "report": null,
+    "selection": null,
+    "witnesses": null
+  },
+  "graph_hash": "35b33b468d578aa17f8a7f0edf21466b778ee1d8beaedf48a5d562afe3204ce0",
+  "mode": "run-all",
+  "schema": "acquit/selection-v2",
+  "skip": [],
+  "tree": {
+    "fingerprint": "329541b61aaaf07813c6d288f2dcdb26d7f8fe521cfffa218a2897e18c990a01",
+    "head_sha": "21806ce70c67de52ddd2a9785a62dd55f554c3b3"
+  }
+}

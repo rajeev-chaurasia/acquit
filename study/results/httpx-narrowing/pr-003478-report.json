@@ -1,0 +1,64 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "docs/advanced/clients.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/quickstart.md",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "docs/advanced/clients.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/advanced/clients.md"
+      },
+      {
+        "reason": "docs/quickstart.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/quickstart.md"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 416,
+    "hash": "75c7948d4ed050e2208ae0f503890d45c37f636c1767f92fc51350b9548aa8fe",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "c7c13f18a5af4c64c649881b2fe8dbd72a519c32",
+    "created_at": "2026-08-09T15:11:22+00:00",
+    "head_sha": "669e05325d0b120398f308ae2c173bb2380703d1"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

@@ -1,0 +1,605 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": ".github/dependabot.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/changelog.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/diff_shades.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/diff_shades_comment.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/docker.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/docs.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/fuzz.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/lint.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/post_release.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/publish_binaries.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/pypi_upload.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/release_tests.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/test.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": ".github/workflows/zizmor.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": ".github/zizmor.yml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": ".pre-commit-config.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": ".readthedocs.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CHANGES.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "Dockerfile",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/contributing/the_basics.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/integrations/editors.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/integrations/github_actions.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/the_black_code_style/current_style.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/the_black_code_style/future_style.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/usage_and_configuration/the_basics.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "plugin/black.vim",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "pyproject.toml",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/__init__.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/brackets.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/cache.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/concurrency.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/linegen.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/lines.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/mode.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/nodes.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/numerics.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/parsing.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/report.py",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "src/black/resources/black.schema.json",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/strings.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/trans.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/blib2to3/pgen2/driver.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/blib2to3/pygram.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/blib2to3/pytree.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "tests/data/cases/pep_750_nested_quotes.py",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "tests/data/cases/preview_fmt_off_class_blank_lines.py",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "tests/data/cases/preview_hug_parens_with_type_ignore.py",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "tests/data/cases/preview_wrap_comprehension_in.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "tests/data/cases/skip_magic_trailing_comma.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "tests/data/cases/string_quotes_escaped_trailing_quote.py",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "tests/data/cases/t_docstring.py",
+      "status": "deleted"
+    },
+    {
+      "kind": "module",
+      "path": "tests/data/cases/type_params.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "tests/data/cases/unstable_comment_on_optional_parens.py",
+      "status": "deleted"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_black.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_blackd.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_format.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".github/dependabot.yml is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".github/dependabot.yml"
+      },
+      {
+        "reason": ".github/zizmor.yml is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".github/zizmor.yml"
+      },
+      {
+        "reason": ".pre-commit-config.yaml is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".pre-commit-config.yaml"
+      },
+      {
+        "reason": ".readthedocs.yaml is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".readthedocs.yaml"
+      },
+      {
+        "reason": "CHANGES.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGES.md"
+      },
+      {
+        "reason": "Dockerfile is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "Dockerfile"
+      },
+      {
+        "reason": "docs/contributing/the_basics.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/contributing/the_basics.md"
+      },
+      {
+        "reason": "docs/integrations/editors.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/integrations/editors.md"
+      },
+      {
+        "reason": "docs/integrations/github_actions.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/integrations/github_actions.md"
+      },
+      {
+        "reason": "docs/the_black_code_style/current_style.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/the_black_code_style/current_style.md"
+      },
+      {
+        "reason": "docs/the_black_code_style/future_style.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/the_black_code_style/future_style.md"
+      },
+      {
+        "reason": "docs/usage_and_configuration/the_basics.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/usage_and_configuration/the_basics.md"
+      },
+      {
+        "reason": "plugin/black.vim is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "plugin/black.vim"
+      },
+      {
+        "reason": "src/black/resources/black.schema.json is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "src/black/resources/black.schema.json"
+      },
+      {
+        "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "pyproject.toml"
+      },
+      {
+        "reason": ".github/workflows/changelog.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/changelog.yml"
+      },
+      {
+        "reason": ".github/workflows/diff_shades.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/diff_shades.yml"
+      },
+      {
+        "reason": ".github/workflows/diff_shades_comment.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/diff_shades_comment.yml"
+      },
+      {
+        "reason": ".github/workflows/docker.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/docker.yml"
+      },
+      {
+        "reason": ".github/workflows/docs.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/docs.yml"
+      },
+      {
+        "reason": ".github/workflows/fuzz.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/fuzz.yml"
+      },
+      {
+        "reason": ".github/workflows/lint.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/lint.yml"
+      },
+      {
+        "reason": ".github/workflows/post_release.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/post_release.yml"
+      },
+      {
+        "reason": ".github/workflows/publish_binaries.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/publish_binaries.yml"
+      },
+      {
+        "reason": ".github/workflows/pypi_upload.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/pypi_upload.yml"
+      },
+      {
+        "reason": ".github/workflows/release_tests.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/release_tests.yml"
+      },
+      {
+        "reason": ".github/workflows/test.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/test.yml"
+      },
+      {
+        "reason": ".github/workflows/zizmor.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/zizmor.yml"
+      },
+      {
+        "reason": "Dockerfile shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": "Dockerfile"
+      },
+      {
+        "reason": "scripts/fuzz.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "scripts/fuzz.py"
+      },
+      {
+        "reason": "src/blib2to3/pgen2/conv.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/blib2to3/pgen2/conv.py"
+      },
+      {
+        "reason": "src/blib2to3/pgen2/pgen.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/blib2to3/pgen2/pgen.py"
+      },
+      {
+        "reason": "tests/data/cases/fmtonoff.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/fmtonoff.py"
+      },
+      {
+        "reason": "tests/data/cases/function.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/function.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/decorators.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/decorators.py"
+      },
+      {
+        "reason": "tests/data/cases/pep_572_do_not_remove_parens.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/pep_572_do_not_remove_parens.py"
+      },
+      {
+        "reason": "tests/data/cases/pep_750.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/pep_750.py"
+      },
+      {
+        "reason": "tests/data/cases/python315.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/python315.py"
+      },
+      {
+        "reason": "tests/data/cases/remove_except_types_parens.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/remove_except_types_parens.py"
+      },
+      {
+        "reason": "tests/data/cases/type_param_defaults.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/type_param_defaults.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/async_as_identifier.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/async_as_identifier.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/invalid_header.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/invalid_header.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/pattern_matching_invalid.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/pattern_matching_invalid.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/python2_detection.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/python2_detection.py"
+      },
+      {
+        "reason": "tests/test_black.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_black.py"
+      },
+      {
+        "reason": "tests/test_blackd.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_blackd.py"
+      },
+      {
+        "reason": "tests/test_format.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_format.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 646,
+    "hash": "21fdbf90374cf6972027719b582d37cc0f681e692844200fa9d3bcec2cf2d251",
+    "nodes": 573,
+    "roots": [
+      "src",
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "928f50354512b3857ca07c1085076286035e4a56",
+    "created_at": "2026-08-09T15:11:13+00:00",
+    "head_sha": "cd56ef3da1861e9e3dccd596af348ac648b87c65"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

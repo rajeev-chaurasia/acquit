@@ -1,0 +1,74 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "httpx/_exceptions.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_urls.py",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "requirements.txt",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_content.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "requirements.txt is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "requirements.txt"
+      },
+      {
+        "reason": "tests/test_content.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_content.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 416,
+    "hash": "75c7948d4ed050e2208ae0f503890d45c37f636c1767f92fc51350b9548aa8fe",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "89102021fcb44f6c3fab6304e5f951692723c908",
+    "created_at": "2026-08-09T15:11:01+00:00",
+    "head_sha": "927b5ac58942eb0f6dfdc3e0b90cac0d3bc9ae8e"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

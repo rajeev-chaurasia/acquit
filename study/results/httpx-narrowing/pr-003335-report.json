@@ -1,0 +1,100 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "docs/advanced/ssl.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_client.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_compat.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_config.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_transports/default.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_types.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_config.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_utils.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "docs/advanced/ssl.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/advanced/ssl.md"
+      },
+      {
+        "reason": "tests/test_config.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_config.py"
+      },
+      {
+        "reason": "tests/test_utils.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_utils.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 415,
+    "hash": "096019d34c2fffcbab6aa0555cf39932ee29179e91437249855b91b10e5f5acf",
+    "nodes": 183,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "2763690e1b2c0f72505397f34fc3c7dc2971955a",
+    "created_at": "2026-08-09T15:11:15+00:00",
+    "head_sha": "ff94a9985a9f1695bee54de7762d956ee3b53ecd"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

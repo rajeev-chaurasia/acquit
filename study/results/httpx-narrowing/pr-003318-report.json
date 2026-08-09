@@ -1,0 +1,53 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": ".github/workflows/test-suite.yml",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".github/workflows/test-suite.yml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/test-suite.yml"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 426,
+    "hash": "352fb55cd3ed156bc005d8b241e5217e6911f8dd2a1a91f28bd5056a5abf7515",
+    "nodes": 183,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "f06171fd5a86cf89387f4ee860ea0da207160418",
+    "created_at": "2026-08-09T15:11:40+00:00",
+    "head_sha": "e77aea577e470ee186cb84c860f90fd1e3ad6726"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

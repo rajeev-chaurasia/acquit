@@ -1,0 +1,85 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "httpx/_models.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "httpx/_utils.py",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "scripts/lint",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/models/test_headers.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_utils.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "scripts/lint is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "scripts/lint"
+      },
+      {
+        "reason": "tests/models/test_headers.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/models/test_headers.py"
+      },
+      {
+        "reason": "tests/test_utils.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_utils.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 420,
+    "hash": "20dc5dc7db99147be5dda5c3986875f59191b7779ac3d9a53d1d977596a08e5c",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "6212e8fa3bf90154b891c7721f6d29737caac861",
+    "created_at": "2026-08-09T15:10:30+00:00",
+    "head_sha": "81bb8d117a80ae88bf8061c9f58877b83774f13d"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

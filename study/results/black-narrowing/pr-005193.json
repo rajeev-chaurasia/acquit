@@ -1,0 +1,183 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 3.805,
+  "base_sha": "b74b23013fe6d0f7e0cee430a472ac70c5ba1334",
+  "base_suite_seconds": 58.319,
+  "changed_outcomes": [
+    "tests/test_black.py::BlackTestCase::test_cli_rejects_non_string_pyproject_regex_configs",
+    "tests/test_black.py::BlackTestCase::test_read_pyproject_toml_rejects_non_string_regex_configs"
+  ],
+  "findings": [
+    {
+      "reason": "CHANGES.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "CHANGES.md"
+    },
+    {
+      "reason": "scripts/fuzz.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "scripts/fuzz.py"
+    },
+    {
+      "reason": "src/blib2to3/pgen2/conv.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/blib2to3/pgen2/conv.py"
+    },
+    {
+      "reason": "src/blib2to3/pgen2/pgen.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/blib2to3/pgen2/pgen.py"
+    },
+    {
+      "reason": "tests/data/cases/fmtonoff.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/fmtonoff.py"
+    },
+    {
+      "reason": "tests/data/cases/function.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/function.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/decorators.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/decorators.py"
+    },
+    {
+      "reason": "tests/data/cases/pep_572_do_not_remove_parens.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/pep_572_do_not_remove_parens.py"
+    },
+    {
+      "reason": "tests/data/cases/pep_750.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/pep_750.py"
+    },
+    {
+      "reason": "tests/data/cases/python315.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/python315.py"
+    },
+    {
+      "reason": "tests/data/cases/remove_except_types_parens.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/remove_except_types_parens.py"
+    },
+    {
+      "reason": "tests/data/cases/type_param_defaults.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/type_param_defaults.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/async_as_identifier.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/async_as_identifier.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/invalid_header.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/invalid_header.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/pattern_matching_invalid.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/pattern_matching_invalid.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/python2_detection.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/python2_detection.py"
+    },
+    {
+      "reason": "tests/test_black.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_black.py"
+    }
+  ],
+  "head_sha": "2db81d2723241accd8a3cd11b47e5c80647c1e96",
+  "head_suite_seconds": 58.523,
+  "mode": "run-all",
+  "mutants": {
+    "detection_parity": 1.0,
+    "entries": [
+      {
+        "col": 37,
+        "description": "string constant extended",
+        "file": "src/black/__init__.py",
+        "full_seconds": 4.972,
+        "killed_by_full": true,
+        "killed_by_selected": true,
+        "kind": "string-tweak",
+        "line": 84,
+        "selected_seconds": 57.731
+      },
+      {
+        "col": 26,
+        "description": "string constant extended",
+        "file": "tests/test_black.py",
+        "full_seconds": 1.012,
+        "killed_by_full": true,
+        "killed_by_selected": true,
+        "kind": "string-tweak",
+        "line": 65,
+        "selected_seconds": 53.186
+      },
+      {
+        "col": 9,
+        "description": "string constant extended",
+        "file": "src/black/__init__.py",
+        "full_seconds": 5.047,
+        "killed_by_full": true,
+        "killed_by_selected": true,
+        "kind": "string-tweak",
+        "line": 276,
+        "selected_seconds": 59.878
+      }
+    ],
+    "errors": [],
+    "requested": 3
+  },
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {},
+  "new_tests_selected": true,
+  "number": 5193,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/test_black.py": 4.684,
+    "tests/test_blackd.py": 1.729,
+    "tests/test_concurrency_manager_shutdown.py": 0.002,
+    "tests/test_docs.py": 0.001,
+    "tests/test_format.py": 50.171,
+    "tests/test_no_ipynb.py": 0.0,
+    "tests/test_ranges.py": 0.001,
+    "tests/test_schema.py": 0.004,
+    "tests/test_tokenize.py": 0.0,
+    "tests/test_trans.py": 0.0
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

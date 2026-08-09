@@ -1,0 +1,65 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "README.es.md",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "README.es.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.es.md"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1354,
+    "hash": "1f7402a11aa154d440fb0862b4e8fb38346d07d6cf80bdc59eda025b2b6ee696",
+    "nodes": 595,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "cd5074f87804aac2f6e5c6143e1cac5e3a0bddc5",
+    "created_at": "2026-08-09T15:09:29+00:00",
+    "head_sha": "518daaa39c17bad485c970bf229424784fbdf044"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

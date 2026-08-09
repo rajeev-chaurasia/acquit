@@ -1,0 +1,125 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGES.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/testing.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_testing.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGES.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGES.rst"
+      },
+      {
+        "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/helpers.py"
+      },
+      {
+        "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "tests/conftest.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_cli.py"
+      },
+      {
+        "reason": "tests/test_instance_config.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_instance_config.py"
+      },
+      {
+        "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/config.py"
+      },
+      {
+        "reason": "tests/test_testing.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_testing.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 516,
+    "hash": "23c982f32b37a372591522110fbd2f5b1180a53a82c95374b49f65e759cd6498",
+    "nodes": 309,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "5addaf833b2e8c7a616f89dd8ad5a44b07d7c000",
+    "created_at": "2026-08-09T15:08:30+00:00",
+    "head_sha": "53b8f08218796d95764c5252bccd8a50a173a6fb"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

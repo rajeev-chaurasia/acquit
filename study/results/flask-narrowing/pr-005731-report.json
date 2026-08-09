@@ -1,0 +1,195 @@
+{
+  "changed": [
+    {
+      "kind": "config",
+      "path": ".github/workflows/tests.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CHANGES.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/extensiondev.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/installation.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "pyproject.toml",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/cli.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/json/provider.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/sansio/app.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/flask/typing.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_cli.py",
+      "status": "modified"
+    },
+    {
+      "kind": "config",
+      "path": "uv.lock",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGES.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGES.rst"
+      },
+      {
+        "reason": "docs/extensiondev.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/extensiondev.rst"
+      },
+      {
+        "reason": "docs/installation.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/installation.rst"
+      },
+      {
+        "reason": "pyproject.toml is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "pyproject.toml"
+      },
+      {
+        "reason": "uv.lock is a dependency manifest, so the environment of every test may change.",
+        "rule": "R002",
+        "scope": "global",
+        "subject": "uv.lock"
+      },
+      {
+        "reason": ".github/workflows/tests.yaml shapes the test environment, so every test could be affected.",
+        "rule": "R003",
+        "scope": "global",
+        "subject": ".github/workflows/tests.yaml"
+      },
+      {
+        "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "src/flask/helpers.py"
+      },
+      {
+        "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "tests/conftest.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/conftest.py"
+      },
+      {
+        "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_cli.py"
+      },
+      {
+        "reason": "tests/test_instance_config.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+        "rule": "R008",
+        "scope": "closure-taint",
+        "subject": "tests/test_instance_config.py"
+      },
+      {
+        "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/cli.py"
+      },
+      {
+        "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/flask/config.py"
+      },
+      {
+        "reason": "tests/test_cli.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_cli.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 723,
+    "hash": "2aceb81e6f6e72654355ee458fd6f64df1a0e4de08e5bc07f2a03bc42be74662",
+    "nodes": 308,
+    "roots": [
+      "src",
+      "",
+      "tests"
+    ]
+  },
+  "run": {
+    "base_sha": "e7e53807766ef1470bce546716a675ded4b08597",
+    "created_at": "2026-08-09T15:08:35+00:00",
+    "head_sha": "52df9eed45d0b19c588662ed8492d8fbaa0e7098"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

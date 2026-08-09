@@ -1,0 +1,66 @@
+{
+  "analysis_seconds": {
+    "p50": 3.822,
+    "p95": 3.9329499999999995
+  },
+  "fail_closed_rules": {
+    "R001": 43,
+    "R002": 6,
+    "R003": 24
+  },
+  "mutation_arm": {
+    "killed_by_full": 58,
+    "missed": [],
+    "mutants": 105,
+    "parity": {
+      "median": 1.0,
+      "p25": 1.0,
+      "p75": 1.0
+    },
+    "prs_with_mutants": 60
+  },
+  "narrowing": {
+    "narrowed_skips": 0,
+    "prs_with_flag": 60,
+    "prs_with_narrowed_skips": 0,
+    "refusals": {
+      "tainted-closure": 10
+    },
+    "unsafe": []
+  },
+  "new_test_violations": 0,
+  "prs": {
+    "analyzed": 60,
+    "excluded": 0,
+    "exclusion_stages": {}
+  },
+  "recoverable_run_alls": {
+    "count": 30,
+    "counterfactual_selective_share": 0.5166666666666667
+  },
+  "replay": {
+    "selective": 1,
+    "selective_verified": 1
+  },
+  "schema": "acquit/study-summary-v1",
+  "selective": {
+    "count": 1,
+    "share": 0.016666666666666666
+  },
+  "skip_rate_count_weighted": {
+    "median": 0.09090909090909091,
+    "p25": 0.09090909090909091,
+    "p75": 0.09090909090909091
+  },
+  "skip_rate_duration_weighted": {
+    "median": 8.019085423307471e-05,
+    "p25": 8.019085423307471e-05,
+    "p75": 8.019085423307471e-05
+  },
+  "sole_blocker_rules": {
+    "R001": 30,
+    "R002": 2,
+    "R003": 14
+  },
+  "unsafe_skips_total": 0
+}

@@ -1,0 +1,53 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "docs/advanced/transports.md",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "docs/advanced/transports.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/advanced/transports.md"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 408,
+    "hash": "6764f133bcd175b759d6656b6f3255b78ea2745175ebc5396d026bdf8e8c0490",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "d0e29b50c561dbc6769120d0ff22a8fc4e726b18",
+    "created_at": "2026-08-09T15:14:30+00:00",
+    "head_sha": "55ce231430722865e674b975b86e99977b256fea"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

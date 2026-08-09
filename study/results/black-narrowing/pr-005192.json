@@ -1,0 +1,182 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 3.836,
+  "base_sha": "ce441f2a5b02fe84aac731194615fb6b2337dd65",
+  "base_suite_seconds": 56.5,
+  "changed_outcomes": [
+    "tests/test_black.py::TestCaching::test_cache_empty_file"
+  ],
+  "findings": [
+    {
+      "reason": "CHANGES.md is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "CHANGES.md"
+    },
+    {
+      "reason": "scripts/fuzz.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "scripts/fuzz.py"
+    },
+    {
+      "reason": "src/blib2to3/pgen2/conv.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/blib2to3/pgen2/conv.py"
+    },
+    {
+      "reason": "src/blib2to3/pgen2/pgen.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/blib2to3/pgen2/pgen.py"
+    },
+    {
+      "reason": "tests/data/cases/fmtonoff.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/fmtonoff.py"
+    },
+    {
+      "reason": "tests/data/cases/function.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/function.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/decorators.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/decorators.py"
+    },
+    {
+      "reason": "tests/data/cases/pep_572_do_not_remove_parens.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/pep_572_do_not_remove_parens.py"
+    },
+    {
+      "reason": "tests/data/cases/pep_750.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/pep_750.py"
+    },
+    {
+      "reason": "tests/data/cases/python315.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/python315.py"
+    },
+    {
+      "reason": "tests/data/cases/remove_except_types_parens.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/remove_except_types_parens.py"
+    },
+    {
+      "reason": "tests/data/cases/type_param_defaults.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/cases/type_param_defaults.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/async_as_identifier.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/async_as_identifier.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/invalid_header.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/invalid_header.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/pattern_matching_invalid.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/pattern_matching_invalid.py"
+    },
+    {
+      "reason": "tests/data/miscellaneous/python2_detection.py could not be parsed, so its imports are unknown.",
+      "rule": "R010",
+      "scope": "closure-taint",
+      "subject": "tests/data/miscellaneous/python2_detection.py"
+    },
+    {
+      "reason": "tests/test_black.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_black.py"
+    }
+  ],
+  "head_sha": "30e2f72b2d70795eb55f5a508a74a2199fec8d86",
+  "head_suite_seconds": 57.148,
+  "mode": "run-all",
+  "mutants": {
+    "detection_parity": 1.0,
+    "entries": [
+      {
+        "col": 3,
+        "description": ">= to >",
+        "file": "src/black/cache.py",
+        "full_seconds": 56.746,
+        "killed_by_full": false,
+        "killed_by_selected": false,
+        "kind": "compare-flip",
+        "line": 19,
+        "selected_seconds": 55.07
+      },
+      {
+        "col": 26,
+        "description": "string constant extended",
+        "file": "tests/test_black.py",
+        "full_seconds": 1.046,
+        "killed_by_full": true,
+        "killed_by_selected": true,
+        "kind": "string-tweak",
+        "line": 65,
+        "selected_seconds": 54.165
+      },
+      {
+        "col": 27,
+        "description": "11 to 12",
+        "file": "src/black/cache.py",
+        "full_seconds": 54.706,
+        "killed_by_full": false,
+        "killed_by_selected": false,
+        "kind": "boundary",
+        "line": 19,
+        "selected_seconds": 56.137
+      }
+    ],
+    "errors": [],
+    "requested": 3
+  },
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {},
+  "new_tests_selected": true,
+  "number": 5192,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/test_black.py": 4.491,
+    "tests/test_blackd.py": 1.39,
+    "tests/test_concurrency_manager_shutdown.py": 0.002,
+    "tests/test_docs.py": 0.001,
+    "tests/test_format.py": 48.955,
+    "tests/test_no_ipynb.py": 0.0,
+    "tests/test_ranges.py": 0.001,
+    "tests/test_schema.py": 0.004,
+    "tests/test_tokenize.py": 0.0,
+    "tests/test_trans.py": 0.0
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

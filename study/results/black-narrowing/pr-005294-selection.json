@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "report": null,
+    "selection": null,
+    "witnesses": null
+  },
+  "graph_hash": "b5b7348717482239f4cc9e5eacc662e913c4ae5bd494a9b3fbf4505a3ac3b293",
+  "mode": "selective",
+  "schema": "acquit/selection-v2",
+  "skip": [
+    {
+      "path": "tests/test_schema.py",
+      "witness": "w-000001"
+    }
+  ],
+  "tree": {
+    "fingerprint": "f9bd9ae706dc8f40b0ee45e4b0fd865b9646b8c59287ea0f92572c639c86271a",
+    "head_sha": "5b7146a554a36b3412f3a2832b2db94c28ba5d49"
+  }
+}

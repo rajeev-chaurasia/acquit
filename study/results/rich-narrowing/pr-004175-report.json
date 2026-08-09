@@ -1,0 +1,258 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "README.cn.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.de-ch.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.de.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.es.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.fa.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.fr.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.hi.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.id.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.it.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.ja.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.kr.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.pl.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.pt-br.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.ru.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.sv.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.tr.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.zh-tw.md",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "README.cn.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.cn.md"
+      },
+      {
+        "reason": "README.de-ch.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.de-ch.md"
+      },
+      {
+        "reason": "README.de.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.de.md"
+      },
+      {
+        "reason": "README.es.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.es.md"
+      },
+      {
+        "reason": "README.fa.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.fa.md"
+      },
+      {
+        "reason": "README.fr.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.fr.md"
+      },
+      {
+        "reason": "README.hi.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.hi.md"
+      },
+      {
+        "reason": "README.id.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.id.md"
+      },
+      {
+        "reason": "README.it.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.it.md"
+      },
+      {
+        "reason": "README.ja.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.ja.md"
+      },
+      {
+        "reason": "README.kr.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.kr.md"
+      },
+      {
+        "reason": "README.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.md"
+      },
+      {
+        "reason": "README.pl.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.pl.md"
+      },
+      {
+        "reason": "README.pt-br.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.pt-br.md"
+      },
+      {
+        "reason": "README.ru.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.ru.md"
+      },
+      {
+        "reason": "README.sv.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.sv.md"
+      },
+      {
+        "reason": "README.tr.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.tr.md"
+      },
+      {
+        "reason": "README.zh-tw.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.zh-tw.md"
+      },
+      {
+        "reason": "rich/_unicode_data/__init__.py imports a module chosen at runtime, so its true dependencies are unknown.",
+        "rule": "R007",
+        "scope": "closure-taint",
+        "subject": "rich/_unicode_data/__init__.py"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1417,
+    "hash": "aea2367951a9341fa6a5ba12771711a03aebf931f9710e123c9721918b43fd9e",
+    "nodes": 622,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "46cebbb032f920eb096efbaf23cdc6fe9dd541f7",
+    "created_at": "2026-08-09T15:08:30+00:00",
+    "head_sha": "ce51a2f8bf326878a94a382cb7102c85824f7e04"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

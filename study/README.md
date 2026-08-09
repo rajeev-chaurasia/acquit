@@ -152,6 +152,16 @@ the per-PR result files committed next to it: click, flask, rich, and httpx
 so far. The json beside each summary carries the same numbers for machines,
 and the README table quotes those json files.
 
+Results come in two arms per repo: `study/results/{repo}/` holds the
+original arm, run without narrowing, and `study/results/{repo}-narrowing/`
+holds the same manifest replayed with `--narrowing`, aggregated to its own
+`{repo}-narrowing-summary.md` beside it. Black joined the study during the
+narrowing campaign and has no original arm, but its results keep the
+`-narrowing` suffix so the directory name always states the arm. The arms
+differ only in the flag: narrowed skips face the identical unsafe-skip bar
+as every other skip, and `acquit-study aggregate` fails either arm the same
+way on an unsafe skip or a skipped new test.
+
 ## Reproducibility contract
 
 - Manifests are committed. They pin the repo, the PR list (numbers and

@@ -1,0 +1,278 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "httpx/_urlparse.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/models/test_url.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "tests/models/test_url.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/models/test_url.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 413,
+    "hash": "ac8c6c882832b59cf5eab20be16f4540c7cf69a3f9b9f1ff518835b73ce1c605",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "489fef48ba8619c7604376165c7e8007398e1b5d",
+    "created_at": "2026-08-09T15:10:54+00:00",
+    "head_sha": "798954ec928bfaeee7ef8ed69a86f9d91892ddcd"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 31,
+    "skipped": 0,
+    "total": 31
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/client/test_async_client.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_auth.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_client.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_cookies.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_event_hooks.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_headers.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_properties.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_proxies.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_queryparams.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/client/test_redirects.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_cookies.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_headers.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_queryparams.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_requests.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_responses.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/models/test_url.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py",
+          "reachable-from:tests/models/test_url.py",
+          "rule:R014"
+        ]
+      },
+      {
+        "path": "tests/models/test_whatwg.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_api.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_asgi.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_auth.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_config.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_content.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_decoders.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_exceptions.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_exported_members.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_main.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_multipart.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_status_codes.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_timeouts.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_utils.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      },
+      {
+        "path": "tests/test_wsgi.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:httpx/_urlparse.py"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

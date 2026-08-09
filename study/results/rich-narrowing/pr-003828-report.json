@@ -1,0 +1,81 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CONTRIBUTING.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CONTRIBUTORS.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/text.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CONTRIBUTING.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CONTRIBUTING.md"
+      },
+      {
+        "reason": "CONTRIBUTORS.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CONTRIBUTORS.md"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1353,
+    "hash": "35b33b468d578aa17f8a7f0edf21466b778ee1d8beaedf48a5d562afe3204ce0",
+    "nodes": 595,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "ea9d4db5d84b4e834979304e3053bf757daae322",
+    "created_at": "2026-08-09T15:08:51+00:00",
+    "head_sha": "21806ce70c67de52ddd2a9785a62dd55f554c3b3"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

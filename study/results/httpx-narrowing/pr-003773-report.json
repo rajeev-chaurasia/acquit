@@ -1,0 +1,183 @@
+{
+  "changed": [
+    {
+      "kind": "test",
+      "path": "tests/models/test_responses.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "tests/models/test_responses.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/models/test_responses.py"
+      }
+    ],
+    "mode": "selective",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 416,
+    "hash": "75c7948d4ed050e2208ae0f503890d45c37f636c1767f92fc51350b9548aa8fe",
+    "nodes": 182,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "ae1b9f66238f75ced3ced5e4485408435de10768",
+    "created_at": "2026-08-09T15:08:46+00:00",
+    "head_sha": "63e885394a629d194b0aa867e8fbf475cdec6521"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 1,
+    "skipped": 30,
+    "total": 31
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/models/test_responses.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:tests/models/test_responses.py",
+          "rule:R014"
+        ]
+      }
+    ],
+    "skipped": [
+      {
+        "path": "tests/client/test_async_client.py",
+        "witness": "w-000001"
+      },
+      {
+        "path": "tests/client/test_auth.py",
+        "witness": "w-000002"
+      },
+      {
+        "path": "tests/client/test_client.py",
+        "witness": "w-000003"
+      },
+      {
+        "path": "tests/client/test_cookies.py",
+        "witness": "w-000004"
+      },
+      {
+        "path": "tests/client/test_event_hooks.py",
+        "witness": "w-000005"
+      },
+      {
+        "path": "tests/client/test_headers.py",
+        "witness": "w-000006"
+      },
+      {
+        "path": "tests/client/test_properties.py",
+        "witness": "w-000007"
+      },
+      {
+        "path": "tests/client/test_proxies.py",
+        "witness": "w-000008"
+      },
+      {
+        "path": "tests/client/test_queryparams.py",
+        "witness": "w-000009"
+      },
+      {
+        "path": "tests/client/test_redirects.py",
+        "witness": "w-000010"
+      },
+      {
+        "path": "tests/models/test_cookies.py",
+        "witness": "w-000011"
+      },
+      {
+        "path": "tests/models/test_headers.py",
+        "witness": "w-000012"
+      },
+      {
+        "path": "tests/models/test_queryparams.py",
+        "witness": "w-000013"
+      },
+      {
+        "path": "tests/models/test_requests.py",
+        "witness": "w-000014"
+      },
+      {
+        "path": "tests/models/test_url.py",
+        "witness": "w-000015"
+      },
+      {
+        "path": "tests/models/test_whatwg.py",
+        "witness": "w-000016"
+      },
+      {
+        "path": "tests/test_api.py",
+        "witness": "w-000017"
+      },
+      {
+        "path": "tests/test_asgi.py",
+        "witness": "w-000018"
+      },
+      {
+        "path": "tests/test_auth.py",
+        "witness": "w-000019"
+      },
+      {
+        "path": "tests/test_config.py",
+        "witness": "w-000020"
+      },
+      {
+        "path": "tests/test_content.py",
+        "witness": "w-000021"
+      },
+      {
+        "path": "tests/test_decoders.py",
+        "witness": "w-000022"
+      },
+      {
+        "path": "tests/test_exceptions.py",
+        "witness": "w-000023"
+      },
+      {
+        "path": "tests/test_exported_members.py",
+        "witness": "w-000024"
+      },
+      {
+        "path": "tests/test_main.py",
+        "witness": "w-000025"
+      },
+      {
+        "path": "tests/test_multipart.py",
+        "witness": "w-000026"
+      },
+      {
+        "path": "tests/test_status_codes.py",
+        "witness": "w-000027"
+      },
+      {
+        "path": "tests/test_timeouts.py",
+        "witness": "w-000028"
+      },
+      {
+        "path": "tests/test_utils.py",
+        "witness": "w-000029"
+      },
+      {
+        "path": "tests/test_wsgi.py",
+        "witness": "w-000030"
+      }
+    ]
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

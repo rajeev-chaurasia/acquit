@@ -1,0 +1,68 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.938,
+  "base_sha": "489fef48ba8619c7604376165c7e8007398e1b5d",
+  "base_suite_seconds": 10.975,
+  "changed_outcomes": [
+    "tests/models/test_url.py::test_param_requires_encoding"
+  ],
+  "findings": [
+    {
+      "reason": "tests/models/test_url.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/models/test_url.py"
+    }
+  ],
+  "head_sha": "798954ec928bfaeee7ef8ed69a86f9d91892ddcd",
+  "head_suite_seconds": 10.901,
+  "mode": "run-all",
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {
+    "not-import-inert": 31
+  },
+  "new_tests_selected": true,
+  "number": 3371,
+  "per_file_durations": {
+    "tests/client/test_async_client.py": 0.852,
+    "tests/client/test_auth.py": 0.207,
+    "tests/client/test_client.py": 0.663,
+    "tests/client/test_cookies.py": 0.014,
+    "tests/client/test_event_hooks.py": 0.022,
+    "tests/client/test_headers.py": 0.022,
+    "tests/client/test_properties.py": 0.178,
+    "tests/client/test_proxies.py": 2.72,
+    "tests/client/test_queryparams.py": 0.061,
+    "tests/client/test_redirects.py": 0.079,
+    "tests/models/test_cookies.py": 0.009,
+    "tests/models/test_headers.py": 0.02,
+    "tests/models/test_queryparams.py": 0.019,
+    "tests/models/test_requests.py": 0.028,
+    "tests/models/test_responses.py": 0.165,
+    "tests/models/test_url.py": 0.126,
+    "tests/models/test_whatwg.py": 0.654,
+    "tests/test_api.py": 0.236,
+    "tests/test_asgi.py": 0.057,
+    "tests/test_auth.py": 0.015,
+    "tests/test_config.py": 0.311,
+    "tests/test_content.py": 0.086,
+    "tests/test_decoders.py": 0.071,
+    "tests/test_exceptions.py": 0.054,
+    "tests/test_exported_members.py": 0.001,
+    "tests/test_main.py": 0.021,
+    "tests/test_multipart.py": 0.073,
+    "tests/test_status_codes.py": 0.006,
+    "tests/test_timeouts.py": 0.26,
+    "tests/test_utils.py": 0.238,
+    "tests/test_wsgi.py": 0.754
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 31,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 31,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

@@ -1,0 +1,108 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": ".pre-commit-config.yaml",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CHANGELOG.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/source/console.rst",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/console.py",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "rich/diagnose.py",
+      "status": "modified"
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_console.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".pre-commit-config.yaml is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".pre-commit-config.yaml"
+      },
+      {
+        "reason": "CHANGELOG.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGELOG.md"
+      },
+      {
+        "reason": "docs/source/console.rst is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/source/console.rst"
+      },
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      },
+      {
+        "reason": "tests/test_console.py is a test file and must run because it changed.",
+        "rule": "R014",
+        "scope": "self-test",
+        "subject": "tests/test_console.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1371,
+    "hash": "8e46ceb47ebe794f2a956a74131e8dfb24fe21a827703028800603c683d97937",
+    "nodes": 595,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "edc6b0a39b6df1c0e26d409bb5c5eda7149b2de6",
+    "created_at": "2026-08-09T15:09:49+00:00",
+    "head_sha": "225cb07b3be67cfa8efd7bd52181638be461065d"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

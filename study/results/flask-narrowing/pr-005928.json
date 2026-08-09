@@ -1,0 +1,147 @@
+{
+  "always_run": 0,
+  "analysis_seconds": 0.481,
+  "base_sha": "7b0088693ece1bd3a9238a6fdf56ed8df7a4d43b",
+  "base_suite_seconds": 1.852,
+  "changed_outcomes": [
+    "tests/test_appctx.py::test_robust_teardown"
+  ],
+  "findings": [
+    {
+      "reason": "CHANGES.rst is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "CHANGES.rst"
+    },
+    {
+      "reason": "docs/appcontext.rst is a resource file, and any test could read it at runtime.",
+      "rule": "R001",
+      "scope": "global",
+      "subject": "docs/appcontext.rst"
+    },
+    {
+      "reason": "src/flask/cli.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/helpers.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "src/flask/helpers.py"
+    },
+    {
+      "reason": "tests/conftest.py imports a module chosen at runtime, so its true dependencies are unknown.",
+      "rule": "R007",
+      "scope": "closure-taint",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "src/flask/cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "tests/conftest.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/conftest.py"
+    },
+    {
+      "reason": "tests/test_cli.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_cli.py"
+    },
+    {
+      "reason": "tests/test_instance_config.py mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.",
+      "rule": "R008",
+      "scope": "closure-taint",
+      "subject": "tests/test_instance_config.py"
+    },
+    {
+      "reason": "src/flask/cli.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/cli.py"
+    },
+    {
+      "reason": "src/flask/config.py calls exec, eval, or compile, so its true dependencies are unknown.",
+      "rule": "R009",
+      "scope": "closure-taint",
+      "subject": "src/flask/config.py"
+    },
+    {
+      "reason": "tests/test_appctx.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_appctx.py"
+    },
+    {
+      "reason": "tests/test_basic.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_basic.py"
+    },
+    {
+      "reason": "tests/test_blueprints.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_blueprints.py"
+    },
+    {
+      "reason": "tests/test_helpers.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_helpers.py"
+    },
+    {
+      "reason": "tests/test_testing.py is a test file and must run because it changed.",
+      "rule": "R014",
+      "scope": "self-test",
+      "subject": "tests/test_testing.py"
+    }
+  ],
+  "head_sha": "fbb6f0bc4c60a0bada0e03c3480d0ccf30a3c1df",
+  "head_suite_seconds": 1.771,
+  "mode": "run-all",
+  "narrowed_skips": 0,
+  "narrowing": true,
+  "narrowing_refusals": {},
+  "new_tests_selected": true,
+  "number": 5928,
+  "per_file_durations": {
+    ".py": 0.0,
+    "tests/test_appctx.py": 0.016,
+    "tests/test_basic.py": 0.182,
+    "tests/test_blueprints.py": 0.096,
+    "tests/test_cli.py": 0.068,
+    "tests/test_config.py": 0.024,
+    "tests/test_converters.py": 0.003,
+    "tests/test_helpers.py": 0.047,
+    "tests/test_instance_config.py": 0.008,
+    "tests/test_json.py": 0.03,
+    "tests/test_json_tag.py": 0.0,
+    "tests/test_logging.py": 0.007,
+    "tests/test_regression.py": 0.002,
+    "tests/test_reqctx.py": 0.017,
+    "tests/test_request.py": 0.004,
+    "tests/test_session_interface.py": 0.001,
+    "tests/test_signals.py": 0.008,
+    "tests/test_subclassing.py": 0.001,
+    "tests/test_templating.py": 0.054,
+    "tests/test_testing.py": 0.032,
+    "tests/test_user_error_handler.py": 0.021,
+    "tests/test_views.py": 0.023
+  },
+  "replay_verified": true,
+  "schema": "acquit/study-result-v1",
+  "selected": 0,
+  "skip_paths": [],
+  "skipped": 0,
+  "total": 0,
+  "unsafe_narrowed_skips": [],
+  "unsafe_skips": []
+}

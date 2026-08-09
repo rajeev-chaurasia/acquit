@@ -1,0 +1,242 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "CONTRIBUTING.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "README.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "docs/conf.py",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/faq.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/guides/using_black_with_other_tools.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/index.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/integrations/doctest_formatting.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/integrations/editors.md",
+      "status": "modified"
+    },
+    {
+      "kind": "resource",
+      "path": "docs/usage_and_configuration/the_basics.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/__init__.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": ".github/PULL_REQUEST_TEMPLATE.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": ".github/PULL_REQUEST_TEMPLATE.md"
+      },
+      {
+        "reason": "CONTRIBUTING.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CONTRIBUTING.md"
+      },
+      {
+        "reason": "README.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "README.md"
+      },
+      {
+        "reason": "docs/faq.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/faq.md"
+      },
+      {
+        "reason": "docs/guides/using_black_with_other_tools.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/guides/using_black_with_other_tools.md"
+      },
+      {
+        "reason": "docs/index.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/index.md"
+      },
+      {
+        "reason": "docs/integrations/doctest_formatting.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/integrations/doctest_formatting.md"
+      },
+      {
+        "reason": "docs/integrations/editors.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/integrations/editors.md"
+      },
+      {
+        "reason": "docs/usage_and_configuration/the_basics.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "docs/usage_and_configuration/the_basics.md"
+      },
+      {
+        "reason": "scripts/fuzz.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "scripts/fuzz.py"
+      },
+      {
+        "reason": "src/blib2to3/pgen2/conv.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/blib2to3/pgen2/conv.py"
+      },
+      {
+        "reason": "src/blib2to3/pgen2/pgen.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/blib2to3/pgen2/pgen.py"
+      },
+      {
+        "reason": "tests/data/cases/fmtonoff.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/fmtonoff.py"
+      },
+      {
+        "reason": "tests/data/cases/function.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/function.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/decorators.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/decorators.py"
+      },
+      {
+        "reason": "tests/data/cases/pep_572_do_not_remove_parens.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/pep_572_do_not_remove_parens.py"
+      },
+      {
+        "reason": "tests/data/cases/pep_750.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/pep_750.py"
+      },
+      {
+        "reason": "tests/data/cases/python315.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/python315.py"
+      },
+      {
+        "reason": "tests/data/cases/remove_except_types_parens.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/remove_except_types_parens.py"
+      },
+      {
+        "reason": "tests/data/cases/type_param_defaults.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/type_param_defaults.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/async_as_identifier.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/async_as_identifier.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/invalid_header.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/invalid_header.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/pattern_matching_invalid.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/pattern_matching_invalid.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/python2_detection.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/python2_detection.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 643,
+    "hash": "d5d31743b6c3d7f7496632304ed1ed84309268db1fa05eac6f29c5ed0dc70355",
+    "nodes": 573,
+    "roots": [
+      "src",
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "c4c9a93111309459a3f0e1e268160f7ef2159077",
+    "created_at": "2026-08-09T15:34:08+00:00",
+    "head_sha": "ae54097c10d8cb331d23afbd2d300d0f21c7c6f2"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

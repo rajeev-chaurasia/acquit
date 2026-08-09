@@ -1,0 +1,149 @@
+{
+  "changed": [
+    {
+      "kind": "resource",
+      "path": "CHANGES.md",
+      "status": "modified"
+    },
+    {
+      "kind": "module",
+      "path": "src/black/lines.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "CHANGES.md is a resource file, and any test could read it at runtime.",
+        "rule": "R001",
+        "scope": "global",
+        "subject": "CHANGES.md"
+      },
+      {
+        "reason": "scripts/fuzz.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "scripts/fuzz.py"
+      },
+      {
+        "reason": "src/blib2to3/pgen2/conv.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/blib2to3/pgen2/conv.py"
+      },
+      {
+        "reason": "src/blib2to3/pgen2/pgen.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "src/blib2to3/pgen2/pgen.py"
+      },
+      {
+        "reason": "tests/data/cases/fmtonoff.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/fmtonoff.py"
+      },
+      {
+        "reason": "tests/data/cases/function.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/function.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/decorators.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/decorators.py"
+      },
+      {
+        "reason": "tests/data/cases/pep_572_do_not_remove_parens.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/pep_572_do_not_remove_parens.py"
+      },
+      {
+        "reason": "tests/data/cases/pep_750.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/pep_750.py"
+      },
+      {
+        "reason": "tests/data/cases/python315.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/python315.py"
+      },
+      {
+        "reason": "tests/data/cases/remove_except_types_parens.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/remove_except_types_parens.py"
+      },
+      {
+        "reason": "tests/data/cases/type_param_defaults.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/cases/type_param_defaults.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/async_as_identifier.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/async_as_identifier.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/invalid_header.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/invalid_header.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/pattern_matching_invalid.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/pattern_matching_invalid.py"
+      },
+      {
+        "reason": "tests/data/miscellaneous/python2_detection.py could not be parsed, so its imports are unknown.",
+        "rule": "R010",
+        "scope": "closure-taint",
+        "subject": "tests/data/miscellaneous/python2_detection.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 644,
+    "hash": "a24a9ddef4b5ed350d87dc5a88f434765d0b57510cc23b8180470bd1224cde56",
+    "nodes": 573,
+    "roots": [
+      "src",
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "fcab6484062fbf1ded2333900ea600b9bc21ac69",
+    "created_at": "2026-08-09T15:19:19+00:00",
+    "head_sha": "ea54c1b28b248776c75c89a4a5d8ca729027f90e"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}

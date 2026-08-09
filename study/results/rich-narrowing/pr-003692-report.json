@@ -1,0 +1,496 @@
+{
+  "changed": [
+    {
+      "kind": "module",
+      "path": "rich/traceback.py",
+      "status": "modified"
+    }
+  ],
+  "decision": {
+    "findings": [
+      {
+        "reason": "tests/test_repr.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_repr.py"
+      },
+      {
+        "reason": "tests/test_traceback.py calls exec, eval, or compile, so its true dependencies are unknown.",
+        "rule": "R009",
+        "scope": "closure-taint",
+        "subject": "tests/test_traceback.py"
+      }
+    ],
+    "mode": "run-all",
+    "waivers": []
+  },
+  "graph": {
+    "edges": 1370,
+    "hash": "7af1da7a0c8ca8a6ceeaad78ba8dc49b4bca3094e72fa7fc419f97b113c980b3",
+    "nodes": 595,
+    "roots": [
+      ""
+    ]
+  },
+  "run": {
+    "base_sha": "0c6c75644f80530de219dae3e94f0aeb999f9b4c",
+    "created_at": "2026-08-09T15:09:29+00:00",
+    "head_sha": "a34914be5d1cc9dc298ca92e5c9af757157a0bb7"
+  },
+  "schema": "acquit/report-v1",
+  "stats": {
+    "always_run": 0,
+    "durations_source": null,
+    "estimated_seconds_saved": null,
+    "selected": 62,
+    "skipped": 0,
+    "total": 62
+  },
+  "tests": {
+    "always_run": [],
+    "selected": [
+      {
+        "path": "tests/test_align.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_ansi.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_bar.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_block_bar.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_box.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_card.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_cells.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_color.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_color_triplet.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_columns.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_columns_align.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_console.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_constrain.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_containers.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_control.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_emoji.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_file_proxy.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_filesize.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_getfileno.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_highlighter.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_inspect.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_json.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_jupyter.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_layout.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_live.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_live_render.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_log.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_logging.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_markdown.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_markdown_no_hyperlinks.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_markup.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_measure.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_null_file.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_padding.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_palette.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_panel.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_pick.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_pretty.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_progress.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_prompt.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_protocol.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_ratio.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_repr.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:rich/traceback.py",
+          "rule:R009"
+        ]
+      },
+      {
+        "path": "tests/test_rich_print.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_rule.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_rule_in_table.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_screen.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_segment.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_spinner.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_stack.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_status.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_style.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_styled.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_syntax.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_table.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_text.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_theme.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_tools.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_traceback.py",
+        "reasons": [
+          "narrowing-refused:tainted-closure",
+          "reachable-from:rich/traceback.py",
+          "rule:R009"
+        ]
+      },
+      {
+        "path": "tests/test_tree.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_win32_console.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      },
+      {
+        "path": "tests/test_windows_renderer.py",
+        "reasons": [
+          "narrowing-refused:not-import-inert",
+          "reachable-from:rich/traceback.py"
+        ]
+      }
+    ],
+    "skipped": []
+  },
+  "tool": {
+    "graph_schema": 2,
+    "name": "acquit",
+    "version": "0.0.1"
+  }
+}
