@@ -6,7 +6,7 @@ on:
       repo:
         description: which committed manifest to replay
         type: choice
-        options: [flask, rich, httpx, click]
+        options: [flask, rich, httpx, click, uvicorn, black]
         required: true
       shards:
         description: number of shards
