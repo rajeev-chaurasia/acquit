@@ -1,0 +1,85 @@
+# OSS idiom census corpus: well-known, mostly pure-Python, pytest-first repos
+# across domains. Variety beats purity: repos with C extensions, generated
+# code, or non-pytest runners are included on purpose and noted; the census
+# tolerates weird repos and reports them instead of curating them away.
+
+# web frameworks and templating
+pallets/flask
+pallets/werkzeug
+pallets/jinja2
+encode/starlette
+fastapi/fastapi
+bottlepy/bottle
+tornadoweb/tornado
+django/django # own test runner; pytest discovery may find few tests, kept as a control
+
+# CLI and terminal
+pallets/click
+fastapi/typer
+Textualize/rich
+Textualize/textual
+google/python-fire
+tqdm/tqdm
+
+# data modeling and validation
+python-attrs/attrs
+python-attrs/cattrs
+pydantic/pydantic # rust core lives in a separate repo; this one is python
+marshmallow-code/marshmallow
+python-jsonschema/jsonschema
+jsonpickle/jsonpickle
+
+# HTTP clients and servers
+encode/httpx
+psf/requests
+aio-libs/aiohttp # C extensions and vendored submodule, kept for variety
+urllib3/urllib3
+encode/uvicorn
+
+# packaging and dev tooling
+pytest-dev/pytest
+pytest-dev/pluggy
+pytest-dev/pytest-mock
+pytest-dev/pytest-asyncio
+tox-dev/tox
+wntrblm/nox
+pre-commit/pre-commit
+pypa/virtualenv
+jazzband/pip-tools
+pypa/build
+pypa/twine
+pypa/packaging
+pypa/pipx
+
+# science-lite and algorithms
+networkx/networkx
+sympy/sympy # large pure-python tree, a deliberate stress test
+mpmath/mpmath
+more-itertools/more-itertools
+
+# async runtimes
+agronholm/anyio
+python-trio/trio
+
+# serialization
+yaml/pyyaml # C accelerator optional, python fallback in-tree
+
+# databases, queues, cloud
+sqlalchemy/sqlalchemy
+sqlalchemy/alembic
+celery/celery
+celery/kombu
+redis/redis-py
+boto/boto3 # generated code, interesting outlier
+
+# quality, formatting, misc infrastructure
+HypothesisWorks/hypothesis
+nedbat/coveragepy
+psf/black
+pygments/pygments
+dateutil/dateutil
+paramiko/paramiko
+giampaolo/psutil # C extension heavy, kept for variety
+tox-dev/platformdirs
+tox-dev/filelock
+gorakhargosh/watchdog

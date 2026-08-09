@@ -12,6 +12,7 @@ from pathlib import Path
 from acquit.errors import AcquitError, ExitCode
 from acquit.gh.comment import UrllibOpener
 from acquit.study.aggregate import run_aggregate
+from acquit.study.census import run_census
 from acquit.study.compare import parse_quarantine
 from acquit.study.manifest import (
     Manifest,
@@ -62,6 +63,17 @@ def _build_parser() -> argparse.ArgumentParser:
     aggregate.add_argument("--results-dir", required=True, help="tree containing result files")
     aggregate.add_argument(
         "--out", required=True, help="markdown summary path; the json lands beside it"
+    )
+
+    census = subcommands.add_parser(
+        "census", help="inventory standing dynamic-idiom hazards across many repositories"
+    )
+    census.add_argument(
+        "--repos", required=True, help="text file of owner/name slugs, one per line, # comments"
+    )
+    census.add_argument("--workdir", required=True, help="scratch dir for the shallow clones")
+    census.add_argument(
+        "--out", required=True, help="output dir: per-repo json under results/, summaries beside it"
     )
     return parser
 
@@ -125,6 +137,8 @@ def main(argv: list[str] | None = None) -> int:
             return _run_sample(args)
         if args.command == "run":
             return _run_run(args)
+        if args.command == "census":
+            return run_census(Path(args.repos), Path(args.workdir).resolve(), Path(args.out))
         return run_aggregate(Path(args.results_dir), Path(args.out))
     except AcquitError as error:
         print(f"acquit-study: {error}", file=sys.stderr)
