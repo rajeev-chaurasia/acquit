@@ -1,4 +1,4 @@
-name: "Acquit"
+name: "Acquit Test Selection"
 description: "Provably skip unaffected pytest tests on every PR. Static analysis, fail-closed, with evidence for every skip."
 branding:
   icon: "fast-forward"
