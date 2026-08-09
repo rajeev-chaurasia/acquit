@@ -55,6 +55,35 @@ def test_quarantine_never_excuses_a_skipped_new_test() -> None:
     assert not result.safe
 
 
+def test_narrowed_unsafe_skip_gets_no_leniency_and_its_own_column() -> None:
+    base = {"tests/test_a.py::test_x": PASSED, "tests/test_b.py::test_y": PASSED}
+    head = {"tests/test_a.py::test_x": FAILED, "tests/test_b.py::test_y": FAILED}
+    result = check_safety(
+        base, head, ["tests/test_a.py", "tests/test_b.py"], NONE, narrowed=["tests/test_b.py"]
+    )
+    # Both skips are unsafe; the narrowed one is additionally attributed.
+    assert result.unsafe_skips == ("tests/test_a.py", "tests/test_b.py")
+    assert result.unsafe_narrowed_skips == ("tests/test_b.py",)
+    assert not result.safe
+
+
+def test_clean_narrowed_skip_reports_nothing() -> None:
+    base = {"tests/test_a.py::test_x": PASSED}
+    head = {"tests/test_a.py::test_x": PASSED}
+    result = check_safety(base, head, ["tests/test_a.py"], NONE, narrowed=["tests/test_a.py"])
+    assert result.unsafe_skips == ()
+    assert result.unsafe_narrowed_skips == ()
+    assert result.safe
+
+
+def test_narrowed_files_outside_the_unsafe_set_are_not_attributed() -> None:
+    base = {"tests/test_a.py::test_x": PASSED}
+    head = {"tests/test_a.py::test_x": FAILED}
+    result = check_safety(base, head, ["tests/test_a.py"], NONE, narrowed=["tests/test_b.py"])
+    assert result.unsafe_skips == ("tests/test_a.py",)
+    assert result.unsafe_narrowed_skips == ()
+
+
 def test_outcome_set_growth_counts_as_change() -> None:
     base = {"tests/test_a.py::test_x": PASSED}
     head = {"tests/test_a.py::test_x": frozenset({Outcome.PASSED, Outcome.FAILED})}

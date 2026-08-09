@@ -65,6 +65,12 @@ def _build_parser() -> argparse.ArgumentParser:
         help="inject up to N first-order mutants per PR into its changed .py files and "
         "check the selected set kills what the full suite kills (0 = off)",
     )
+    run.add_argument(
+        "--narrowing",
+        action="store_true",
+        help="run every select with re-export narrowing (ADR 0008) enabled by injecting "
+        "narrowing = true into the head worktree's acquit config for the PR's duration",
+    )
 
     aggregate = subcommands.add_parser("aggregate", help="fold per-PR results into a summary")
     aggregate.add_argument("--results-dir", required=True, help="tree containing result files")
@@ -133,6 +139,7 @@ def _run_run(args: argparse.Namespace) -> int:
         shard=parse_shard(args.shard),
         record_exclusions=bool(args.record_exclusion),
         mutants=max(int(args.mutants), 0),
+        narrowing=bool(args.narrowing),
     )
     return run_study(settings)
 

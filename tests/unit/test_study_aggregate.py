@@ -311,3 +311,91 @@ def test_markdown_handles_no_selective_prs() -> None:
     assert "| by file count | - | - | - |" in rendered
     assert "No analyzed PRs." in rendered
     assert "Run-alls whose only global blocker is R001: 0" in rendered
+
+
+def test_no_narrowing_section_without_flagged_prs(tmp_path: Path) -> None:
+    results_dir = tmp_path / "results"
+    _write(results_dir, "pr-000001.json", _selective(1, 2, 1.0))
+    out = tmp_path / "summary.md"
+    assert run_aggregate(results_dir, out) == 0
+    assert "## Narrowing" not in out.read_text(encoding="utf-8")
+    summary = json.loads((tmp_path / "summary.json").read_text(encoding="utf-8"))
+    assert summary["narrowing"] == {
+        "prs_with_flag": 0,
+        "prs_with_narrowed_skips": 0,
+        "narrowed_skips": 0,
+        "unsafe": [],
+        "refusals": {},
+    }
+
+
+def test_narrowing_section_sums_counts_and_refusals(tmp_path: Path) -> None:
+    _write(
+        tmp_path,
+        "pr-000001.json",
+        _result(
+            1,
+            narrowing=True,
+            narrowed_skips=2,
+            skipped=3,
+            selected=7,
+            narrowing_refusals={"impure-init": 2},
+        ),
+    )
+    _write(
+        tmp_path,
+        "pr-000002.json",
+        _result(
+            2,
+            narrowing=True,
+            narrowing_refusals={"impure-init": 1, "not-import-inert": 4},
+        ),
+    )
+    _write(tmp_path, "pr-000003.json", _selective(3, 2, 1.0))
+    results, exclusions = load_results(tmp_path)
+    summary = summarize(results, exclusions)
+    assert summary.narrowing_prs == 2
+    assert summary.narrowed_skip_prs == 1
+    assert summary.narrowed_skips_total == 2
+    assert summary.narrowed_unsafe == ()
+    assert summary.narrowing_refusals == {"impure-init": 3, "not-import-inert": 4}
+    rendered = render_markdown(summary)
+    assert "## Narrowing" in rendered
+    assert "- PRs run with narrowing enabled: 2" in rendered
+    assert "- PRs with narrowed skips: 1" in rendered
+    assert "- Narrowed skips: 2" in rendered
+    assert "- Unsafe among them: 0 (must be 0)" in rendered
+    assert "| impure-init | 3 |" in rendered
+    assert "| not-import-inert | 4 |" in rendered
+
+
+def test_narrowing_section_renders_empty_refusal_placeholder(tmp_path: Path) -> None:
+    _write(tmp_path, "pr-000001.json", _result(1, narrowing=True))
+    results, exclusions = load_results(tmp_path)
+    rendered = render_markdown(summarize(results, exclusions))
+    assert "## Narrowing" in rendered
+    assert "| (none) | 0 |" in rendered
+
+
+def test_narrowed_unsafe_skip_is_listed_and_fatal(tmp_path: Path) -> None:
+    results_dir = tmp_path / "results"
+    _write(
+        results_dir,
+        "pr-000009.json",
+        _result(
+            9,
+            narrowing=True,
+            narrowed_skips=1,
+            skipped=1,
+            skip_paths=["tests/test_a.py"],
+            unsafe_skips=["tests/test_a.py"],
+            unsafe_narrowed_skips=["tests/test_a.py"],
+        ),
+    )
+    out = tmp_path / "summary.md"
+    assert run_aggregate(results_dir, out) == 1
+    markdown = out.read_text(encoding="utf-8")
+    assert "- Unsafe among them: 1 (must be 0)" in markdown
+    assert "| 9 | tests/test_a.py |" in markdown
+    summary = json.loads((tmp_path / "summary.json").read_text(encoding="utf-8"))
+    assert summary["narrowing"]["unsafe"] == [{"pr": 9, "path": "tests/test_a.py"}]

@@ -14,8 +14,10 @@ import shutil
 import subprocess
 import sys
 import time
-from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+import tomllib
+from collections import Counter
+from collections.abc import Collection, Mapping, Sequence
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
 
@@ -35,7 +37,7 @@ from acquit.study.manifest import (
     with_exclusion,
     write_manifest,
 )
-from acquit.study.mutate import Mutant, detection_parity, enumerate_mutants
+from acquit.study.mutate import Mutant, MutantTarget, detection_parity, enumerate_mutants
 from acquit.study.outcomes import Outcome, SuiteOutcomes, parse_junit
 
 SUITE_TIMEOUT_SECONDS: Final = 1800.0
@@ -75,6 +77,9 @@ class RunSettings:
     record_exclusions: bool
     # Mutation-injection arm: up to this many first-order mutants per PR.
     mutants: int = 0
+    # Narrowing arm (ADR 0008): run every select with narrowing enabled by
+    # injecting the config key into the head worktree for the run's duration.
+    narrowing: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -89,6 +94,13 @@ class SelectRun:
     selection: dict[str, Any]
     seconds: float
     replay_verified: bool
+    # ADR 0008 narrowing evidence for this select run: the skipped tests
+    # whose witnesses carry the narrowed claim, the import-time-only files
+    # those witnesses excused, and the refusal histogram harvested from
+    # selected-test reasons. All empty whenever narrowing is off.
+    narrowed_skip_paths: tuple[str, ...] = ()
+    narrowed_files: frozenset[str] = frozenset()
+    narrowing_refusals: Mapping[str, int] = field(default_factory=dict)
 
 
 def _run_step(
@@ -255,6 +267,170 @@ def _read_json_object(stage: str, path: Path) -> dict[str, Any]:
     return data
 
 
+# The one key the narrowing arm injects; ADR 0008's rollout flag.
+_NARROWING_LINE: Final = "narrowing = true\n"
+# Mirrors the reason prefix acquit.select puts on tests a refusal kept selected.
+_NARROWING_REFUSED: Final = "narrowing-refused:"
+
+
+@dataclass(frozen=True, slots=True)
+class ConfigInjection:
+    """One reversible config edit: the file touched and its prior bytes.
+
+    path None means nothing was written (the config already pins the key);
+    original None means the file did not exist and restore deletes it.
+    """
+
+    path: Path | None
+    original: bytes | None
+
+
+def _parse_toml(stage: str, path: Path) -> dict[str, Any]:
+    try:
+        with path.open("rb") as handle:
+            return tomllib.load(handle)
+    except (OSError, tomllib.TOMLDecodeError) as error:
+        raise StepFailure(stage, f"cannot parse {path.name}: {error}") from error
+
+
+def _with_key_in_tool_acquit(stage: str, original: bytes) -> bytes:
+    """Insert the narrowing key right after the [tool.acquit] header line."""
+    lines = original.decode("utf-8").splitlines(keepends=True)
+    for index, line in enumerate(lines):
+        bare = line.strip()
+        remainder = bare.removeprefix("[tool.acquit]")
+        if bare.startswith("[tool.acquit]") and (not remainder or remainder.lstrip()[:1] == "#"):
+            if not line.endswith("\n"):
+                lines[index] = line + "\n"
+            lines.insert(index + 1, _NARROWING_LINE)
+            return "".join(lines).encode("utf-8")
+    raise StepFailure(
+        stage,
+        "pyproject.toml declares [tool.acquit] in a form this injector cannot "
+        "edit (dotted or inline table); cannot enable narrowing safely",
+    )
+
+
+def inject_narrowing_config(worktree: Path) -> ConfigInjection:
+    """Enable ADR 0008 narrowing for the select run inside the head worktree.
+
+    Safe because of how the pipeline splits its reads: select loads acquit
+    config from the checkout's filesystem (pipeline.run_select calls
+    load_config on the repo root), while both analyzed snapshots read blobs
+    of the base and head shas and the ref-tree fingerprint hashes the head
+    commit. An untracked .acquit.toml in the head worktree therefore flips
+    the flag without perturbing either analyzed tree, and the base worktree,
+    which only ever runs the plain pytest suite, must never receive the file.
+
+    An existing .acquit.toml at the head sha is merged, never clobbered: the
+    key is added only if absent, and restore_config puts the original bytes
+    back. A pyproject [tool.acquit] section gets the key inserted in place,
+    because a fresh .acquit.toml would shadow that section entirely (config
+    sources are first-hit-wins) and silently drop roots and waivers.
+    """
+    stage = "narrowing-config"
+    acquit_toml = worktree / ".acquit.toml"
+    if acquit_toml.is_file():
+        if "narrowing" in _parse_toml(stage, acquit_toml):
+            # The repo pins the key at this sha; honoring it beats clobbering.
+            return ConfigInjection(path=None, original=None)
+        original = acquit_toml.read_bytes()
+        # Prepend: a top-level key appended after a [[waive]] table would be
+        # parsed as part of that table; the top of the file is always valid.
+        acquit_toml.write_bytes(_NARROWING_LINE.encode("utf-8") + original)
+        return ConfigInjection(path=acquit_toml, original=original)
+    pyproject = worktree / "pyproject.toml"
+    if pyproject.is_file():
+        tool = _parse_toml(stage, pyproject).get("tool")
+        section = tool.get("acquit") if isinstance(tool, dict) else None
+        if isinstance(section, dict):
+            if "narrowing" in section:
+                return ConfigInjection(path=None, original=None)
+            original = pyproject.read_bytes()
+            pyproject.write_bytes(_with_key_in_tool_acquit(stage, original))
+            return ConfigInjection(path=pyproject, original=original)
+    acquit_toml.write_bytes(_NARROWING_LINE.encode("utf-8"))
+    return ConfigInjection(path=acquit_toml, original=None)
+
+
+def restore_config(injection: ConfigInjection) -> None:
+    """Undo inject_narrowing_config exactly, once the PR's runs are over.
+
+    Best-effort inside the runner: the worktree is torn down right after,
+    and a restore failure must never mask the replay failure that caused it.
+    """
+    if injection.path is None:
+        return
+    try:
+        if injection.original is None:
+            injection.path.unlink(missing_ok=True)
+        else:
+            injection.path.write_bytes(injection.original)
+    except OSError:
+        pass
+
+
+def narrowed_skip_paths(report: Mapping[str, Any]) -> tuple[str, ...]:
+    """Paths of skipped tests whose witnesses carry the narrowed claim.
+
+    Parsed from the report's tests.skipped block, where the narrowed flag
+    only appears when set, so its literal presence is the signal.
+    """
+    tests = report.get("tests")
+    entries = tests.get("skipped") if isinstance(tests, Mapping) else None
+    if not isinstance(entries, list):
+        return ()
+    return tuple(
+        entry["path"]
+        for entry in entries
+        if isinstance(entry, Mapping)
+        and entry.get("narrowed") is True
+        and isinstance(entry.get("path"), str)
+    )
+
+
+def narrowing_refusals(report: Mapping[str, Any]) -> dict[str, int]:
+    """Histogram of narrowing refusal reasons across the selected tests.
+
+    Each selected test carries at most one narrowing-refused:* reason (the
+    judge stops at the first failing condition), so a count is the number
+    of tests that one refusal reason kept selected.
+    """
+    tests = report.get("tests")
+    entries = tests.get("selected") if isinstance(tests, Mapping) else None
+    if not isinstance(entries, list):
+        return {}
+    histogram: Counter[str] = Counter()
+    for entry in entries:
+        reasons = entry.get("reasons") if isinstance(entry, Mapping) else None
+        if not isinstance(reasons, list):
+            continue
+        for reason in reasons:
+            if isinstance(reason, str) and reason.startswith(_NARROWING_REFUSED):
+                histogram[reason.removeprefix(_NARROWING_REFUSED)] += 1
+    return dict(sorted(histogram.items()))
+
+
+def narrowed_witness_files(witnesses: Mapping[str, Any]) -> frozenset[str]:
+    """Changed files excused by narrowed witness blocks, across all witnesses.
+
+    These are the proven import-time-only files; the mutation arm restricts
+    their mutants to ADR 0008's body-and-constant protocol.
+    """
+    entries = witnesses.get("witnesses")
+    if not isinstance(entries, list):
+        return frozenset()
+    files: set[str] = set()
+    for entry in entries:
+        blocks = entry.get("narrowed") if isinstance(entry, Mapping) else None
+        if not isinstance(blocks, list):
+            continue
+        for block in blocks:
+            if isinstance(block, Mapping) and isinstance(block.get("path"), str):
+                files.add(block["path"])
+    return frozenset(files)
+
+
 def run_acquit(head_tree: Path, pr: PrRecord, settings: RunSettings) -> SelectRun:
     """Run acquit select and replay via the current installation, timed.
 
@@ -300,11 +476,19 @@ def run_acquit(head_tree: Path, pr: PrRecord, settings: RunSettings) -> SelectRu
         str(selection_path),
     ]
     replay = _run_step("replay", replay_args, cwd=head_tree, env=env)
+    narrowed_paths = narrowed_skip_paths(report)
+    narrowed_files: frozenset[str] = frozenset()
+    if narrowed_paths:
+        # Only narrowed runs need the witness blocks; the document is large.
+        narrowed_files = narrowed_witness_files(_read_json_object("select", witnesses_path))
     return SelectRun(
         report=report,
         selection=selection,
         seconds=seconds,
         replay_verified=replay.returncode == 0,
+        narrowed_skip_paths=narrowed_paths,
+        narrowed_files=narrowed_files,
+        narrowing_refusals=narrowing_refusals(report),
     )
 
 
@@ -320,6 +504,18 @@ def _changed_python_files(head_tree: Path, pr: PrRecord) -> tuple[str, ...]:
             and (head_tree / change.path).is_file()
         )
     )
+
+
+def mutant_target_for(path: str, narrowed_files: Collection[str]) -> MutantTarget:
+    """ADR 0008's mutation protocol: narrowed files get body/constant mutants.
+
+    A file named in a narrowed witness block was proven import-time-only for
+    the tests that skipped, so its mutants must not alter module-level
+    control flow; every other changed file keeps the full enumeration.
+    """
+    if path in narrowed_files:
+        return MutantTarget.FUNCTION_BODIES_AND_CONSTANTS
+    return MutantTarget.ALL
 
 
 def plan_mutants(
@@ -486,7 +682,15 @@ def run_mutation_arm(
             except (OSError, UnicodeDecodeError) as error:
                 errors.append({"stage": "mutant-read", "file": path, "reason": str(error)})
                 continue
-            per_file[path] = enumerate_mutants(source)
+            # ADR 0008's directional expectation rides on the existing parity
+            # assertion, no new machinery: a mutant in a narrowed file that
+            # the full suite kills means some consumer reaches the mutated
+            # behavior semantically, so the selected set must contain that
+            # consumer, and a full-suite kill the selected set misses is
+            # already fatal in aggregate.
+            per_file[path] = enumerate_mutants(
+                source, mutant_target_for(path, select_run.narrowed_files)
+            )
         plan = plan_mutants(per_file, settings.mutants)
         if plan:
             _install_selection_plugin(python, head_tree)
@@ -579,7 +783,7 @@ def _findings_of(report: Mapping[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
-def _payload(
+def result_payload(
     pr: PrRecord,
     base_run: SuiteRun,
     head_run: SuiteRun,
@@ -587,7 +791,9 @@ def _payload(
     skip_paths: tuple[str, ...],
     safety: SafetyResult,
     mutants: dict[str, Any] | None = None,
+    narrowing: bool = False,
 ) -> dict[str, Any]:
+    """Assemble one PR's result document; narrowing records which arm ran."""
     digest = digest_report(select_run.report)
     durations = base_run.outcomes.file_durations
     payload: dict[str, Any] = {
@@ -610,6 +816,10 @@ def _payload(
         "base_suite_seconds": round(base_run.seconds, 3),
         "head_suite_seconds": round(head_run.seconds, 3),
         "per_file_durations": {path: round(durations[path], 3) for path in sorted(durations)},
+        "narrowing": narrowing,
+        "narrowed_skips": len(select_run.narrowed_skip_paths),
+        "narrowing_refusals": dict(select_run.narrowing_refusals),
+        "unsafe_narrowed_skips": list(safety.unsafe_narrowed_skips),
     }
     if mutants is not None:
         payload["mutants"] = mutants
@@ -624,6 +834,7 @@ def replay_pr(
     base_tree = settings.workdir / f"wt-{pr.number}-base"
     head_tree = settings.workdir / f"wt-{pr.number}-head"
     mutants_block: dict[str, Any] | None = None
+    injection = ConfigInjection(path=None, original=None)
     try:
         add_worktree(mirror, pr.base_sha, base_tree)
         base_python = make_venv(
@@ -635,12 +846,19 @@ def replay_pr(
             head_tree, manifest.python_version, manifest.suite_deps, settings.constraints
         )
         head_run = run_suite("head-suite", head_tree, head_python, settings.workdir)
+        if settings.narrowing:
+            # Head worktree only, and only until this PR completes: select
+            # reads config from the head checkout's filesystem while both
+            # snapshots read blobs of the base and head shas, so the file
+            # never leaks into an analyzed tree (see inject_narrowing_config).
+            injection = inject_narrowing_config(head_tree)
         select_run = run_acquit(head_tree, pr, settings)
         if settings.mutants > 0:
             mutants_block = run_mutation_arm(
                 head_tree, head_python, pr, head_run, select_run, settings
             )
     finally:
+        restore_config(injection)
         remove_worktree(mirror, base_tree)
         remove_worktree(mirror, head_tree)
     skip_paths = _skip_paths(select_run.selection)
@@ -649,8 +867,18 @@ def replay_pr(
         head_run.outcomes.by_test,
         skip_paths,
         settings.quarantine,
+        narrowed=select_run.narrowed_skip_paths,
     )
-    return _payload(pr, base_run, head_run, select_run, skip_paths, safety, mutants_block)
+    return result_payload(
+        pr,
+        base_run,
+        head_run,
+        select_run,
+        skip_paths,
+        safety,
+        mutants_block,
+        narrowing=settings.narrowing,
+    )
 
 
 def _verify_constraints(manifest: Manifest, constraints: Path | None) -> None:
@@ -727,9 +955,10 @@ def run_study(settings: RunSettings) -> int:
         if _flagged(payload):
             unsafe_prs += 1
         verdict = "ok" if payload["replay_verified"] else "MISMATCH"
+        narrowed = f" narrowed={payload['narrowed_skips']}" if payload.get("narrowing") else ""
         print(
             f"study: pr {pr.number}: mode={payload['mode']} "
-            f"skipped={payload['skipped']}/{payload['total']} replay={verdict}"
+            f"skipped={payload['skipped']}/{payload['total']}{narrowed} replay={verdict}"
         )
         block = payload.get("mutants")
         if isinstance(block, dict):

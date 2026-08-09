@@ -19,6 +19,10 @@ class SafetyResult:
     changed_outcomes: tuple[str, ...]
     unsafe_skips: tuple[str, ...]
     new_tests_selected: bool
+    # The subset of unsafe_skips whose witness carried the ADR 0008 narrowed
+    # claim. Pure attribution for the summary's own column: narrowed skips
+    # are judged by the identical bar and stay in unsafe_skips regardless.
+    unsafe_narrowed_skips: tuple[str, ...] = ()
 
     @property
     def safe(self) -> bool:
@@ -54,14 +58,18 @@ def check_safety(
     head: Mapping[str, frozenset[Outcome]],
     skip_paths: Iterable[str],
     quarantine: frozenset[str],
+    narrowed: Iterable[str] = (),
 ) -> SafetyResult:
     """Judge one PR's selection against the observed base and head outcomes.
 
     The quarantine only shrinks the changed set. The new-test check ignores
     it on purpose: a brand-new test inside a skipped file is unsafe even if
-    someone quarantined its node id.
+    someone quarantined its node id. narrowed lists the skipped files whose
+    witnesses carry the ADR 0008 narrowed claim; they get no leniency (a
+    narrowed skip is a skip), only their own attribution column.
     """
     skipped_files = frozenset(skip_paths)
+    narrowed_files = frozenset(narrowed)
     changed = changed_tests(base, head, quarantine)
     unsafe = sorted({file_of(node) for node in changed} & skipped_files)
     head_only = {node for node in head if node not in base}
@@ -70,4 +78,5 @@ def check_safety(
         changed_outcomes=tuple(sorted(changed)),
         unsafe_skips=tuple(unsafe),
         new_tests_selected=not new_in_skipped,
+        unsafe_narrowed_skips=tuple(path for path in unsafe if path in narrowed_files),
     )

@@ -16,7 +16,7 @@ import math
 import sys
 from collections import Counter
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
 
@@ -54,6 +54,14 @@ class MissedMutant:
 
 
 @dataclass(frozen=True, slots=True)
+class NarrowedUnsafeSkip:
+    """An unsafe skip whose witness carried the narrowed claim (ADR 0008)."""
+
+    pr: int
+    path: str
+
+
+@dataclass(frozen=True, slots=True)
 class PrResult:
     """The slice of one per-PR result file that aggregation needs."""
 
@@ -72,6 +80,13 @@ class PrResult:
     per_file_durations: Mapping[str, float]
     # None means the mutation arm was not run for this PR.
     mutants: tuple[MutantRecord, ...] | None = None
+    # ADR 0008 narrowing arm: whether the run had the flag, how many skips
+    # carried narrowed witnesses, the unsafe skips among them, and the
+    # refusal-reason histogram harvested from selected-test reasons.
+    narrowing: bool = False
+    narrowed_skips: int = 0
+    unsafe_narrowed_skips: tuple[str, ...] = ()
+    narrowing_refusals: Mapping[str, int] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,6 +128,11 @@ class StudySummary:
     mutant_killed_by_full: int
     mutant_missed: tuple[MissedMutant, ...]
     mutant_parity: Quartiles | None
+    narrowing_prs: int
+    narrowed_skip_prs: int
+    narrowed_skips_total: int
+    narrowed_unsafe: tuple[NarrowedUnsafeSkip, ...]
+    narrowing_refusals: Mapping[str, int]
 
 
 def percentile(values: Sequence[float], q: float) -> float:
@@ -205,6 +225,17 @@ def _mutant_records(data: Mapping[str, Any]) -> tuple[MutantRecord, ...] | None:
     return tuple(records)
 
 
+def _refusal_counts(data: Mapping[str, Any]) -> Mapping[str, int]:
+    value = data.get("narrowing_refusals")
+    if not isinstance(value, Mapping):
+        return {}
+    out: dict[str, int] = {}
+    for key, raw in value.items():
+        if isinstance(key, str) and isinstance(raw, int) and not isinstance(raw, bool):
+            out[key] = raw
+    return out
+
+
 def _pr_result(data: Mapping[str, Any]) -> PrResult:
     return PrResult(
         number=_int_field(data, "number"),
@@ -221,6 +252,10 @@ def _pr_result(data: Mapping[str, Any]) -> PrResult:
         analysis_seconds=_float_field(data, "analysis_seconds"),
         per_file_durations=_durations(data),
         mutants=_mutant_records(data),
+        narrowing=data.get("narrowing") is True,
+        narrowed_skips=_int_field(data, "narrowed_skips"),
+        unsafe_narrowed_skips=_str_tuple(data, "unsafe_narrowed_skips"),
+        narrowing_refusals=_refusal_counts(data),
     )
 
 
@@ -327,6 +362,14 @@ def summarize(results: Sequence[PrResult], exclusions: Sequence[ExclusionRecord]
         for number, entry in mutant_records
         if entry.killed_by_full and not entry.killed_by_selected
     )
+    narrowed_unsafe = tuple(
+        NarrowedUnsafeSkip(pr=result.number, path=path)
+        for result in results
+        for path in result.unsafe_narrowed_skips
+    )
+    refusals: Counter[str] = Counter()
+    for result in results:
+        refusals.update(result.narrowing_refusals)
     return StudySummary(
         analyzed=len(results),
         excluded=len(exclusions),
@@ -352,6 +395,11 @@ def summarize(results: Sequence[PrResult], exclusions: Sequence[ExclusionRecord]
         mutant_killed_by_full=sum(1 for _, entry in mutant_records if entry.killed_by_full),
         mutant_missed=missed,
         mutant_parity=_quartiles(parity_values),
+        narrowing_prs=sum(1 for result in results if result.narrowing),
+        narrowed_skip_prs=sum(1 for result in results if result.narrowed_skips > 0),
+        narrowed_skips_total=sum(result.narrowed_skips for result in results),
+        narrowed_unsafe=narrowed_unsafe,
+        narrowing_refusals=dict(sorted(refusals.items())),
     )
 
 
@@ -401,6 +449,13 @@ def summary_to_dict(summary: StudySummary) -> dict[str, Any]:
             ],
             "parity": _quartiles_dict(summary.mutant_parity),
         },
+        "narrowing": {
+            "prs_with_flag": summary.narrowing_prs,
+            "prs_with_narrowed_skips": summary.narrowed_skip_prs,
+            "narrowed_skips": summary.narrowed_skips_total,
+            "unsafe": [{"pr": entry.pr, "path": entry.path} for entry in summary.narrowed_unsafe],
+            "refusals": dict(summary.narrowing_refusals),
+        },
     }
 
 
@@ -418,6 +473,38 @@ def _quartile_rows(label: str, quartiles: Quartiles | None) -> list[str]:
     return [
         f"| {label} | {_pct(quartiles.p25)} | {_pct(quartiles.median)} | {_pct(quartiles.p75)} |"
     ]
+
+
+def _narrowing_lines(summary: StudySummary) -> list[str]:
+    """The Narrowing section; omitted entirely when no PR ran with the flag."""
+    if summary.narrowing_prs == 0:
+        return []
+    lines = [
+        "",
+        "## Narrowing",
+        "",
+        f"- PRs run with narrowing enabled: {summary.narrowing_prs}",
+        f"- PRs with narrowed skips: {summary.narrowed_skip_prs}",
+        f"- Narrowed skips: {summary.narrowed_skips_total}",
+        f"- Unsafe among them: {len(summary.narrowed_unsafe)} (must be 0)",
+    ]
+    if summary.narrowed_unsafe:
+        lines += ["", "| PR | Skipped file |", "| --- | --- |"]
+        for entry in summary.narrowed_unsafe:
+            lines.append(f"| {entry.pr} | {entry.path} |")
+    lines += [
+        "",
+        "Narrowed skips face the identical unsafe-skip bar as every other skip;",
+        "the count above only attributes which unsafe skips were narrowed.",
+        "",
+        "| Narrowing refusal | Selected tests |",
+        "| --- | --- |",
+    ]
+    for reason, count in summary.narrowing_refusals.items():
+        lines.append(f"| {reason} | {count} |")
+    if not summary.narrowing_refusals:
+        lines.append("| (none) | 0 |")
+    return lines
 
 
 def _mutation_lines(summary: StudySummary) -> list[str]:
@@ -499,6 +586,7 @@ def render_markdown(summary: StudySummary) -> str:
         f"- PRs where a new test was skipped: {summary.new_test_violations} (must be 0)",
         f"- Replay verification: {replay_cell}",
     ]
+    lines += _narrowing_lines(summary)
     lines += _mutation_lines(summary)
     lines += [
         "",
@@ -539,9 +627,12 @@ def run_aggregate(results_dir: Path, out_markdown: Path) -> int:
             "but missed by the selected set",
             file=sys.stderr,
         )
-    if summary.unsafe_skips_total or summary.new_test_violations:
+    # Narrowed unsafe skips are a subset of unsafe_skips_total by
+    # construction; the explicit term keeps a malformed result file fatal.
+    if summary.unsafe_skips_total or summary.new_test_violations or summary.narrowed_unsafe:
         print(
-            f"study: FAILED: {summary.unsafe_skips_total} unsafe skip(s), "
+            f"study: FAILED: {summary.unsafe_skips_total} unsafe skip(s) "
+            f"({len(summary.narrowed_unsafe)} narrowed), "
             f"{summary.new_test_violations} pr(s) with a skipped new test",
             file=sys.stderr,
         )
