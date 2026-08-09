@@ -17,3 +17,8 @@ htmlcov/
 .idea/
 .vscode/
 .DS_Store
+
+# Acquit's own output documents (also fingerprint-exempt by design)
+acquit-report.json
+acquit-selection.json
+acquit-witnesses.json

@@ -35,4 +35,4 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: uv sync --frozen
-      - run: uv run pytest --cov --cov-report=term-missing
+      - run: uv run pytest --cov --cov-report=term-missing --cov-fail-under=79

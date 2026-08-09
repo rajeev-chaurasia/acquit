@@ -22,10 +22,6 @@ class GraphError(AcquitError):
     """The dependency graph could not be built."""
 
 
-class ResolutionError(AcquitError):
-    """An import statement could not be resolved."""
-
-
 class PolicyError(AcquitError):
     """The policy engine could not evaluate its rules."""
 

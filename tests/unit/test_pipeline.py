@@ -6,12 +6,12 @@ from pathlib import Path
 import pytest
 from conftest import RepoBuilder, ScenarioRepo, module_test_source
 
-from acquit import vcs
-from acquit.config import load_config
+from acquit import pipeline, vcs
+from acquit.config import AcquitConfig, load_config
 from acquit.graph.cache import ParseCache
-from acquit.pipeline import run_select, snapshot_tree
+from acquit.pipeline import Snapshot, run_select, snapshot_tree
 from acquit.policy.model import RuleId
-from acquit.pytestmap.pytestcfg import load_pytest_config
+from acquit.pytestmap.pytestcfg import PytestConfig, load_pytest_config
 from acquit.report import SelectionMode
 from acquit.select import Decision, import_closure
 from acquit.witness import verify_witness
@@ -97,6 +97,41 @@ def test_select_deletion_selects_importer_through_base_graph(
     }
     for witness in result.decision.witnesses:
         assert witness.changed == ("delta.py", "delta_extra.py")
+
+
+def test_escalated_mutator_skips_the_base_snapshot(
+    repo_builder: RepoBuilder, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    repo_builder.write(
+        {
+            "paths.py": "import sys\n\nsys.path.append('vendor')\n",
+            "doomed.py": "D = 1\n",
+            "tests/test_paths.py": module_test_source("paths"),
+        }
+    )
+    base = repo_builder.commit("base")
+    repo_builder.remove("doomed.py")
+    head = repo_builder.commit("delete doomed")
+
+    snapshotted: list[str | None] = []
+
+    def counting(
+        ref: str | None,
+        repo: Path,
+        acquit_config: AcquitConfig,
+        pytest_config: PytestConfig,
+        cache: ParseCache | None,
+    ) -> Snapshot:
+        snapshotted.append(ref)
+        return snapshot_tree(ref, repo, acquit_config, pytest_config, cache)
+
+    monkeypatch.setattr(pipeline, "snapshot_tree", counting)
+    result = run_select(base, head, repo_builder.path)
+
+    # The deletion alone would demand a base snapshot; the escalated mutator
+    # already binds the run to run-all, so only head is analyzed.
+    assert result.decision.mode is SelectionMode.RUN_ALL
+    assert snapshotted == [head]
 
 
 def test_select_working_tree_head_has_no_head_sha(repo_builder: RepoBuilder) -> None:

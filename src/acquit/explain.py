@@ -8,6 +8,7 @@ from acquit.errors import ExitCode
 from acquit.graph.model import BuiltGraph, NodeKind
 from acquit.pipeline import SelectResult
 from acquit.policy.model import ScopeKind
+from acquit.select import escalated_findings
 
 _REACHABLE_PREFIX = "reachable-from:"
 
@@ -86,9 +87,16 @@ def explain_lines(test: str, result: SelectResult) -> tuple[tuple[str, ...], Exi
         return ((f"acquit: {path!r} is not a known test file at head",), ExitCode.USAGE)
 
     global_findings = [f for f in result.outcome.findings if f.scope.kind is ScopeKind.GLOBAL]
-    if global_findings:
+    # A GLOBAL_IF_REACHED finding whose subject some test reaches is global
+    # in effect; render it beside the plain global findings, naming the cause.
+    escalated = escalated_findings(result.head.graph, result.outcome.findings)
+    if global_findings or escalated:
         lines = [f"{path}: runs; global findings force the full suite:"]
         lines.extend(f"  {f.rule} {f.subject}: {f.reason}" for f in global_findings)
+        lines.extend(
+            f"  {f.rule} {f.scope.subject or f.subject} (escalated: a test reaches it): {f.reason}"
+            for f in escalated
+        )
         return (tuple(lines), ExitCode.OK)
 
     for skipped in result.decision.skipped:

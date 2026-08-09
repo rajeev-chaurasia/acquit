@@ -108,6 +108,20 @@ def tainted_reachers(graph: BuiltGraph) -> frozenset[str]:
     return frozenset(path for path in reaching if graph.nodes[path].kind is NodeKind.TEST)
 
 
+def escalated_findings(head: BuiltGraph, findings: tuple[Finding, ...]) -> tuple[Finding, ...]:
+    """The GLOBAL_IF_REACHED findings whose subject some head test reaches.
+
+    Each one acts exactly like a GLOBAL finding for this head graph; the
+    pipeline and explain reuse this check so all three agree on escalation.
+    """
+    return tuple(
+        finding
+        for finding in findings
+        if finding.scope.kind is ScopeKind.GLOBAL_IF_REACHED
+        and impacted_tests(head, (_subject_of(finding),))
+    )
+
+
 def _run_all() -> Decision:
     return Decision(
         mode=SelectionMode.RUN_ALL,
@@ -185,11 +199,8 @@ def decide(
     remains is skipped only after build_witness independently re-verifies that
     its import closure avoids every changed path.
     """
-    for finding in findings:
-        if finding.scope.kind is not ScopeKind.GLOBAL_IF_REACHED:
-            continue
-        if impacted_tests(head, (_subject_of(finding),)):
-            return _run_all()
+    if escalated_findings(head, findings):
+        return _run_all()
     if any(finding.scope.kind is ScopeKind.GLOBAL for finding in findings):
         return _run_all()
 

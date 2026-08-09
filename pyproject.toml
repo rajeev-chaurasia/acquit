@@ -21,6 +21,9 @@ dependencies = ["rustworkx>=0.15"]
 
 [project.urls]
 Repository = "https://github.com/rajeev-chaurasia/acquit"
+Documentation = "https://github.com/rajeev-chaurasia/acquit/tree/main/docs"
+Issues = "https://github.com/rajeev-chaurasia/acquit/issues"
+Changelog = "https://github.com/rajeev-chaurasia/acquit/releases"
 
 [project.scripts]
 acquit = "acquit.cli:main"
@@ -61,3 +64,8 @@ addopts = "-q"
 [tool.coverage.run]
 source = ["acquit"]
 branch = true
+
+[tool.coverage.report]
+skip_covered = false
+# Mirrors --cov-fail-under in ci.yml so local runs agree with the gate.
+fail_under = 79

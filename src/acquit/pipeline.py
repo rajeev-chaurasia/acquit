@@ -22,7 +22,7 @@ from acquit.policy.model import ScopeKind
 from acquit.pytestmap.conftree import UNPARSEABLE_MARKER, ConftestFacts, inspect_conftest
 from acquit.pytestmap.discover import classify_file, discover_test_files
 from acquit.pytestmap.pytestcfg import PytestConfig, load_pytest_config
-from acquit.select import Decision, decide
+from acquit.select import Decision, decide, escalated_findings
 from acquit.vcs import ChangedFile, ChangeStatus
 
 
@@ -236,9 +236,14 @@ def run_select(
     needs_base = any(
         change.status in (ChangeStatus.DELETED, ChangeStatus.RENAMED) for change in changed
     )
-    has_global = any(finding.scope.kind is ScopeKind.GLOBAL for finding in outcome.findings)
+    # A run bound for run-all never consults the base graph, so skip that
+    # snapshot: plain GLOBAL findings force run-all, and an escalated
+    # GLOBAL_IF_REACHED finding does the same (decide re-applies this check).
+    run_all_bound = any(
+        finding.scope.kind is ScopeKind.GLOBAL for finding in outcome.findings
+    ) or bool(escalated_findings(head_snapshot.graph, outcome.findings))
     base_graph: BuiltGraph | None = None
-    if needs_base and not has_global:
+    if needs_base and not run_all_bound:
         # The base graph reuses the head pytest and acquit config: sound, because
         # a changed config fires a GLOBAL rule and selective mode is never
         # reached when configs differ.

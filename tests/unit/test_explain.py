@@ -1,6 +1,7 @@
 """Tests for the explain command: every decision names its evidence."""
 
 import shutil
+from pathlib import Path
 
 import pytest
 from conftest import ScenarioRepo, commit_all, init_repo, module_test_source, write_files
@@ -85,6 +86,29 @@ def test_explain_global_run_prints_global_reasons(scenario_repo: ScenarioRepo) -
     assert code == ExitCode.OK
     assert lines[0] == "tests/test_alpha.py: runs; global findings force the full suite:"
     assert any(line.startswith("  R002 pyproject.toml:") for line in lines)
+
+
+def test_explain_escalated_mutator_names_the_reached_subject(tmp_path: Path) -> None:
+    repo = init_repo(tmp_path)
+    write_files(
+        repo,
+        {
+            "paths.py": "import sys\n\nsys.path.append('vendor')\n",
+            "other.py": "OTHER = 1\n",
+            "tests/test_paths.py": module_test_source("paths"),
+            "tests/test_other.py": module_test_source("other"),
+        },
+    )
+    base = commit_all(repo, "base")
+    write_files(repo, {"other.py": "OTHER = 2\n"})
+    head = commit_all(repo, "change other")
+    result = run_select(base, head, repo)
+
+    lines, code = explain_lines("tests/test_other.py", result)
+
+    assert code == ExitCode.OK
+    assert lines[0] == "tests/test_other.py: runs; global findings force the full suite:"
+    assert any(line.startswith("  R008 paths.py (escalated: a test reaches it):") for line in lines)
 
 
 def test_explain_cli_prints_to_stdout_and_signals_usage(
