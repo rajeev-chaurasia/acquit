@@ -1,8 +1,13 @@
 # Acquit
 
+[![CI](https://github.com/rajeev-chaurasia/acquit/actions/workflows/ci.yml/badge.svg)](https://github.com/rajeev-chaurasia/acquit/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/acquit)](https://pypi.org/project/acquit/)
+[![Python versions](https://img.shields.io/pypi/pyversions/acquit)](https://pypi.org/project/acquit/)
+[![License](https://img.shields.io/pypi/l/acquit)](https://github.com/rajeev-chaurasia/acquit/blob/main/LICENSE)
+
 Provably skip unaffected pytest tests on every pull request. Static analysis, fail-closed, with evidence for every skip.
 
-> Status: alpha. The engine works: on real pull requests acquit makes selective decisions, and every skip ships with a machine-checkable witness that is re-verified by replay before pytest honors it. Every failure mode still converges on "run everything". The CLI is on PyPI (`pip install acquit==0.0.1`), so the analysis itself pins cleanly. The GitHub Action is not yet on the Marketplace; that arrives with 0.1.0, and until then the action is used via `@main`. Re-export narrowing for fat package inits exists and ships disabled: it survived an adversarial break-and-fix cycle before anyone relied on it, and its measured applicability where it engages is 6.7 percent of submodules ([docs/study.md](docs/study.md) has the full story).
+> Status: alpha. The engine works: on real pull requests acquit makes selective decisions, and every skip ships with a machine-checkable witness that is re-verified by replay before pytest honors it. Every failure mode still converges on "run everything". The CLI is on PyPI (`pip install acquit==0.0.1`), so the analysis itself pins cleanly. The GitHub Action is not yet on the Marketplace; that arrives with 0.1.0, and until then the action is used via `@main`. Re-export narrowing for fat package inits exists and ships disabled: it survived an adversarial break-and-fix cycle before anyone relied on it, and its measured applicability where it engages is 6.7 percent of submodules ([docs/study.md](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/study.md) has the full story).
 
 ## What it does
 
@@ -22,22 +27,9 @@ Acquit replayed 198 merged PRs from four real repositories, running each full su
 | encode/httpx | 83 | 0 | 97.5% | 4.8% (4/83) | 53.0% (44/83) |
 | Total | 198 | 0 | - | 5.1% (10/198) | 60.1% (119/198) |
 
-The docs-config column is computed from the recorded findings for flask, rich, and httpx; click's docs-config counterfactual was re-replayed for real, with every additional selective decision verified (see [docs/study.md](docs/study.md)).
+The docs-config column is computed from the recorded findings for flask, rich, and httpx; click's docs-config counterfactual was re-replayed for real, with every additional selective decision verified (see [docs/study.md](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/study.md)).
 
-The out-of-the-box share is low because acquit is fail-closed: any PR it cannot fully prove safe runs the whole suite. Docs and changelog churn (rule R001) is by far the dominant blocker; the docs-config column counts PRs where it was the only one, and the sticky PR comment suggests the exact `assume_inert` entry to lift it. Every number above regenerates from committed manifests via `acquit-study`; see [study/README.md](study/README.md). The full writeup, including the parts that went wrong, is in [docs/study.md](docs/study.md).
-
-## How it compares
-
-| Tool | Mechanism | Needs code execution | Deterministic | Explains each skip | Works with plain pytest | Cost |
-| --- | --- | --- | --- | --- | --- | --- |
-| acquit | static import graph, fail-closed rules | no | yes | yes: a witness per skip, a named rule per run-all | yes | free, Apache-2.0 |
-| pytest-testmon | runtime coverage database | yes | given the same database, yes; the database is per-machine state | dependency data exists, but no proof artifact per skip | yes | free |
-| Codecov ATS | testmon-based, hosted | yes | same caveats as testmon | no | yes | commercial |
-| Launchable | ML over test-result history | needs outcome history | no, probabilistic by design | no, it predicts | yes | commercial |
-| Bazel / Pants | declared build dependency graph | no | yes | queryable graph, no per-skip artifact | no, requires build-system migration | free, plus the migration |
-| dorny/paths-filter | hand-written path globs | no | yes | no, the globs are the reasoning | yes | free |
-
-Acquit occupies one niche: fail-closed static selection with a proof per skip, on an unmodified pytest project. If you want function-level precision and are willing to maintain runtime coverage state, pytest-testmon is the honest alternative; it is precise where acquit is conservative, and stateful where acquit is a pure function of the diff.
+The out-of-the-box share is low because acquit is fail-closed: any PR it cannot fully prove safe runs the whole suite. Docs and changelog churn (rule R001) is by far the dominant blocker; the docs-config column counts PRs where it was the only one, and the sticky PR comment suggests the exact `assume_inert` entry to lift it. Every number above regenerates from committed manifests via `acquit-study`; see [study/README.md](https://github.com/rajeev-chaurasia/acquit/blob/main/study/README.md). The full writeup, including the parts that went wrong, is in [docs/study.md](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/study.md).
 
 ## Try it on a PR
 
@@ -99,6 +91,19 @@ From there:
 - `acquit replay acquit-report.json` re-verifies every witness from first principles. Replay rebuilds the analyzed commit, and a working-tree report records no head sha, so pass `--head <commit>` at select time if you want the run to be replayable.
 - `acquit analyze` prints the dependency graph's health.
 
+## How it compares
+
+| Tool | Mechanism | Needs code execution | Deterministic | Explains each skip | Works with plain pytest | Cost |
+| --- | --- | --- | --- | --- | --- | --- |
+| acquit | static import graph, fail-closed rules | no | yes | yes: a witness per skip, a named rule per run-all | yes | free, Apache-2.0 |
+| pytest-testmon | runtime coverage database | yes | given the same database, yes; the database is per-machine state | dependency data exists, but no proof artifact per skip | yes | free |
+| Codecov ATS | testmon-based, hosted | yes | same caveats as testmon | no | yes | commercial |
+| Launchable | ML over test-result history | needs outcome history | no, probabilistic by design | no, it predicts | yes | commercial |
+| Bazel / Pants | declared build dependency graph | no | yes | queryable graph, no per-skip artifact | no, requires build-system migration | free, plus the migration |
+| dorny/paths-filter | hand-written path globs | no | yes | no, the globs are the reasoning | yes | free |
+
+Acquit occupies one niche: fail-closed static selection with a proof per skip, on an unmodified pytest project. If you want function-level precision and are willing to maintain runtime coverage state, pytest-testmon is the honest alternative; it is precise where acquit is conservative, and stateful where acquit is a pure function of the diff.
+
 ## Design principles
 
 - Never execute user code during analysis
@@ -118,13 +123,13 @@ From there:
 
 ## Documentation
 
-- [CLI reference](docs/cli.md): every subcommand, flag, document schema, exit code, and the action's inputs and outputs
-- [Rule reference](docs/rules.md): R001 to R018, with triggers, scopes, and the exact reason texts
-- [Soundness contract](docs/soundness.md): what "provably unaffected" means, its assumptions, and its limits
-- [Architecture decision records](docs/adr): fail-closed policy, static analysis, rustworkx, the action, the study, granularity, tree binding
-- [The replay study](docs/study.md): 198 replayed PRs, and [how to re-run it](study/README.md)
-- [Contributing](CONTRIBUTING.md): dev setup, the CI gate, and the bar for soundness-critical changes
-- [Security policy](SECURITY.md): what counts as a vulnerability here, and how to report one
+- [CLI reference](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/cli.md): every subcommand, flag, document schema, exit code, and the action's inputs and outputs
+- [Rule reference](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/rules.md): R001 to R018, with triggers, scopes, and the exact reason texts
+- [Soundness contract](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/soundness.md): what "provably unaffected" means, its assumptions, and its limits
+- [Architecture decision records](https://github.com/rajeev-chaurasia/acquit/tree/main/docs/adr): fail-closed policy, static analysis, rustworkx, the action, the study, granularity, tree binding, and the precision work (re-export narrowing, constant folding, derived registries)
+- [The replay study](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/study.md): 198 replayed PRs, and [how to re-run it](https://github.com/rajeev-chaurasia/acquit/blob/main/study/README.md)
+- [Contributing](https://github.com/rajeev-chaurasia/acquit/blob/main/CONTRIBUTING.md): dev setup, the CI gate, and the bar for soundness-critical changes
+- [Security policy](https://github.com/rajeev-chaurasia/acquit/blob/main/SECURITY.md): what counts as a vulnerability here, and how to report one
 
 ## License
 

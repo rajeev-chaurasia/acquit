@@ -2,6 +2,8 @@
 
 Thanks for looking under the hood. Acquit is small on purpose, and the bar
 for changes scales with how close they sit to the soundness contract.
+The [code of conduct](CODE_OF_CONDUCT.md) applies everywhere the project
+talks: issues, PRs, and reviews.
 
 ## Dev setup
 

@@ -187,7 +187,7 @@ permissions:
   pull-requests: write
 
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v7
     with:
       fetch-depth: 0
   - uses: rajeev-chaurasia/acquit@main

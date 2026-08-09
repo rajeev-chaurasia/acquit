@@ -20,9 +20,11 @@ of the taint, exactly as if each name were a literal.
 
 ## Decision
 
-Fold what can be proven, decline everything else into today's taint. Full
-grammar, flow rules, counterexamples, and measured rates:
-[design/constant-folding.md](../design/constant-folding.md).
+Fold what can be proven, decline everything else into today's taint. The
+grammar is implemented rule for rule in
+`src/acquit/graph/resolvers/folding.py`; the counterexample gallery ships
+as committed tests in `tests/unit/test_folding.py` and the folding fixture
+repo under `tests/fixtures/repos/folding/`.
 
 - The invariant is superset-only: a fold must contain every name the site
   can pass to the import machinery, or the site declines. Extra edges are

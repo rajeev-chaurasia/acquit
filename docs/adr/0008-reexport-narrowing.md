@@ -19,8 +19,10 @@ affects that test only if `console.py`'s import-time behavior changed.
 ## Decision
 
 Narrow impact, never the closure, through a new edge kind and a stronger
-witness claim. Full analysis, whitelists, counterexamples, and measured
-rates: [design/reexport-narrowing.md](../design/reexport-narrowing.md).
+witness claim. The purity and inertness checks are implemented in
+`src/acquit/graph/resolvers/` and pinned by
+`tests/unit/test_reexport_checkers.py`; the counterexamples live on as
+regression guards in `tests/adversarial/test_narrowing_claims.py`.
 
 - A proven pure re-exporter `__init__.py` (docstring, imports,
   from-imports, literal `__all__`, literal metadata assignments,

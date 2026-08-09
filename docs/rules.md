@@ -111,7 +111,7 @@ subject at run time.
   `__package__` or `__name__` anchor) becomes `DYNAMIC_IMPORT` edges
   instead of a suspect, so R007 stops firing on it. Any unresolved part
   declines the whole site into today's taint; the full pattern list and
-  every counterexample live in the ADR and its design doc.
+  every counterexample live in the ADR and the committed folding tests.
 
 ## R008: sys.path mutation
 

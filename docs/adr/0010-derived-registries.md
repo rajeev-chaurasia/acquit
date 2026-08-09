@@ -9,8 +9,8 @@ by module-level loops over literal structures, the kombu and celery
 lazy-init idiom, "9 sites, two 100%-blast repos", to arrive as its own
 measured proposal. This is that proposal, built the established way: an
 exact grammar with a soundness argument per rule, an adversarial
-counterexample hunt, and measured rates from the census corpus. Full
-analysis: [design/derived-registries.md](../design/derived-registries.md).
+counterexample hunt (a 44-case gallery run against a disposable
+prototype), and measured rates from the census corpus.
 
 The recount comes first, because the headroom was mislabeled at birth: the
 "9 sites" was a decline-bucket population, not an idiom count. Site by
@@ -30,8 +30,8 @@ Specify the grammar, publish the measurement, and do not build the
 resolver. Adopt the three corrections the counterexample hunt forced on
 ADR 0009's rules, which are the durable output of this design.
 
-- The grammar (specified and prototype-validated, admitted shapes and
-  soundness arguments in the design doc): a module-level dict qualifies
+- The grammar (specified and prototype-validated): a module-level dict
+  qualifies
   when its single binding is a display or foldable comprehension and every
   other mention is a whitelisted read or a derivation store whose value
   expression folds; consumption folds to the union over the display and
@@ -117,8 +117,9 @@ ADR 0009's rules, which are the durable output of this design.
   fromlist resolution belong in the v1 folder that just landed; the
   external-mutation join is specified and waiting if any module-state fold
   ever ships beyond v1's registry rule, and the seam's ResolveContext
-  already carries the facts mapping it needs. The 44-case gallery joins
-  the record so the next design starts where this one stopped.
+  already carries the facts mapping it needs. The grammar, the
+  corrections, and the sharpest counterexamples are recorded here so the
+  next design starts where this one stopped.
 - The alternative for kombu-shaped repos is a waiver, documented honestly:
   `[tool.acquit.waive]` on R007 for the registry module, with the
   justification that the lazily imported modules are all imported directly
@@ -151,5 +152,4 @@ ADR 0009's rules, which are the durable output of this design.
   registry-module taint is the sole blocker on skips that would otherwise
   land, the bar the narrowing campaign set), or a census over a corpus
   where module-local derived registries are actually common. The grammar
-  here is specified, gallery-pinned, and ready to be re-measured against
-  either.
+  here is specified and ready to be re-measured against either.
