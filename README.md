@@ -2,7 +2,7 @@
 
 Provably skip unaffected pytest tests on every pull request. Static analysis, fail-closed, with evidence for every skip.
 
-> Status: alpha. The engine works: on real pull requests acquit makes selective decisions, and every skip ships with a machine-checkable witness that is re-verified by replay before pytest honors it. Every failure mode still converges on "run everything". Not yet on the GitHub Marketplace, so expect rough edges and no version pinning.
+> Status: alpha. The engine works: on real pull requests acquit makes selective decisions, and every skip ships with a machine-checkable witness that is re-verified by replay before pytest honors it. Every failure mode still converges on "run everything". The CLI is on PyPI (`pip install acquit==0.0.1`), so the analysis itself pins cleanly. The GitHub Action is not yet on the Marketplace; that arrives with 0.1.0, and until then the action is used via `@main`.
 
 ## What it does
 
@@ -22,7 +22,20 @@ Acquit replayed 198 merged PRs from four real repositories, running each full su
 | encode/httpx | 83 | 0 | 97.5% | 4.8% (4/83) | 53.0% (44/83) |
 | Total | 198 | 0 | - | 5.1% (10/198) | 60.1% (119/198) |
 
-The out-of-the-box share is low because acquit is fail-closed: any PR it cannot fully prove safe runs the whole suite. Docs and changelog churn (rule R001) is by far the dominant blocker; the docs-config column counts PRs where it was the only one, and the sticky PR comment suggests the exact `assume_inert` entry to lift it. Every number above regenerates from committed manifests via `acquit-study`; see [study/README.md](study/README.md).
+The out-of-the-box share is low because acquit is fail-closed: any PR it cannot fully prove safe runs the whole suite. Docs and changelog churn (rule R001) is by far the dominant blocker; the docs-config column counts PRs where it was the only one, and the sticky PR comment suggests the exact `assume_inert` entry to lift it. Every number above regenerates from committed manifests via `acquit-study`; see [study/README.md](study/README.md). The full writeup, including the parts that went wrong, is in [docs/study.md](docs/study.md).
+
+## How it compares
+
+| Tool | Mechanism | Needs code execution | Deterministic | Explains each skip | Works with plain pytest | Cost |
+| --- | --- | --- | --- | --- | --- | --- |
+| acquit | static import graph, fail-closed rules | no | yes | yes: a witness per skip, a named rule per run-all | yes | free, Apache-2.0 |
+| pytest-testmon | runtime coverage database | yes | given the same database, yes; the database is per-machine state | dependency data exists, but no proof artifact per skip | yes | free |
+| Codecov ATS | testmon-based, hosted | yes | same caveats as testmon | no | yes | commercial |
+| Launchable | ML over test-result history | needs outcome history | no, probabilistic by design | no, it predicts | yes | commercial |
+| Bazel / Pants | declared build dependency graph | no | yes | queryable graph, no per-skip artifact | no, requires build-system migration | free, plus the migration |
+| dorny/paths-filter | hand-written path globs | no | yes | no, the globs are the reasoning | yes | free |
+
+Acquit occupies one niche: fail-closed static selection with a proof per skip, on an unmodified pytest project. If you want function-level precision and are willing to maintain runtime coverage state, pytest-testmon is the honest alternative; it is precise where acquit is conservative, and stateful where acquit is a pure function of the diff.
 
 ## Try it on a PR
 
@@ -48,6 +61,16 @@ Report mode never skips a test: the action analyzes the diff, verifies the evide
 - Fail closed: every error path converges on "run all tests"
 - Deterministic: same tree and diff produce byte-identical reports
 - Explainable: every decision names the rule or the graph path behind it
+
+## FAQ
+
+**Static analysis cannot be sound in Python.** It cannot bound everything, and acquit does not try. Anything outside what static imports can bound (non-literal importlib, exec, sys.path mutation, changed conftests, dependency bumps, unparseable files, and the rest of an eighteen-rule table) fails closed to running more tests, up to everything. Soundness comes from the direction of the failure, not from the reach of the analysis. Measured: 198 replayed PRs, zero unsafe skips, every skip re-verified by `acquit replay` from first principles.
+
+**Why file-level selection instead of test-level?** Module-level imports are the unit static analysis can bound honestly. Function-level selection would require bounding fixture resolution and parametrization behavior, and a bound I cannot defend is a skip I will not make. Function-level granularity is on the research list, not in the product.
+
+**What about fixtures and conftest magic?** Conftest scoping is modeled directly: a changed non-root conftest forces its whole subtree to run, a changed root conftest or pytest config forces everything, collection-altering hooks and unresolvable `pytest_plugins` entries fail closed globally. Fixtures defined in a conftest ride on those edges; fixture changes inside a test's own import closure are ordinary graph reachability.
+
+**My PRs all touch the changelog, so this will never skip anything.** That is rule R001 doing its job until you say otherwise. An `assume_inert` list under `[tool.acquit]` vouches that named docs or data files feed no test, and the sticky PR comment suggests the exact entry when docs files are the only blocker. The proof obligation for those files becomes yours; treat `.acquit.toml` diffs like CI config in review.
 
 ## License
 
