@@ -108,6 +108,10 @@ subject at run time.
 ## R008: sys.path mutation
 
 - Trigger: any mutation of `sys.path`, scoped by when the mutation executes.
+  Direct calls and assignments count, as do `site.addsitedir`,
+  `pkgutil.extend_path`, and pytest's helpers `monkeypatch.syspath_prepend`
+  and `pytester.syspathinsert` (matched by method name on any receiver;
+  over-approximating a look-alike costs precision, never soundness).
 - Scope and reasons, three cases:
   - Import-time (module level or class body) in a conftest: global.
     `{path} mutates sys.path at import time, and conftests execute unconditionally during collection.`

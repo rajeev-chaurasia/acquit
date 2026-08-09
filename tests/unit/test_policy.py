@@ -369,6 +369,24 @@ def test_r008_both_depths_in_one_module_yield_both_findings() -> None:
     }
 
 
+# The flask blind spot: pytest's monkeypatch fixture mutates sys.path on the
+# test's behalf, and a fixture body is a function body, so the runtime kind.
+def test_r008_monkeypatch_syspath_prepend_in_conftest_fixture_is_closure_taint() -> None:
+    source = """\
+import pytest
+
+
+@pytest.fixture
+def test_apps(monkeypatch):
+    monkeypatch.syspath_prepend("test_apps")
+"""
+    path = "tests/conftest.py"
+    ctx = make_ctx(facts={path: facts_for(path, source)})
+    (finding,) = findings_for(evaluate(ctx), RuleId.SYS_PATH_MUTATION)
+    assert finding.scope == Scope(ScopeKind.CLOSURE_TAINT, path)
+    assert finding.subject == path
+
+
 def test_r008_reading_sys_path_is_silent() -> None:
     source = "import sys\n\nknown = list(sys.path)\n"
     ctx = make_ctx(facts={"pkg/paths.py": facts_for("pkg/paths.py", source)})

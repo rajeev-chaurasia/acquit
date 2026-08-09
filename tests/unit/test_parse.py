@@ -271,6 +271,51 @@ def vendor():
     assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION] * 2
 
 
+def test_monkeypatch_syspath_prepend_in_fixture_body_is_runtime() -> None:
+    source = """\
+import pytest
+
+
+@pytest.fixture
+def test_apps(monkeypatch):
+    monkeypatch.syspath_prepend("vendored")
+"""
+    result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION]
+
+
+def test_pytester_syspathinsert_in_function_body_is_runtime() -> None:
+    source = """\
+def test_plugin(pytester):
+    pytester.syspathinsert("vendored")
+"""
+    result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION]
+
+
+def test_monkeypatch_syspath_prepend_at_module_level_is_import_time() -> None:
+    # Contrived, but a MonkeyPatch instance can be built and used anywhere.
+    source = """\
+from _pytest.monkeypatch import MonkeyPatch
+
+mp = MonkeyPatch()
+mp.syspath_prepend("vendored")
+"""
+    result = facts(source)
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME]
+
+
+def test_syspath_prepend_on_arbitrary_receiver_still_counts() -> None:
+    # Receiver types are unknowable statically; over-approximating is sound.
+    result = facts("def use(thing):\n    thing.syspath_prepend('x')")
+    assert [s.kind for s in result.suspects] == [SuspectKind.SYS_PATH_MUTATION]
+
+
+def test_function_named_syspath_prepend_defined_but_not_called_is_silent() -> None:
+    result = facts("def syspath_prepend(path):\n    pass")
+    assert result.suspects == ()
+
+
 def test_exec_eval_compile() -> None:
     source = 'exec(code)\neval(expr)\ncompile(src, "<s>", "exec")'
     result = facts(source)

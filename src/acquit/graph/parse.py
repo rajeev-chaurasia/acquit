@@ -18,6 +18,10 @@ _IMPORT_MODULE = "import_module"
 _SYS_PATH_METHODS = frozenset({"append", "insert", "extend"})
 _EXEC_EVAL_NAMES = frozenset({"exec", "eval", "compile"})
 _SITE_PATH_CALLEES = frozenset({"addsitedir", "extend_path"})
+# pytest's monkeypatch and pytester helpers mutate sys.path on the caller's
+# behalf. Matched by attribute name alone, on any receiver: a false positive
+# costs precision, a miss costs soundness.
+_PYTEST_SYS_PATH_METHODS = frozenset({"syspath_prepend", "syspathinsert"})
 _SYS_MODULES_METHODS = frozenset({"get", "setdefault", "pop"})
 
 
@@ -211,7 +215,11 @@ class _FactsVisitor(ast.NodeVisitor):
             # Only import_module takes a package anchor for relative names.
             package = _package_argument(node) if last == _IMPORT_MODULE else None
             self._record_dynamic_import(node, package)
-        elif self._is_sys_path_call(node) or last in _SITE_PATH_CALLEES:
+        elif (
+            self._is_sys_path_call(node)
+            or last in _SITE_PATH_CALLEES
+            or self._is_pytest_sys_path_call(node)
+        ):
             self._suspect(self._sys_path_kind(), node)
         elif isinstance(node.func, ast.Name) and node.func.id in _EXEC_EVAL_NAMES:
             self._suspect(SuspectKind.EXEC_EVAL, node)
@@ -266,6 +274,11 @@ class _FactsVisitor(ast.NodeVisitor):
             and func.attr in _SYS_PATH_METHODS
             and _is_sys_path(func.value)
         )
+
+    @staticmethod
+    def _is_pytest_sys_path_call(node: ast.Call) -> bool:
+        func = node.func
+        return isinstance(func, ast.Attribute) and func.attr in _PYTEST_SYS_PATH_METHODS
 
     def visit_Assign(self, node: ast.Assign) -> None:
         for target in node.targets:

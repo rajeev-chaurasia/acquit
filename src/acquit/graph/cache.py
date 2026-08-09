@@ -22,8 +22,9 @@ from acquit.graph.parse import ImportStmt, ModuleFacts, Suspect, SuspectKind
 
 # Bump whenever parser semantics change: cached ModuleFacts for an unchanged
 # blob must never outlive the rules that produced them. Version 4 split the
-# sys.path suspect into import-time and runtime kinds.
-CACHE_FORMAT_VERSION: Final = 4
+# sys.path suspect into import-time and runtime kinds. Version 5 added
+# monkeypatch.syspath_prepend and pytester.syspathinsert as sys.path mutations.
+CACHE_FORMAT_VERSION: Final = 5
 
 
 def parse_cache_dir(repo_root: Path) -> Path:
