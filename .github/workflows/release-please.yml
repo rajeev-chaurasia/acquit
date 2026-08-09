@@ -1,6 +1,8 @@
 # Maintains a running release PR from conventional commits. Merging that PR
 # bumps the version, updates the changelog, tags, and creates the GitHub
-# release, which triggers release.yml to publish to PyPI.
+# release. Releases created with the workflow token do not fire on-release
+# workflows (GitHub's cascade guard), so this workflow dispatches the publish
+# explicitly when a release was created.
 
 name: release-please
 
@@ -11,11 +13,22 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
+<<<<<<< Updated upstream
       - uses: googleapis/release-please-action@v5
+=======
+      - id: release
+        uses: googleapis/release-please-action@v4
+>>>>>>> Stashed changes
         with:
           release-type: python
+
+      - if: ${{ steps.release.outputs.release_created }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run release.yml --repo "$GITHUB_REPOSITORY" -f tag="${{ steps.release.outputs.tag_name }}"
