@@ -30,8 +30,9 @@ from acquit.graph.resolvers.checkers import (
 # blob must never outlive the rules that produced them. Version 4 split the
 # sys.path suspect into import-time and runtime kinds. Version 5 added
 # monkeypatch.syspath_prepend and pytester.syspathinsert as sys.path mutations.
-# Version 6 added the re-export scan for ADR 0008 narrowing.
-CACHE_FORMAT_VERSION: Final = 6
+# Version 6 added the re-export scan for ADR 0008 narrowing. Version 7 added
+# the inertness verdict and bound-name set for the narrowed witness claim.
+CACHE_FORMAT_VERSION: Final = 7
 
 
 def parse_cache_dir(repo_root: Path) -> Path:
@@ -73,6 +74,8 @@ def facts_to_dict(facts: ModuleFacts) -> dict[str, Any]:
         "defines_module_getattr": facts.defines_module_getattr,
         "pytest_plugins_decl": list(facts.pytest_plugins_decl),
         "reexport": _scan_to_dict(facts.reexport),
+        "inert_reason": facts.inert_reason,
+        "bound_names": list(facts.bound_names),
     }
 
 
@@ -106,6 +109,8 @@ def facts_from_dict(data: dict[str, Any]) -> ModuleFacts:
             defines_module_getattr=_expect_bool(data["defines_module_getattr"]),
             pytest_plugins_decl=_expect_str_tuple(data["pytest_plugins_decl"]),
             reexport=_scan_from_dict(_expect_dict(data["reexport"])),
+            inert_reason=_expect_opt_str(data["inert_reason"]),
+            bound_names=_expect_str_tuple(data["bound_names"]),
         )
     except (KeyError, TypeError, ValueError) as error:
         raise GraphError(f"cached facts have an unexpected shape: {error!r}") from error

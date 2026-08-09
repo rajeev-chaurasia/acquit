@@ -20,7 +20,8 @@ if TYPE_CHECKING:
     from acquit.pipeline import SelectResult
     from acquit.policy.engine import WaivedFinding
     from acquit.policy.model import Finding
-    from acquit.select import Decision
+    from acquit.select import Decision, SkippedTest
+    from acquit.witness import Witness
 
 
 class SelectionMode(StrEnum):
@@ -133,9 +134,7 @@ def build_report(
             "selected": [
                 {"path": entry.path, "reasons": list(entry.reasons)} for entry in decision.selected
             ],
-            "skipped": [
-                {"path": entry.path, "witness": entry.witness_id} for entry in decision.skipped
-            ],
+            "skipped": [_skipped_to_dict(entry) for entry in decision.skipped],
             "always_run": [
                 {"path": entry.path, "finding": entry.finding} for entry in decision.always_run
             ],
@@ -151,6 +150,39 @@ def build_report(
     }
 
 
+def _skipped_to_dict(entry: SkippedTest) -> dict[str, Any]:
+    # The flag only appears when set: non-narrowed entries stay byte-identical.
+    document: dict[str, Any] = {"path": entry.path, "witness": entry.witness_id}
+    if entry.narrowed:
+        document["narrowed"] = True
+    return document
+
+
+def _witness_to_dict(witness: Witness) -> dict[str, Any]:
+    document: dict[str, Any] = {
+        "id": witness.id,
+        "test": witness.test,
+        "closure": witness.closure_hash,
+        "changed": list(witness.changed),
+        "claim": witness.claim,
+    }
+    if witness.narrowed:
+        # The ADR 0008 evidence block; disjoint witnesses stay byte-identical.
+        document["narrowed"] = [
+            {
+                "path": entry.path,
+                "base_blob": entry.base_blob,
+                "head_blob": entry.head_blob,
+                "inits": [
+                    {"path": init.path, "base_tier": init.base_tier, "head_tier": init.head_tier}
+                    for init in entry.inits
+                ],
+            }
+            for entry in witness.narrowed
+        ]
+    return document
+
+
 def build_witnesses_doc(decision: Decision, graph_hash: str) -> dict[str, Any]:
     """Build the witnesses document: machine-checkable evidence for every skip."""
     return {
@@ -158,13 +190,7 @@ def build_witnesses_doc(decision: Decision, graph_hash: str) -> dict[str, Any]:
         "graph_hash": graph_hash,
         "closures": {key: list(paths) for key, paths in sorted(decision.closures.items())},
         "witnesses": [
-            {
-                "id": witness.id,
-                "test": witness.test,
-                "closure": witness.closure_hash,
-                "changed": list(witness.changed),
-                "claim": witness.claim,
-            }
+            _witness_to_dict(witness)
             for witness in sorted(decision.witnesses, key=lambda witness: witness.id)
         ],
     }

@@ -50,6 +50,8 @@ def poison_cache(cache_dir: Path, blob_sha: str, path: str) -> Path:
         defines_module_getattr=False,
         pytest_plugins_decl=(),
         reexport=ReexportScan(reason=None, bindings=(), stars=(), local_names=(), all_names=None),
+        inert_reason=None,
+        bound_names=(),
     )
     entry = cache_dir / f"{blob_sha}.json"
     entry.parent.mkdir(parents=True, exist_ok=True)

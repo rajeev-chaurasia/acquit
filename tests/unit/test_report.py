@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from dataclasses import replace
 
 import rustworkx as rx
 
@@ -11,6 +12,7 @@ from acquit.policy.engine import PolicyOutcome, WaivedFinding
 from acquit.policy.model import Finding, RuleId, Scope, ScopeKind
 from acquit.report import (
     RunInfo,
+    SelectionMode,
     build_report,
     build_run_all_report,
     build_run_all_selection,
@@ -18,9 +20,15 @@ from acquit.report import (
     build_witnesses_doc,
     to_canonical_json,
 )
-from acquit.select import decide
+from acquit.select import Decision, SkippedTest, decide
 from acquit.vcs import ChangedFile, ChangeStatus
-from acquit.witness import closure_hash
+from acquit.witness import (
+    CLAIM_NARROWED,
+    NarrowedFile,
+    ReliedInit,
+    build_witness,
+    closure_hash,
+)
 
 FINDING = Finding(
     rule=RuleId.INTERNAL_ERROR,
@@ -148,6 +156,63 @@ def test_build_witnesses_doc_shape() -> None:
         "claim": "closure(test) does not intersect changed set",
     }
     assert document["closures"] == {closure_hash(expected_closure): expected_closure}
+
+
+def _narrowed_decision() -> Decision:
+    narrowed = (
+        NarrowedFile(
+            path="src/a.py",
+            base_blob="b" * 40,
+            head_blob="h" * 40,
+            inits=(ReliedInit(path="src/__init__.py", base_tier="strict", head_tier="strict"),),
+        ),
+    )
+    closure = ["src/a.py", "tests/test_b.py"]
+    witness = build_witness(1, "tests/test_b.py", closure, ["src/a.py"], narrowed)
+    return Decision(
+        mode=SelectionMode.SELECTIVE,
+        selected=(),
+        skipped=(SkippedTest(path="tests/test_b.py", witness_id="w-000001", narrowed=True),),
+        always_run=(),
+        witnesses=(witness,),
+        closures={witness.closure_hash: tuple(closure)},
+    )
+
+
+def test_witnesses_doc_serializes_the_narrowed_block_in_the_existing_shape() -> None:
+    decision = _narrowed_decision()
+    document = build_witnesses_doc(decision, "hand-built")
+
+    assert document["schema"] == WITNESSES_SCHEMA
+    (entry,) = document["witnesses"]
+    assert entry == {
+        "id": "w-000001",
+        "test": "tests/test_b.py",
+        "closure": closure_hash(["src/a.py", "tests/test_b.py"]),
+        "changed": ["src/a.py"],
+        "claim": CLAIM_NARROWED,
+        "narrowed": [
+            {
+                "path": "src/a.py",
+                "base_blob": "b" * 40,
+                "head_blob": "h" * 40,
+                "inits": [
+                    {"path": "src/__init__.py", "base_tier": "strict", "head_tier": "strict"}
+                ],
+            }
+        ],
+    }
+
+
+def test_report_marks_narrowed_skips_and_selection_doc_is_unchanged() -> None:
+    result = replace(_result(), decision=_narrowed_decision())
+    report = build_report(result, created_at="2026-01-01T00:00:00+00:00", durations=None)
+    assert report["tests"]["skipped"] == [
+        {"path": "tests/test_b.py", "witness": "w-000001", "narrowed": True}
+    ]
+
+    selection = build_selection_doc(result.decision, "hand-built", "h" * 40, "f" * 64)
+    assert selection["skip"] == [{"path": "tests/test_b.py", "witness": "w-000001"}]
 
 
 def test_build_selection_doc_binds_skips_to_the_analyzed_tree() -> None:

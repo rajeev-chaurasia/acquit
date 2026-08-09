@@ -12,7 +12,12 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 from acquit.errors import ParseFailure
-from acquit.graph.resolvers.checkers import ReexportScan, scan_reexports
+from acquit.graph.resolvers.checkers import (
+    ReexportScan,
+    bound_name_set,
+    module_inertness,
+    scan_reexports,
+)
 
 _DYNAMIC_IMPORT_CALLEES = frozenset({"__import__", "import_module"})
 _IMPORT_MODULE = "import_module"
@@ -74,6 +79,11 @@ class ModuleFacts:
     # Content-based, so it survives the content-addressed cache; whether it
     # applies (the file is a package init) is the builder's call.
     reexport: ReexportScan
+    # ADR 0008 narrowing facts, also content-based: the strict inertness
+    # disqualifier (None on pass) and the module-level bound-name set the
+    # relational witness conditions compare across revisions.
+    inert_reason: str | None
+    bound_names: tuple[str, ...]
 
 
 def parse_module_facts(source: bytes, path: str) -> ModuleFacts:
@@ -84,6 +94,7 @@ def parse_module_facts(source: bytes, path: str) -> ModuleFacts:
         raise ParseFailure(f"{path}: {exc}") from exc
     visitor = _FactsVisitor()
     visitor.visit(tree)
+    inertness = module_inertness(tree)
     return ModuleFacts(
         path=path,
         imports=tuple(visitor.imports),
@@ -92,6 +103,8 @@ def parse_module_facts(source: bytes, path: str) -> ModuleFacts:
         defines_module_getattr=visitor.defines_module_getattr,
         pytest_plugins_decl=tuple(visitor.pytest_plugins_decl),
         reexport=scan_reexports(tree),
+        inert_reason=None if inertness.ok else inertness.reason,
+        bound_names=tuple(sorted(bound_name_set(tree))),
     )
 
 

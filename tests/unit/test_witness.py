@@ -5,7 +5,16 @@ import hashlib
 import pytest
 
 from acquit.errors import PolicyError
-from acquit.witness import CLAIM_DISJOINT, Witness, build_witness, closure_hash, verify_witness
+from acquit.witness import (
+    CLAIM_DISJOINT,
+    CLAIM_NARROWED,
+    NarrowedFile,
+    ReliedInit,
+    Witness,
+    build_witness,
+    closure_hash,
+    verify_witness,
+)
 
 
 def test_closure_hash_is_sha256_of_sorted_listing() -> None:
@@ -95,3 +104,92 @@ def test_empty_changed_set_is_trivially_disjoint() -> None:
     witness = build_witness(1, "t.py", ["t.py"], [])
     assert witness.changed == ()
     assert verify_witness(witness, ["t.py"], [])
+
+
+def narrowed_file(path: str = "src/a.py") -> NarrowedFile:
+    return NarrowedFile(
+        path=path,
+        base_blob="b" * 40,
+        head_blob="h" * 40,
+        inits=(ReliedInit(path="src/__init__.py", base_tier="strict", head_tier="strict"),),
+    )
+
+
+def test_build_narrowed_witness_and_verify_round_trip() -> None:
+    closure = ["t.py", "src/__init__.py", "src/a.py", "src/home.py"]
+    changed = ["src/a.py"]
+    witness = build_witness(1, "t.py", closure, changed, (narrowed_file(),))
+    assert witness.claim == CLAIM_NARROWED
+    assert witness.narrowed == (narrowed_file(),)
+    assert verify_witness(witness, closure, changed)
+
+
+def test_build_witness_refuses_narrowed_block_over_disjoint_sets() -> None:
+    with pytest.raises(PolicyError, match="narrowed block"):
+        build_witness(1, "t.py", ["t.py"], ["src/a.py"], (narrowed_file(),))
+
+
+def test_build_witness_refuses_narrowed_block_not_covering_the_intersection() -> None:
+    closure = ["t.py", "src/a.py", "src/b.py"]
+    changed = ["src/a.py", "src/b.py"]
+    with pytest.raises(PolicyError, match="narrowed block"):
+        build_witness(1, "t.py", closure, changed, (narrowed_file("src/a.py"),))
+
+
+def test_build_witness_refuses_narrowed_file_without_inits() -> None:
+    bare = NarrowedFile(path="src/a.py", base_blob="b" * 40, head_blob="h" * 40, inits=())
+    with pytest.raises(PolicyError, match="relies on no init"):
+        build_witness(1, "t.py", ["t.py", "src/a.py"], ["src/a.py"], (bare,))
+
+
+def test_verify_witness_rejects_narrowed_block_under_disjoint_claim() -> None:
+    closure = ["t.py", "src/a.py"]
+    forged = Witness(
+        id="w-000001",
+        test="t.py",
+        closure_hash=closure_hash(closure),
+        changed=("src/a.py",),
+        claim=CLAIM_DISJOINT,
+        narrowed=(narrowed_file(),),
+    )
+    assert not verify_witness(forged, closure, ["src/a.py"])
+
+
+def test_verify_witness_rejects_narrowed_claim_without_block() -> None:
+    closure = ["t.py", "src/a.py"]
+    forged = Witness(
+        id="w-000001",
+        test="t.py",
+        closure_hash=closure_hash(closure),
+        changed=("src/a.py",),
+        claim=CLAIM_NARROWED,
+    )
+    assert not verify_witness(forged, closure, ["src/a.py"])
+
+
+def test_verify_witness_rejects_narrowed_listing_mismatch() -> None:
+    closure = ["t.py", "src/a.py", "src/b.py"]
+    changed = ["src/a.py", "src/b.py"]
+    forged = Witness(
+        id="w-000001",
+        test="t.py",
+        closure_hash=closure_hash(closure),
+        changed=tuple(sorted(changed)),
+        claim=CLAIM_NARROWED,
+        narrowed=(narrowed_file("src/a.py"),),
+    )
+    assert not verify_witness(forged, closure, changed)
+
+
+def test_verify_witness_rejects_narrowed_block_with_forged_empty_inits() -> None:
+    closure = ["t.py", "src/a.py"]
+    bare = NarrowedFile(path="src/a.py", base_blob="b" * 40, head_blob="h" * 40, inits=())
+    forged = Witness(
+        id="w-000001",
+        test="t.py",
+        closure_hash=closure_hash(closure),
+        changed=("src/a.py",),
+        claim=CLAIM_NARROWED,
+        narrowed=(bare,),
+    )
+    assert not verify_witness(forged, closure, ["src/a.py"])

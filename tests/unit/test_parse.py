@@ -437,4 +437,6 @@ def test_empty_module() -> None:
         defines_module_getattr=False,
         pytest_plugins_decl=(),
         reexport=ReexportScan(reason=None, bindings=(), stars=(), local_names=(), all_names=None),
+        inert_reason=None,
+        bound_names=(),
     )

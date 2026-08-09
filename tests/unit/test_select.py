@@ -1,25 +1,29 @@
 """Unit tests for reachability queries and the fail-closed decision."""
 
-from collections.abc import Collection, Sequence
+from collections.abc import Collection, Mapping, Sequence
 
 import pytest
 import rustworkx as rx
 
 from acquit.errors import GraphError, PolicyError
 from acquit.graph.model import BuiltGraph, EdgeKind, Node, NodeKind
+from acquit.graph.parse import ModuleFacts, parse_module_facts
+from acquit.graph.resolvers.checkers import ReexportTier
 from acquit.policy.model import Finding, RuleId, Scope, ScopeKind
 from acquit.report import SelectionMode
 from acquit.select import (
     AlwaysRunTest,
     Decision,
+    NarrowingContext,
     SkippedTest,
     decide,
     impacted_tests,
     import_closure,
+    semantic_closure,
     tainted_reachers,
 )
 from acquit.vcs import ChangedFile, ChangeStatus
-from acquit.witness import Witness, verify_witness
+from acquit.witness import CLAIM_NARROWED, NarrowedFile, ReliedInit, Witness, verify_witness
 
 Edge = tuple[str, str] | tuple[str, str, EdgeKind]
 
@@ -36,7 +40,11 @@ def make_conftest(path: str) -> Node:
     return Node(path=path, kind=NodeKind.CONFTEST)
 
 
-def make_graph(nodes: Sequence[Node], edges: Sequence[Edge] = ()) -> BuiltGraph:
+def make_graph(
+    nodes: Sequence[Node],
+    edges: Sequence[Edge] = (),
+    reexport_inits: Mapping[str, ReexportTier] | None = None,
+) -> BuiltGraph:
     digraph: rx.PyDiGraph[Node, EdgeKind] = rx.PyDiGraph()
     index_of = {node.path: digraph.add_node(node) for node in nodes}
     for edge in edges:
@@ -47,6 +55,7 @@ def make_graph(nodes: Sequence[Node], edges: Sequence[Edge] = ()) -> BuiltGraph:
         index_of=index_of,
         nodes={node.path: node for node in nodes},
         graph_hash="hand-built",
+        reexport_inits=dict(reexport_inits or {}),
     )
 
 
@@ -575,7 +584,11 @@ def test_decide_identical_closures_share_one_closures_entry() -> None:
 
 def test_decide_witness_refusal_moves_test_to_selected(monkeypatch: pytest.MonkeyPatch) -> None:
     def refuse(
-        index: int, test: str, closure: Collection[str], changed: Collection[str]
+        index: int,
+        test: str,
+        closure: Collection[str],
+        changed: Collection[str],
+        narrowed: tuple[NarrowedFile, ...] = (),
     ) -> Witness:
         raise PolicyError("refused")
 
@@ -676,3 +689,260 @@ def test_decide_invariants_hold_on_a_mixed_scenario() -> None:
         closure = import_closure(head, skipped.path)
         assert verify_witness(witness, closure, full_changed)
         assert decision.closures[witness.closure_hash] == tuple(sorted(closure))
+
+
+# ---------------------------------------------------------------------------
+# Re-export narrowing (ADR 0008 wave two)
+# ---------------------------------------------------------------------------
+
+TABLE_SOURCE = (
+    '"""Inert sibling."""\n\n\nclass Table:\n    def render(self) -> str:\n        return "table"\n'
+)
+TABLE_BODY_EDIT = (
+    '"""Inert sibling."""\n\n\nclass Table:\n    def render(self) -> str:\n        return "grid"\n'
+)
+TABLE_RENAMED = (
+    '"""Inert sibling."""\n\n\nclass Grid:\n    def render(self) -> str:\n        return "table"\n'
+)
+TABLE_NON_INERT = 'THEMES = dict(plain="")\n\n\nclass Table:\n    pass\n'
+CONSOLE_SOURCE = 'STATE = dict(plain="")\n\n\nclass Console:\n    pass\n'
+
+HEAD_BLOBS = {"pkg/table.py": "1" * 40, "pkg/console.py": "2" * 40}
+BASE_BLOBS = {"pkg/table.py": "3" * 40, "pkg/console.py": "4" * 40}
+
+
+def facts_map(sources: Mapping[str, str]) -> dict[str, ModuleFacts]:
+    return {path: parse_module_facts(text.encode(), path) for path, text in sources.items()}
+
+
+def narrowing_graph(
+    *,
+    extra_edges: Sequence[Edge] = (),
+    inits: Mapping[str, ReexportTier] | None = None,
+    tainted: Collection[str] = (),
+    drop_test: str | None = None,
+) -> BuiltGraph:
+    """The fixture shape: a pure init re-exporting an inert and a busy sibling."""
+    nodes = [
+        node
+        for node in (
+            make_test("test_console.py"),
+            make_test("test_table.py"),
+            make_module("pkg/__init__.py"),
+            make_module("pkg/console.py", tainted="pkg/console.py" in tainted),
+            make_module("pkg/table.py"),
+        )
+        if node.path != drop_test
+    ]
+    edges: list[Edge] = [
+        ("test_console.py", "pkg/__init__.py"),
+        ("test_console.py", "pkg/console.py"),
+        ("test_table.py", "pkg/__init__.py"),
+        ("test_table.py", "pkg/table.py"),
+        ("pkg/__init__.py", "pkg/console.py", EdgeKind.INIT_REEXPORT),
+        ("pkg/__init__.py", "pkg/table.py", EdgeKind.INIT_REEXPORT),
+    ]
+    if drop_test is not None:
+        edges = [edge for edge in edges if edge[0] != drop_test]
+    edges.extend(extra_edges)
+    default_inits = {"pkg/__init__.py": ReexportTier.STRICT}
+    return make_graph(nodes, edges, inits if inits is not None else default_inits)
+
+
+def narrowing_context(
+    head_table: str = TABLE_BODY_EDIT, base_table: str = TABLE_SOURCE
+) -> NarrowingContext:
+    return NarrowingContext(
+        head_facts=facts_map({"pkg/table.py": head_table, "pkg/console.py": CONSOLE_SOURCE}),
+        base_facts=facts_map({"pkg/table.py": base_table, "pkg/console.py": CONSOLE_SOURCE}),
+        head_blobs=HEAD_BLOBS,
+        base_blobs=BASE_BLOBS,
+    )
+
+
+NARROWED_TABLE = NarrowedFile(
+    path="pkg/table.py",
+    base_blob=BASE_BLOBS["pkg/table.py"],
+    head_blob=HEAD_BLOBS["pkg/table.py"],
+    inits=(ReliedInit(path="pkg/__init__.py", base_tier="strict", head_tier="strict"),),
+)
+
+
+def test_semantic_closure_excludes_init_reexport_targets() -> None:
+    head = narrowing_graph()
+    assert semantic_closure(head, "test_console.py") == {
+        "test_console.py",
+        "pkg/__init__.py",
+        "pkg/console.py",
+    }
+    assert "pkg/table.py" in import_closure(head, "test_console.py")
+
+
+def test_semantic_closure_unknown_path_raises() -> None:
+    with pytest.raises(GraphError, match="nope"):
+        semantic_closure(narrowing_graph(), "tests/nope.py")
+
+
+def test_decide_narrows_inert_sibling_change_for_other_symbol_consumer() -> None:
+    head = narrowing_graph()
+    decision = decide(
+        head,
+        narrowing_graph(),
+        (modified("pkg/table.py"),),
+        (),
+        narrowing=narrowing_context(),
+    )
+    assert selected_paths(decision) == {"test_table.py"}
+    assert reasons_of(decision, "test_table.py") == (
+        "narrowing-refused:inside-semantic-closure",
+        "reachable-from:pkg/table.py",
+    )
+    assert decision.skipped == (
+        SkippedTest(path="test_console.py", witness_id="w-000001", narrowed=True),
+    )
+    witness = witness_by_id(decision, "w-000001")
+    assert witness.claim == CLAIM_NARROWED
+    assert witness.narrowed == (NARROWED_TABLE,)
+    closure = import_closure(head, "test_console.py")
+    assert verify_witness(witness, closure, {"pkg/table.py"})
+    assert decision.closures == {witness.closure_hash: tuple(sorted(closure))}
+
+
+def test_decide_without_narrowing_context_keeps_todays_behavior() -> None:
+    decision = decide(narrowing_graph(), narrowing_graph(), (modified("pkg/table.py"),), ())
+    assert selected_paths(decision) == {"test_console.py", "test_table.py"}
+    for entry in decision.selected:
+        assert all(not reason.startswith("narrowing") for reason in entry.reasons)
+    assert all(not entry.narrowed for entry in decision.skipped)
+    assert all(not witness.narrowed for witness in decision.witnesses)
+
+
+def test_decide_narrowing_is_deterministic() -> None:
+    changed = (modified("pkg/table.py"),)
+    first = decide(narrowing_graph(), narrowing_graph(), changed, (), narrowing=narrowing_context())
+    second = decide(
+        narrowing_graph(), narrowing_graph(), changed, (), narrowing=narrowing_context()
+    )
+    assert first == second
+
+
+def _refusal_reasons(decision: Decision, path: str) -> set[str]:
+    return {
+        reason for reason in reasons_of(decision, path) if reason.startswith("narrowing-refused:")
+    }
+
+
+def test_narrowing_refuses_condition_1_not_modified_in_place() -> None:
+    decision = decide(
+        narrowing_graph(),
+        narrowing_graph(),
+        (added("pkg/table.py"),),
+        (),
+        narrowing=narrowing_context(),
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {
+        "narrowing-refused:not-modified-in-place"
+    }
+    assert decision.skipped == ()
+
+
+def test_narrowing_refuses_condition_2_not_import_inert() -> None:
+    decision = decide(
+        narrowing_graph(),
+        narrowing_graph(),
+        (modified("pkg/table.py"),),
+        (),
+        narrowing=narrowing_context(base_table=TABLE_NON_INERT),
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {"narrowing-refused:not-import-inert"}
+
+
+def test_narrowing_refuses_condition_3_bound_names_differ() -> None:
+    decision = decide(
+        narrowing_graph(),
+        narrowing_graph(),
+        (modified("pkg/table.py"),),
+        (),
+        narrowing=narrowing_context(base_table=TABLE_RENAMED),
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {"narrowing-refused:bound-names-differ"}
+
+
+def test_narrowing_refuses_condition_4_edge_set_differs() -> None:
+    base = narrowing_graph(extra_edges=[("pkg/table.py", "pkg/console.py")])
+    decision = decide(
+        narrowing_graph(), base, (modified("pkg/table.py"),), (), narrowing=narrowing_context()
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {"narrowing-refused:edge-set-differs"}
+
+
+def test_narrowing_refuses_condition_5_impure_init_at_base() -> None:
+    base = narrowing_graph(inits={})
+    decision = decide(
+        narrowing_graph(), base, (modified("pkg/table.py"),), (), narrowing=narrowing_context()
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {"narrowing-refused:impure-init"}
+
+
+def test_narrowing_refuses_condition_5_tier_mismatch() -> None:
+    base = narrowing_graph(inits={"pkg/__init__.py": ReexportTier.STAR_ALL})
+    decision = decide(
+        narrowing_graph(), base, (modified("pkg/table.py"),), (), narrowing=narrowing_context()
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {"narrowing-refused:impure-init"}
+
+
+def test_narrowing_refuses_condition_6_inside_semantic_closure() -> None:
+    head = narrowing_graph(extra_edges=[("test_console.py", "pkg/table.py")])
+    decision = decide(
+        head, narrowing_graph(), (modified("pkg/table.py"),), (), narrowing=narrowing_context()
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {
+        "narrowing-refused:inside-semantic-closure"
+    }
+
+
+def test_narrowing_refuses_renamed_files() -> None:
+    decision = decide(
+        narrowing_graph(),
+        narrowing_graph(),
+        (renamed("pkg/table.py", "pkg/old_table.py"),),
+        (),
+        narrowing=narrowing_context(),
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {
+        "narrowing-refused:not-modified-in-place"
+    }
+
+
+def test_narrowing_refuses_tainted_closures() -> None:
+    head = narrowing_graph(tainted={"pkg/console.py"})
+    decision = decide(
+        head, narrowing_graph(), (modified("pkg/table.py"),), (), narrowing=narrowing_context()
+    )
+    assert "narrowing-refused:tainted-closure" in reasons_of(decision, "test_console.py")
+    assert decision.skipped == ()
+
+
+def test_narrowing_never_excuses_a_changed_init() -> None:
+    decision = decide(
+        narrowing_graph(),
+        narrowing_graph(),
+        (modified("pkg/__init__.py"),),
+        (),
+        narrowing=narrowing_context(),
+    )
+    assert selected_paths(decision) == {"test_console.py", "test_table.py"}
+    assert _refusal_reasons(decision, "test_console.py") == {"narrowing-refused:changed-init"}
+    assert _refusal_reasons(decision, "test_table.py") == {"narrowing-refused:changed-init"}
+    assert decision.skipped == ()
+
+
+def test_narrowing_refuses_test_missing_at_base() -> None:
+    base = narrowing_graph(drop_test="test_console.py")
+    decision = decide(
+        narrowing_graph(), base, (modified("pkg/table.py"),), (), narrowing=narrowing_context()
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {
+        "narrowing-refused:test-missing-at-base"
+    }
