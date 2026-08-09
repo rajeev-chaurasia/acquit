@@ -53,7 +53,7 @@ jobs:
           enable-cache: true
           cache-suffix: study-${{ inputs.repo }}-${{ hashFiles(format('study/constraints/{0}.txt', inputs.repo)) }}
       - name: Restore repo mirror
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: workdir/mirror.git
           key: study-mirror-${{ inputs.repo }}-${{ github.run_id }}
@@ -77,7 +77,7 @@ jobs:
             --shard "${{ matrix.shard }}/${{ inputs.shards }}" \
             "${ARGS[@]}" \
             --results-dir results-shard
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: results-shard-${{ matrix.shard }}
@@ -95,7 +95,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv sync --frozen
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: results-shard-*
           path: results
@@ -104,7 +104,7 @@ jobs:
           uv run acquit-study aggregate
           --results-dir results
           --out ${{ inputs.repo }}-summary.md
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: study-summary-${{ inputs.repo }}

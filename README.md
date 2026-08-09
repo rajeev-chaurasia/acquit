@@ -56,7 +56,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # The base ref must exist locally; shallow clones always fall back to run-all.
           fetch-depth: 0
@@ -65,7 +65,7 @@ jobs:
         with:
           mode: report
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 

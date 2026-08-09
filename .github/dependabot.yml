@@ -1,0 +1,12 @@
+# Keeps the dependency floor and the pinned actions current. Dependabot PRs
+# run the full CI matrix like any other change; nothing merges on its own.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

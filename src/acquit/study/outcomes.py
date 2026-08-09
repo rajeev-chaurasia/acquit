@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import Final
 
 from acquit.errors import AcquitError
 
@@ -87,8 +88,17 @@ def _seconds(raw: str | None) -> float:
         return 0.0
 
 
+JUNIT_SIZE_CAP: Final = 100 * 1024 * 1024
+
+
 def parse_junit(text: str) -> SuiteOutcomes:
     """Parse one junit xml document into normalized outcomes and durations."""
+    # The document is produced by pytest, but pytest just executed the target
+    # repo's code, so treat it as untrusted: cap the size before parsing.
+    # Entity-expansion attacks are additionally blunted by modern expat's
+    # built-in amplification limits.
+    if len(text) > JUNIT_SIZE_CAP:
+        raise AcquitError(f"junit xml exceeds {JUNIT_SIZE_CAP} bytes; refusing to parse")
     try:
         root = ET.fromstring(text)
     except ET.ParseError as error:

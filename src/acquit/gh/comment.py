@@ -212,6 +212,11 @@ class UrllibOpener:
     """The production transport: stdlib urllib, an explicit timeout, nothing else."""
 
     def open(self, request: urllib.request.Request, *, timeout: float) -> bytes:
+        # GITHUB_API_URL comes from the environment; refuse anything that is
+        # not https so a hostile value cannot redirect the token to file: or
+        # custom schemes.
+        if not request.full_url.startswith("https://"):
+            raise ValueError(f"refusing non-https API url: {request.full_url!r}")
         with urllib.request.urlopen(request, timeout=timeout) as response:
             body: bytes = response.read()
         return body
