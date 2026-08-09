@@ -28,6 +28,7 @@ from acquit.witness import (
     ReliedInit,
     build_witness,
     closure_hash,
+    region_listing_hash,
 )
 
 FINDING = Finding(
@@ -165,6 +166,8 @@ def _narrowed_decision() -> Decision:
             base_blob="b" * 40,
             head_blob="h" * 40,
             inits=(ReliedInit(path="src/__init__.py", base_tier="strict", head_tier="strict"),),
+            region_count=1,
+            region_hash=region_listing_hash([("src/a.py", "h" * 40)]),
         ),
     )
     closure = ["src/a.py", "tests/test_b.py"]
@@ -199,6 +202,8 @@ def test_witnesses_doc_serializes_the_narrowed_block_in_the_existing_shape() -> 
                 "inits": [
                     {"path": "src/__init__.py", "base_tier": "strict", "head_tier": "strict"}
                 ],
+                "region_count": 1,
+                "region_hash": region_listing_hash([("src/a.py", "h" * 40)]),
             }
         ],
     }

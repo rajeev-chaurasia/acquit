@@ -48,6 +48,8 @@ def _narrowed_from_entry(entry: dict[str, Any]) -> tuple[NarrowedFile, ...]:
                 )
                 for init in item["inits"]
             ),
+            region_count=item["region_count"],
+            region_hash=item["region_hash"],
         )
         for item in blocks
     )
@@ -122,6 +124,15 @@ class _NarrowedReplay:
                 failures.append(
                     f"{path}: witness {witness.id} relied inits mismatch for {recorded.path} "
                     f"(condition 5)"
+                )
+                return False
+            if (recorded.region_count, recorded.region_hash) != (
+                derived.region_count,
+                derived.region_hash,
+            ):
+                failures.append(
+                    f"{path}: witness {witness.id} region accounting mismatch for "
+                    f"{recorded.path} (condition 7)"
                 )
                 return False
         return True

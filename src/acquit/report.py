@@ -177,6 +177,8 @@ def _witness_to_dict(witness: Witness) -> dict[str, Any]:
                     {"path": init.path, "base_tier": init.base_tier, "head_tier": init.head_tier}
                     for init in entry.inits
                 ],
+                "region_count": entry.region_count,
+                "region_hash": entry.region_hash,
             }
             for entry in witness.narrowed
         ]

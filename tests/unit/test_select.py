@@ -23,7 +23,14 @@ from acquit.select import (
     tainted_reachers,
 )
 from acquit.vcs import ChangedFile, ChangeStatus
-from acquit.witness import CLAIM_NARROWED, NarrowedFile, ReliedInit, Witness, verify_witness
+from acquit.witness import (
+    CLAIM_NARROWED,
+    NarrowedFile,
+    ReliedInit,
+    Witness,
+    region_listing_hash,
+    verify_witness,
+)
 
 Edge = tuple[str, str] | tuple[str, str, EdgeKind]
 
@@ -765,6 +772,8 @@ NARROWED_TABLE = NarrowedFile(
     base_blob=BASE_BLOBS["pkg/table.py"],
     head_blob=HEAD_BLOBS["pkg/table.py"],
     inits=(ReliedInit(path="pkg/__init__.py", base_tier="strict", head_tier="strict"),),
+    region_count=1,
+    region_hash=region_listing_hash([("pkg/table.py", HEAD_BLOBS["pkg/table.py"])]),
 )
 
 
@@ -892,6 +901,22 @@ def test_narrowing_refuses_condition_5_tier_mismatch() -> None:
     assert _refusal_reasons(decision, "test_console.py") == {"narrowing-refused:impure-init"}
 
 
+def test_narrowing_refuses_condition_3_all_listing_differs() -> None:
+    # Bound names stay equal; only the literal __all__ content moves.
+    base_table = '__all__ = ["Table"]\n\n\nclass Table:\n    pass\n'
+    head_table = '__all__ = ["Table", "extra"]\n\n\nclass Table:\n    pass\n'
+    decision = decide(
+        narrowing_graph(),
+        narrowing_graph(),
+        (modified("pkg/table.py"),),
+        (),
+        narrowing=narrowing_context(head_table=head_table, base_table=base_table),
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {
+        "narrowing-refused:all-listing-differs"
+    }
+
+
 def test_narrowing_refuses_condition_6_inside_semantic_closure() -> None:
     head = narrowing_graph(extra_edges=[("test_console.py", "pkg/table.py")])
     decision = decide(
@@ -900,6 +925,71 @@ def test_narrowing_refuses_condition_6_inside_semantic_closure() -> None:
     assert _refusal_reasons(decision, "test_console.py") == {
         "narrowing-refused:inside-semantic-closure"
     }
+
+
+READER_NON_INERT = "SEEN = dict(count=0)\n"
+READER_INERT = "WATCHING = True\n"
+READER_BLOB = "5" * 40
+
+
+def observer_graph() -> BuiltGraph:
+    """The narrowing shape plus a reader sibling that reaches the inert one."""
+    nodes = [
+        make_test("test_console.py"),
+        make_module("pkg/__init__.py"),
+        make_module("pkg/console.py"),
+        make_module("pkg/table.py"),
+        make_module("pkg/reader.py"),
+    ]
+    edges: list[Edge] = [
+        ("test_console.py", "pkg/__init__.py"),
+        ("test_console.py", "pkg/console.py"),
+        ("pkg/__init__.py", "pkg/console.py", EdgeKind.INIT_REEXPORT),
+        ("pkg/__init__.py", "pkg/table.py", EdgeKind.INIT_REEXPORT),
+        ("pkg/__init__.py", "pkg/reader.py", EdgeKind.INIT_REEXPORT),
+        ("pkg/reader.py", "pkg/table.py"),
+    ]
+    return make_graph(nodes, edges, {"pkg/__init__.py": ReexportTier.STRICT})
+
+
+def observer_context(reader: str) -> NarrowingContext:
+    head = {"pkg/table.py": TABLE_BODY_EDIT, "pkg/console.py": CONSOLE_SOURCE}
+    base = {"pkg/table.py": TABLE_SOURCE, "pkg/console.py": CONSOLE_SOURCE}
+    return NarrowingContext(
+        head_facts=facts_map({**head, "pkg/reader.py": reader}),
+        base_facts=facts_map({**base, "pkg/reader.py": reader}),
+        head_blobs={**HEAD_BLOBS, "pkg/reader.py": READER_BLOB},
+        base_blobs={**BASE_BLOBS, "pkg/reader.py": READER_BLOB},
+    )
+
+
+def test_narrowing_refuses_condition_7_non_inert_observer_in_the_region() -> None:
+    decision = decide(
+        observer_graph(),
+        observer_graph(),
+        (modified("pkg/table.py"),),
+        (),
+        narrowing=observer_context(READER_NON_INERT),
+    )
+    assert _refusal_reasons(decision, "test_console.py") == {"narrowing-refused:non-inert-observer"}
+    assert decision.skipped == ()
+
+
+def test_narrowing_records_inert_observers_in_the_region_accounting() -> None:
+    decision = decide(
+        observer_graph(),
+        observer_graph(),
+        (modified("pkg/table.py"),),
+        (),
+        narrowing=observer_context(READER_INERT),
+    )
+    assert skipped_paths(decision) == {"test_console.py"}
+    (witness,) = decision.witnesses
+    (entry,) = witness.narrowed
+    assert entry.region_count == 2
+    assert entry.region_hash == region_listing_hash(
+        [("pkg/reader.py", READER_BLOB), ("pkg/table.py", HEAD_BLOBS["pkg/table.py"])]
+    )
 
 
 def test_narrowing_refuses_renamed_files() -> None:

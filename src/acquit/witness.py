@@ -16,7 +16,7 @@ from acquit.errors import PolicyError
 
 CLAIM_DISJOINT: Final = "closure(test) does not intersect changed set"
 # The ADR 0008 claim, verbatim. A witness carrying it must list one narrowed
-# entry per intersecting file; replay re-derives all six conditions.
+# entry per intersecting file; replay re-derives every condition.
 CLAIM_NARROWED: Final = (
     "closure(test) intersects changed set only in import-time-only files, "
     "each modified in place and import-inert across base and head"
@@ -34,12 +34,20 @@ class ReliedInit:
 
 @dataclass(frozen=True, slots=True)
 class NarrowedFile:
-    """The evidence excusing one intersecting file as import-time-only."""
+    """The evidence excusing one intersecting file as import-time-only.
+
+    region_count and region_hash account for condition 7: every module in the
+    test's import-time-only region that can reach this file was checked
+    import-inert at both revisions. The hash covers the sorted
+    (path, head blob) listing so replay can re-derive the region and compare.
+    """
 
     path: str
     base_blob: str
     head_blob: str
     inits: tuple[ReliedInit, ...]
+    region_count: int
+    region_hash: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -63,6 +71,12 @@ class Witness:
 def closure_hash(closure: Collection[str]) -> str:
     """Hash the canonical closure listing: sorted paths joined by newlines."""
     return hashlib.sha256("\n".join(sorted(closure)).encode("utf-8")).hexdigest()
+
+
+def region_listing_hash(listing: Collection[tuple[str, str]]) -> str:
+    """Hash the condition 7 observer accounting: sorted "path blob" lines."""
+    lines = (f"{path} {blob}" for path, blob in sorted(listing))
+    return hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest()
 
 
 def build_witness(
@@ -109,7 +123,7 @@ def verify_witness(w: Witness, closure: Collection[str], changed: Collection[str
     """Recheck a witness from first principles; used by replay.
 
     This checks the claim's set relations and the narrowed block's internal
-    consistency; the block's six conditions themselves are re-derived by
+    consistency; the block's seven conditions themselves are re-derived by
     replay against fresh base and head snapshots.
     """
     if w.closure_hash != closure_hash(closure) or w.changed != tuple(sorted(set(changed))):

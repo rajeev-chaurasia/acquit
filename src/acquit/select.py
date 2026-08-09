@@ -20,7 +20,7 @@ from acquit.graph.parse import ModuleFacts
 from acquit.policy.model import Finding, RuleId, ScopeKind
 from acquit.report import SelectionMode
 from acquit.vcs import ChangedFile, ChangeStatus
-from acquit.witness import NarrowedFile, ReliedInit, Witness, build_witness
+from acquit.witness import NarrowedFile, ReliedInit, Witness, build_witness, region_listing_hash
 
 _REASON_NEW_TEST: Final = "new-test"
 _REASON_NO_BASE: Final = "no-base-graph"
@@ -32,9 +32,11 @@ _NARROWING_PREFIX: Final = "narrowing-refused:"
 REFUSED_NOT_MODIFIED: Final = "not-modified-in-place"  # condition 1
 REFUSED_NOT_INERT: Final = "not-import-inert"  # condition 2
 REFUSED_BOUND_NAMES: Final = "bound-names-differ"  # condition 3
+REFUSED_ALL_LISTING: Final = "all-listing-differs"  # condition 3, __all__ content
 REFUSED_EDGE_SET: Final = "edge-set-differs"  # condition 4
 REFUSED_IMPURE_INIT: Final = "impure-init"  # condition 5
 REFUSED_SEMANTIC_CLOSURE: Final = "inside-semantic-closure"  # condition 6
+REFUSED_NON_INERT_OBSERVER: Final = "non-inert-observer"  # condition 7
 REFUSED_CHANGED_INIT: Final = "changed-init"
 REFUSED_TAINTED: Final = "tainted-closure"
 REFUSED_TEST_MISSING_AT_BASE: Final = "test-missing-at-base"
@@ -184,7 +186,7 @@ def _out_edges(graph: BuiltGraph, path: str) -> frozenset[tuple[str, EdgeKind]]:
 
 
 class NarrowingJudge:
-    """Applies the six ADR 0008 conditions; replay reuses this verbatim.
+    """Applies the seven ADR 0008 conditions; replay reuses this verbatim.
 
     judge() either returns the narrowed evidence block for one candidate
     test (one entry per intersecting file, in sorted path order) or the
@@ -212,6 +214,8 @@ class NarrowingJudge:
         self._head_semantic = _semantic_digraph(head.digraph)
         self._base_semantic = _semantic_digraph(base.digraph)
         self._init_reach: dict[str, frozenset[str]] = {}
+        self._head_reachers: dict[str, frozenset[str]] = {}
+        self._base_reachers: dict[str, frozenset[str]] = {}
 
     def judge(self, test: str) -> tuple[NarrowedFile, ...] | NarrowingRefusal:
         """The narrowed block excusing every intersecting file, or the refusal."""
@@ -226,9 +230,13 @@ class NarrowingJudge:
             return NarrowingRefusal(reason=REFUSED_TAINTED, subject=test)
         head_semantic = self._semantic(self._head, self._head_semantic, test)
         base_semantic = self._semantic(self._base, self._base_semantic, test)
+        head_region = head_closure - head_semantic
+        base_region = base_closure - base_semantic
         block: list[NarrowedFile] = []
         for path in sorted((head_closure | base_closure) & self._changed_paths):
-            verdict = self._file(test, path, head_closure, head_semantic, base_semantic)
+            verdict = self._file(
+                test, path, head_closure, head_semantic, base_semantic, head_region, base_region
+            )
             if isinstance(verdict, NarrowingRefusal):
                 return verdict
             block.append(verdict)
@@ -241,6 +249,8 @@ class NarrowingJudge:
         head_closure: frozenset[str],
         head_semantic: frozenset[str],
         base_semantic: frozenset[str],
+        head_region: frozenset[str],
+        base_region: frozenset[str],
     ) -> NarrowedFile | NarrowingRefusal:
         if path.rpartition("/")[2] == "__init__.py":
             # A changed init is never narrowed: consumers hold full edges to it.
@@ -258,6 +268,11 @@ class NarrowingJudge:
             return NarrowingRefusal(reason=REFUSED_NOT_INERT, subject=path)
         if head_facts.bound_names != base_facts.bound_names:
             return NarrowingRefusal(reason=REFUSED_BOUND_NAMES, subject=path)
+        if head_facts.reexport.all_names != base_facts.reexport.all_names:
+            # __all__ content is import-time behavior: a star importer binds
+            # exactly those names, so a listing change is observable even
+            # when the bound-name set is stable (NARROW-3).
+            return NarrowingRefusal(reason=REFUSED_ALL_LISTING, subject=path)
         if _out_edges(self._head, path) != _out_edges(self._base, path):
             return NarrowingRefusal(reason=REFUSED_EDGE_SET, subject=path)
         inits = self._relied_inits(path, head_closure)
@@ -265,7 +280,67 @@ class NarrowingJudge:
             return inits
         if path in head_semantic or path in base_semantic:
             return NarrowingRefusal(reason=REFUSED_SEMANTIC_CLOSURE, subject=path)
-        return NarrowedFile(path=path, base_blob=base_blob, head_blob=head_blob, inits=inits)
+        observers = self._region_observers(path, head_region, base_region)
+        if isinstance(observers, NarrowingRefusal):
+            return observers
+        return NarrowedFile(
+            path=path,
+            base_blob=base_blob,
+            head_blob=head_blob,
+            inits=inits,
+            region_count=len(observers),
+            region_hash=region_listing_hash(observers),
+        )
+
+    def _region_observers(
+        self, path: str, head_region: frozenset[str], base_region: frozenset[str]
+    ) -> tuple[tuple[str, str], ...] | NarrowingRefusal:
+        """Condition 7: the import-time-only observers of the changed file.
+
+        Conditions 2 through 4 pin what the changed file binds, but its bound
+        values, __all__ listing, and statement order are import-time behavior
+        too. Any module in the test's import-time-only region that can reach
+        the file (any edge kind) executes downstream of it at import and can
+        convert those into effects, so every such observer must itself be
+        import-inert at the revision whose graph places it in the region. A
+        star importer never passes: star imports are outside the inertness
+        whitelist. Returns the sorted (path, head blob) accounting the
+        witness records, or the refusal naming the first non-inert observer.
+        """
+        checked: set[str] = set()
+        views = (
+            (head_region, self._head, self._head_reachers, self._ctx.head_facts),
+            (base_region, self._base, self._base_reachers, self._ctx.base_facts),
+        )
+        for region, graph, cache, facts in views:
+            for observer in sorted(self._reachers_of(path, graph, cache) & region):
+                module = facts.get(observer)
+                if module is None or module.inert_reason is not None:
+                    return NarrowingRefusal(reason=REFUSED_NON_INERT_OBSERVER, subject=observer)
+                checked.add(observer)
+        listing: list[tuple[str, str]] = []
+        for observer in sorted(checked):
+            blob = self._ctx.head_blobs.get(observer)
+            if blob is None:
+                # No head blob to pin the accounting to: nothing provable.
+                return NarrowingRefusal(reason=REFUSED_NON_INERT_OBSERVER, subject=observer)
+            listing.append((observer, blob))
+        return tuple(listing)
+
+    def _reachers_of(
+        self, path: str, graph: BuiltGraph, cache: dict[str, frozenset[str]]
+    ) -> frozenset[str]:
+        """Every node that can reach path in this graph, path itself included."""
+        cached = cache.get(path)
+        if cached is None:
+            index = graph.index_of.get(path)
+            if index is None:
+                cached = frozenset()
+            else:
+                reach = rx.ancestors(graph.digraph, index)
+                cached = frozenset(graph.digraph[node].path for node in reach) | {path}
+            cache[path] = cached
+        return cached
 
     def _relied_inits(
         self, path: str, head_closure: frozenset[str]
@@ -402,7 +477,7 @@ def decide(
     at head, plus at base for deletions, rename origins, and modifications
     when a base graph is given; without one, deletions and renames make every
     head test impacted. With a NarrowingContext and a base graph, an impacted
-    test may still skip when every intersecting file passes all six ADR 0008
+    test may still skip when every intersecting file passes all seven ADR 0008
     conditions; any refusal keeps it selected with the reason appended.
     Findings force their captured tests to run. Whatever remains is skipped
     only after build_witness independently re-verifies its claim.

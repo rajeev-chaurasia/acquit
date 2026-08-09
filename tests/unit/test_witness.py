@@ -13,6 +13,7 @@ from acquit.witness import (
     Witness,
     build_witness,
     closure_hash,
+    region_listing_hash,
     verify_witness,
 )
 
@@ -112,6 +113,8 @@ def narrowed_file(path: str = "src/a.py") -> NarrowedFile:
         base_blob="b" * 40,
         head_blob="h" * 40,
         inits=(ReliedInit(path="src/__init__.py", base_tier="strict", head_tier="strict"),),
+        region_count=1,
+        region_hash=region_listing_hash([(path, "h" * 40)]),
     )
 
 
@@ -136,10 +139,20 @@ def test_build_witness_refuses_narrowed_block_not_covering_the_intersection() ->
         build_witness(1, "t.py", closure, changed, (narrowed_file("src/a.py"),))
 
 
+def _bare_narrowed_file() -> NarrowedFile:
+    return NarrowedFile(
+        path="src/a.py",
+        base_blob="b" * 40,
+        head_blob="h" * 40,
+        inits=(),
+        region_count=0,
+        region_hash="",
+    )
+
+
 def test_build_witness_refuses_narrowed_file_without_inits() -> None:
-    bare = NarrowedFile(path="src/a.py", base_blob="b" * 40, head_blob="h" * 40, inits=())
     with pytest.raises(PolicyError, match="relies on no init"):
-        build_witness(1, "t.py", ["t.py", "src/a.py"], ["src/a.py"], (bare,))
+        build_witness(1, "t.py", ["t.py", "src/a.py"], ["src/a.py"], (_bare_narrowed_file(),))
 
 
 def test_verify_witness_rejects_narrowed_block_under_disjoint_claim() -> None:
@@ -183,13 +196,21 @@ def test_verify_witness_rejects_narrowed_listing_mismatch() -> None:
 
 def test_verify_witness_rejects_narrowed_block_with_forged_empty_inits() -> None:
     closure = ["t.py", "src/a.py"]
-    bare = NarrowedFile(path="src/a.py", base_blob="b" * 40, head_blob="h" * 40, inits=())
     forged = Witness(
         id="w-000001",
         test="t.py",
         closure_hash=closure_hash(closure),
         changed=("src/a.py",),
         claim=CLAIM_NARROWED,
-        narrowed=(bare,),
+        narrowed=(_bare_narrowed_file(),),
     )
     assert not verify_witness(forged, closure, ["src/a.py"])
+
+
+def test_region_listing_hash_is_order_independent_and_content_sensitive() -> None:
+    listing = [("pkg/a.py", "1" * 40), ("pkg/b.py", "2" * 40)]
+    assert region_listing_hash(listing) == region_listing_hash(list(reversed(listing)))
+    assert region_listing_hash(listing) != region_listing_hash(listing[:1])
+    assert region_listing_hash(listing) != region_listing_hash(
+        [("pkg/a.py", "1" * 40), ("pkg/b.py", "3" * 40)]
+    )

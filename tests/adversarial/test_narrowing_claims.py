@@ -2,14 +2,16 @@
 
 Every reproduction builds a two-revision repository with narrowing enabled,
 establishes ground truth with real pytest runs, and drives the real pipeline.
-NARROW-1 through NARROW-5 are open findings, kept as strict xfails: each one
-constructs a narrowed skip whose test outcome genuinely differs between the
-revisions while all six conditions hold. Their shared mechanism is that the
-whitelist proves the changed file binds only its own names, but the values it
-binds (constants, __all__ listings, statement order) flow at import time into
-unchanged siblings that are themselves import-time-only for the victim, so
-no semantic edge ever reaches back into the victim's semantic closure. The
-passing tests guard the refusals that held and the replay tamper checks.
+NARROW-1 through NARROW-5 were confirmed unsafe narrowed skips: each one
+constructed a narrowed skip whose test outcome genuinely differed between the
+revisions while the original six conditions held. Their shared mechanism was
+that the whitelist proves the changed file binds only its own names, but the
+values it binds (constants, __all__ listings, statement order) flow at import
+time into unchanged siblings that are themselves import-time-only for the
+victim, so no semantic edge ever reaches back into the victim's semantic
+closure. Condition 7 (every import-time-only observer of the changed file
+must itself be import-inert) and the strengthened condition 3 (__all__
+content equality) close them; each reproduction now guards its refusal.
 """
 
 import json
@@ -44,19 +46,16 @@ def _skip_is_narrowed(result: SelectResult, path: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Confirmed unsafe narrowed skips (open findings, strict xfail)
+# The five confirmed unsafe skips, now refused (regression guards)
 # ---------------------------------------------------------------------------
 
 
-# NARROW-1: a constant flip in a whitelist-inert sibling is read at import
-# time by an unchanged sibling that raises on the new value. The reader is
-# reachable only through the pure init, so the changed file stays outside the
-# victim's semantic closure in both graphs and all six conditions hold, yet
-# importing the package fails at head for every consumer.
-@pytest.mark.xfail(
-    strict=True,
-    reason="NARROW-1: import-time value coupling through an unchanged sibling",
-)
+# NARROW-1 (fixed): a constant flip in a whitelist-inert sibling is read at
+# import time by an unchanged sibling that raises on the new value. The
+# reader is reachable only through the pure init, so the changed file stays
+# outside the victim's semantic closure in both graphs, yet importing the
+# package fails at head for every consumer. Condition 7 names the reader a
+# non-inert observer in the victim's import-time-only region and refuses.
 def test_constant_flip_tripping_an_unchanged_siblings_import_guard(adv_repo: AdvRepo) -> None:
     _enable_narrowing(adv_repo)
     adv_repo.write(
@@ -86,19 +85,15 @@ def test_constant_flip_tripping_an_unchanged_siblings_import_guard(adv_repo: Adv
 
     result = run_select(base, head, adv_repo.path)
     _, skipped, _ = buckets(result)
-    if "test_table.py" in skipped:
-        assert _skip_is_narrowed(result, "test_table.py")
     assert "test_table.py" not in skipped
+    assert "narrowing-refused:non-inert-observer" in _selected_reasons(result, "test_table.py")
 
 
-# NARROW-2: the silent variant of NARROW-1. The unchanged sibling copies the
-# flipped constant into a registry at import time, and the victim reads the
-# registry at runtime through its own unchanged home module. Nothing raises;
-# the narrowed skip simply hides a failing test.
-@pytest.mark.xfail(
-    strict=True,
-    reason="NARROW-2: import-time registry mutation carries the changed value to the victim",
-)
+# NARROW-2 (fixed): the silent variant of NARROW-1. The unchanged sibling
+# copies the flipped constant into a registry at import time, and the victim
+# reads the registry at runtime through its own unchanged home module.
+# Nothing raises; the narrowed skip simply hid a failing test. The relaying
+# sibling is a non-inert observer, so condition 7 refuses.
 def test_constant_flip_relayed_through_an_import_time_registry_write(adv_repo: AdvRepo) -> None:
     _enable_narrowing(adv_repo)
     adv_repo.write(
@@ -137,19 +132,17 @@ def test_constant_flip_relayed_through_an_import_time_registry_write(adv_repo: A
     selected, skipped, _ = buckets(result)
     # The reader-symbol consumer is correctly kept: its home pins the sibling.
     assert "test_reader.py" in selected
-    if "test_limit.py" in skipped:
-        assert _skip_is_narrowed(result, "test_limit.py")
     assert "test_limit.py" not in skipped
+    assert "narrowing-refused:non-inert-observer" in _selected_reasons(result, "test_limit.py")
 
 
-# NARROW-3: __all__ is just another literal assignment to the inertness
-# whitelist and to the bound-name collector, but its VALUE is import-time
-# behavior: an unchanged sibling star-importing the changed file raises
-# AttributeError at head because the new listing names a missing attribute.
-@pytest.mark.xfail(
-    strict=True,
-    reason="NARROW-3: __all__ content drives an unchanged star importer",
-)
+# NARROW-3 (fixed): __all__ is just another literal assignment to the
+# inertness whitelist and to the bound-name collector, but its VALUE is
+# import-time behavior: an unchanged sibling star-importing the changed file
+# raises AttributeError at head because the new listing names a missing
+# attribute. The strengthened condition 3 compares the literal __all__
+# content and refuses; the star importer would also trip condition 7 (star
+# imports are outside the inertness whitelist).
 def test_all_listing_change_breaks_an_unchanged_star_importer(adv_repo: AdvRepo) -> None:
     _enable_narrowing(adv_repo)
     adv_repo.write(
@@ -178,19 +171,16 @@ def test_all_listing_change_breaks_an_unchanged_star_importer(adv_repo: AdvRepo)
 
     result = run_select(base, head, adv_repo.path)
     _, skipped, _ = buckets(result)
-    if "test_table.py" in skipped:
-        assert _skip_is_narrowed(result, "test_table.py")
     assert "test_table.py" not in skipped
+    assert "narrowing-refused:all-listing-differs" in _selected_reasons(result, "test_table.py")
 
 
-# NARROW-4: condition 4 compares the resolved edge SET, which erases
+# NARROW-4 (fixed): condition 4 compares the resolved edge SET, which erases
 # statement order. Reordering two imports inside the inert file reorders the
 # unchanged siblings' import-time side effects, and the victim observes the
-# order through its own home module at runtime.
-@pytest.mark.xfail(
-    strict=True,
-    reason="NARROW-4: the edge-set comparison erases import statement order",
-)
+# order through its own home module at runtime. The appending siblings are
+# non-inert observers in the region (they reach the changed file through the
+# init's own edges), so condition 7 refuses.
 def test_import_reorder_flips_order_dependent_sibling_effects(adv_repo: AdvRepo) -> None:
     _enable_narrowing(adv_repo)
     adv_repo.write(
@@ -219,19 +209,15 @@ def test_import_reorder_flips_order_dependent_sibling_effects(adv_repo: AdvRepo)
 
     result = run_select(base, head, adv_repo.path)
     _, skipped, _ = buckets(result)
-    if "test_first.py" in skipped:
-        assert _skip_is_narrowed(result, "test_first.py")
     assert "test_first.py" not in skipped
+    assert "narrowing-refused:non-inert-observer" in _selected_reasons(result, "test_first.py")
 
 
-# NARROW-5: condition 5 only vets inits whose RE-EXPORT edges the route
-# crosses. An impure init below the pure one is an ordinary module on the
-# route, free to act on the changed value at import time, exactly like the
-# reader in NARROW-1. The changed file itself is a plain inert submodule.
-@pytest.mark.xfail(
-    strict=True,
-    reason="NARROW-5: an impure init below the pure one couples at import time",
-)
+# NARROW-5 (fixed): condition 5 only vets inits whose RE-EXPORT edges the
+# route crosses. An impure init below the pure one is an ordinary module on
+# the route, free to act on the changed value at import time, exactly like
+# the reader in NARROW-1. The changed file itself is a plain inert
+# submodule; the impure sub-init is a non-inert observer, condition 7.
 def test_impure_subinit_below_the_pure_init_acts_on_the_changed_value(adv_repo: AdvRepo) -> None:
     _enable_narrowing(adv_repo)
     adv_repo.write(
@@ -259,9 +245,42 @@ def test_impure_subinit_below_the_pure_init_acts_on_the_changed_value(adv_repo: 
 
     result = run_select(base, head, adv_repo.path)
     _, skipped, _ = buckets(result)
-    if "test_table.py" in skipped:
-        assert _skip_is_narrowed(result, "test_table.py")
     assert "test_table.py" not in skipped
+    assert "narrowing-refused:non-inert-observer" in _selected_reasons(result, "test_table.py")
+
+
+# The def-body corollary of NARROW-1: the changed file stays inert and only
+# a def body moves, but an unchanged sibling in the import-time-only region
+# CALLS that def at import time, converting the body edit into import-time
+# behavior. The caller is a non-inert observer, condition 7.
+def test_def_body_edit_with_an_import_time_caller_in_the_region_is_refused(
+    adv_repo: AdvRepo,
+) -> None:
+    _enable_narrowing(adv_repo)
+    adv_repo.write(
+        {
+            "pkg/__init__.py": (
+                '"""Pure re-exporter."""\n\n'
+                "from .caller import RESULT\nfrom .table import Table\n\n"
+                '__all__ = ["RESULT", "Table"]\n'
+            ),
+            "pkg/console.py": "def helper():\n    return 1\n",
+            "pkg/caller.py": "from .console import helper\n\nRESULT = helper()\n",
+            "pkg/table.py": _TABLE_MODULE,
+            "test_table.py": _TEST_TABLE,
+        }
+    )
+    base = adv_repo.commit("base")
+    assert adv_repo.run_pytest().returncode == 0
+    adv_repo.write({"pkg/console.py": "def helper():\n    raise RuntimeError('body edit')\n"})
+    head = adv_repo.commit("head")
+
+    assert adv_repo.run_pytest().returncode != 0
+
+    result = run_select(base, head, adv_repo.path)
+    _, skipped, _ = buckets(result)
+    assert "test_table.py" not in skipped
+    assert "narrowing-refused:non-inert-observer" in _selected_reasons(result, "test_table.py")
 
 
 # ---------------------------------------------------------------------------
@@ -492,7 +511,9 @@ def test_changed_nested_init_on_the_route_never_narrows(adv_repo: AdvRepo) -> No
 
 
 # A star-tier init whose star source stops proving a single literal __all__
-# at head loses its proof, and condition 5 refuses for lack of a relied init.
+# at head loses its proof. The strengthened condition 3 refuses first: the
+# source's provable __all__ surface moves from a literal tuple to nothing,
+# and condition 5 (no relied init at head) would refuse right behind it.
 def test_star_source_losing_its_literal_all_refuses(adv_repo: AdvRepo) -> None:
     _enable_narrowing(adv_repo)
     adv_repo.write(
@@ -516,7 +537,7 @@ def test_star_source_losing_its_literal_all_refuses(adv_repo: AdvRepo) -> None:
     result = run_select(base, head, adv_repo.path)
     _, skipped, _ = buckets(result)
     assert "test_table.py" not in skipped
-    assert "narrowing-refused:impure-init" in _selected_reasons(result, "test_table.py")
+    assert "narrowing-refused:all-listing-differs" in _selected_reasons(result, "test_table.py")
 
 
 # A root conftest importing the package plainly takes the full fan-out, so
@@ -778,48 +799,18 @@ def test_replay_rejects_a_shortened_narrowed_listing(
     assert "failed verification" in capsys.readouterr().err
 
 
-# Replay re-derives the same six conditions, so it verifies the NARROW-2
-# witness rather than catching it: the blind spot is shared by construction.
-# Remove together with the NARROW-2 xfail when the conditions are extended.
-def test_replay_verifies_the_narrow2_unsafe_witness(
-    adv_repo: AdvRepo,
+# Tampering with the condition 7 region membership: shrinking the recorded
+# observer accounting must never survive replay's re-derivation.
+def test_replay_rejects_tampered_region_membership(
+    two_file_narrowed_docs: tuple[Path, Path, Path],
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    _enable_narrowing(adv_repo)
-    adv_repo.write(
-        {
-            "pkg/__init__.py": (
-                '"""Pure re-exporter."""\n\n'
-                "from .registry import get_limit\n"
-                "from .reader import READER_OK\nfrom .table import Table\n\n"
-                '__all__ = ["get_limit", "READER_OK", "Table"]\n'
-            ),
-            "pkg/registry.py": (
-                "LIMITS = []\n\n\ndef get_limit():\n    return LIMITS[0] if LIMITS else 0\n"
-            ),
-            "pkg/console.py": "LIMIT = 1\n",
-            "pkg/reader.py": (
-                "from .console import LIMIT\nfrom .registry import LIMITS\n\n"
-                "LIMITS.append(LIMIT)\nREADER_OK = True\n"
-            ),
-            "pkg/table.py": _TABLE_MODULE,
-            "test_limit.py": (
-                "from pkg import get_limit\n\n\ndef test_limit():\n    assert get_limit() == 1\n"
-            ),
-        }
-    )
-    base = adv_repo.commit("base")
-    adv_repo.write({"pkg/console.py": "LIMIT = 2\n"})
-    head = adv_repo.commit("head")
-    report, witnesses = _select_docs(adv_repo.path, base, head, tmp_path)
-    document = _load(witnesses)
-    entry = next(w for w in document["witnesses"] if w.get("narrowed"))
-    assert entry["test"] == "test_limit.py"
-    monkeypatch.chdir(adv_repo.path)
+    def shrink(entry: dict[str, Any]) -> None:
+        entry["narrowed"][0]["region_count"] = 0
+        entry["narrowed"][0]["region_hash"] = ""
 
-    exit_code = main(["replay", str(report), "--witnesses", str(witnesses)])
-
-    assert exit_code == ExitCode.OK
-    assert "replay ok" in capsys.readouterr().out
+    code = _tampered_replay(two_file_narrowed_docs, tmp_path, monkeypatch, shrink)
+    assert code == ExitCode.REPLAY_MISMATCH
+    assert "region accounting mismatch for pkg/alpha.py (condition 7)" in capsys.readouterr().err

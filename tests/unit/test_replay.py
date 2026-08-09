@@ -16,7 +16,7 @@ from acquit.pipeline import snapshot_tree
 from acquit.pytestmap.pytestcfg import load_pytest_config
 from acquit.select import import_closure
 from acquit.vcs import blob_shas
-from acquit.witness import CLAIM_NARROWED, closure_hash
+from acquit.witness import CLAIM_NARROWED, closure_hash, region_listing_hash
 
 pytestmark = pytest.mark.skipif(shutil.which("git") is None, reason="git is not available")
 
@@ -399,6 +399,26 @@ def test_replay_detects_a_tampered_init_tier(
     assert "relied inits mismatch for pkg/table.py (condition 5)" in capsys.readouterr().err
 
 
+def test_replay_detects_tampered_region_accounting(
+    narrowed_docs: tuple[Path, Path],
+    narrowed_repo: NarrowedRepo,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    report, witnesses = narrowed_docs
+    document = _load(witnesses)
+    entry = _narrowed_witness_entry(document)
+    entry["narrowed"][0]["region_hash"] = "0" * 64
+    tampered = _dump(document, tmp_path / "witnesses.json")
+    monkeypatch.chdir(narrowed_repo.path)
+
+    exit_code = main(["replay", str(report), "--witnesses", str(tampered)])
+
+    assert exit_code == ExitCode.REPLAY_MISMATCH
+    assert "region accounting mismatch for pkg/table.py (condition 7)" in capsys.readouterr().err
+
+
 def test_replay_rejects_a_narrowed_report_without_a_base_sha(
     narrowed_docs: tuple[Path, Path],
     narrowed_repo: NarrowedRepo,
@@ -456,6 +476,10 @@ def test_replay_rejects_forged_inertness_for_a_busy_sibling(
                             "head_tier": "strict",
                         }
                     ],
+                    "region_count": 1,
+                    "region_hash": region_listing_hash(
+                        [("pkg/console.py", blob_shas(head, repo)["pkg/console.py"])]
+                    ),
                 }
             ],
         }
