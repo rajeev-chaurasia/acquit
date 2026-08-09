@@ -30,5 +30,74 @@
     "expect_rules": [],
     "expect_selected_contains": ["test_legacy.py"],
     "expect_skipped": ["test_console.py", "test_table.py"]
+  },
+  {
+    "name": "narrow_inert_sibling_body_edit",
+    "narrowing": true,
+    "changed": [
+      {
+        "path": "pkg/table.py",
+        "content": "\"\"\"Table rendering: deliberately import-inert.\"\"\"\n\n\nclass Table:\n    def render(self) -> str:\n        return \"grid\"\n"
+      }
+    ],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_table.py"],
+    "expect_skipped": ["test_console.py", "test_legacy.py"],
+    "expect_narrowed": { "test_console.py": ["pkg/table.py"] },
+    "expect_selected_reasons": {
+      "test_table.py": [
+        "reachable-from:pkg/table.py",
+        "narrowing-refused:inside-semantic-closure"
+      ]
+    }
+  },
+  {
+    "name": "narrow_refuses_bound_name_rename",
+    "narrowing": true,
+    "changed": [
+      {
+        "path": "pkg/table.py",
+        "content": "\"\"\"Table rendering: deliberately import-inert.\"\"\"\n\n\nclass Grid:\n    def render(self) -> str:\n        return \"table\"\n"
+      }
+    ],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_console.py", "test_table.py"],
+    "expect_skipped": ["test_legacy.py"],
+    "expect_narrowed": {},
+    "expect_selected_reasons": {
+      "test_console.py": ["narrowing-refused:bound-names-differ"]
+    }
+  },
+  {
+    "name": "narrow_refuses_non_inert_sibling",
+    "narrowing": true,
+    "changed": ["pkg/console.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_console.py", "test_table.py"],
+    "expect_skipped": ["test_legacy.py"],
+    "expect_narrowed": {},
+    "expect_selected_reasons": {
+      "test_table.py": [
+        "reachable-from:pkg/console.py",
+        "narrowing-refused:not-import-inert"
+      ]
+    }
+  },
+  {
+    "name": "narrow_init_edit_selects_both_consumers",
+    "narrowing": true,
+    "changed": ["pkg/__init__.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_console.py", "test_table.py"],
+    "expect_skipped": ["test_legacy.py"],
+    "expect_narrowed": {},
+    "expect_selected_reasons": {
+      "test_console.py": ["narrowing-refused:changed-init"],
+      "test_table.py": ["narrowing-refused:changed-init"]
+    }
   }
 ]

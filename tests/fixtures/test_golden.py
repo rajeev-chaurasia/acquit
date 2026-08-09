@@ -8,7 +8,6 @@ deliberate regeneration is a copy-paste away.
 
 import json
 import shutil
-from collections.abc import Callable
 from typing import Any
 
 import pytest
@@ -21,6 +20,7 @@ from acquit.witness import verify_witness
 from fixtures.conftest import (
     FIXTURE_NAMES,
     FixtureRepo,
+    RepoCache,
     apply_scenario_change,
     commit_all,
     full_changed_paths,
@@ -41,7 +41,7 @@ SCENARIOS = [
 
 
 @pytest.mark.parametrize("name", FIXTURE_NAMES)
-def test_graph_matches_golden(name: str, repo_cache: Callable[[str], FixtureRepo]) -> None:
+def test_graph_matches_golden(name: str, repo_cache: RepoCache) -> None:
     built = repo_cache(name)
     snapshot = snapshot_working_tree_plain(built.path)
     actual = graph_as_dict(snapshot.graph)
@@ -71,10 +71,8 @@ def _assert_witnesses_verify(result: SelectResult) -> None:
 
 
 @pytest.mark.parametrize(("name", "scenario"), SCENARIOS)
-def test_scenario(
-    name: str, scenario: dict[str, Any], repo_cache: Callable[[str], FixtureRepo]
-) -> None:
-    built = repo_cache(name)
+def test_scenario(name: str, scenario: dict[str, Any], repo_cache: RepoCache) -> None:
+    built = repo_cache(name, narrowing=bool(scenario.get("narrowing", False)))
     result = _run_scenario(built, scenario)
     decision = result.decision
 
@@ -104,5 +102,17 @@ def test_scenario(
         assert set(scenario["expect_selected_contains"]) <= selected
     if "expect_always_run" in scenario:
         assert always == scenario["expect_always_run"]
+    if "expect_narrowed" in scenario:
+        by_id = {witness.id: witness for witness in decision.witnesses}
+        narrowed = {
+            entry.path: [block.path for block in by_id[entry.witness_id].narrowed]
+            for entry in decision.skipped
+            if entry.narrowed
+        }
+        assert narrowed == scenario["expect_narrowed"]
+    if "expect_selected_reasons" in scenario:
+        for path, expected in scenario["expect_selected_reasons"].items():
+            entry = next(item for item in decision.selected if item.path == path)
+            assert set(expected) <= set(entry.reasons), path
 
     _assert_witnesses_verify(result)

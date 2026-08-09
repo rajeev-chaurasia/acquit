@@ -11,6 +11,28 @@ disjointness claim. `acquit replay` rebuilds the graph at the recorded commit
 and re-verifies every witness from first principles. A witness that cannot be
 verified is a bug in acquit, not a judgment call.
 
+## The narrowed claim (ADR 0008)
+
+With re-export narrowing enabled (`narrowing = true`; it ships disabled), a
+skipped test's witness may instead carry a second, stronger claim:
+
+> closure(test) intersects changed set only in import-time-only files, each
+> modified in place and import-inert across base and head
+
+Import-time-only means the file sits in the closure but outside the semantic
+closure (the closure with the pure re-exporter inits' edges removed) at base
+and at head: every route from the test to the file crosses a proven pure
+`__init__.py`. Each intersecting file must additionally be modified in place,
+pass the import-inertness whitelist at both revisions, and keep its
+module-level bound-name set and resolved outgoing edge set identical across
+them; every init the narrowing relies on must prove pure at both revisions
+with the same tier. The witness records the per-file evidence (base and head
+blob shas, the inits crossed), and `acquit replay` rebuilds both commits
+cache-free and re-derives every condition with the production checkers
+before the skip is honored. Closures never shrink; a failed condition, a
+tainted closure, a changed init, an added or renamed or deleted file, or a
+working-tree run all decline into the disjointness behavior above.
+
 ## Assumptions
 
 - A1. First-party code acquires modules through static import statements or

@@ -1,5 +1,9 @@
 # Acquit analyzing acquit: the dogfooding configuration.
 
+# Re-export narrowing (ADR 0008) runs live here: the selfhost canary
+# classifies every narrowed decision against the full suite.
+narrowing = true
+
 [[waive]]
 rule = "R006"
 glob = "tests/fixtures/conftest.py"

@@ -1,6 +1,6 @@
 # ADR 0008: re-export narrowing for fat package inits
 
-Status: proposed
+Status: accepted
 
 ## Context
 
