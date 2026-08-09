@@ -22,6 +22,8 @@ Acquit replayed 198 merged PRs from four real repositories, running each full su
 | encode/httpx | 83 | 0 | 97.5% | 4.8% (4/83) | 53.0% (44/83) |
 | Total | 198 | 0 | - | 5.1% (10/198) | 60.1% (119/198) |
 
+The docs-config column is computed from the recorded findings for flask, rich, and httpx; click's docs-config counterfactual was re-replayed for real, with every additional selective decision verified (see [docs/study.md](docs/study.md)).
+
 The out-of-the-box share is low because acquit is fail-closed: any PR it cannot fully prove safe runs the whole suite. Docs and changelog churn (rule R001) is by far the dominant blocker; the docs-config column counts PRs where it was the only one, and the sticky PR comment suggests the exact `assume_inert` entry to lift it. Every number above regenerates from committed manifests via `acquit-study`; see [study/README.md](study/README.md). The full writeup, including the parts that went wrong, is in [docs/study.md](docs/study.md).
 
 ## How it compares
@@ -39,21 +41,63 @@ Acquit occupies one niche: fail-closed static selection with a proof per skip, o
 
 ## Try it on a PR
 
+One complete workflow file, ready to paste:
+
 ```yaml
+name: tests
+
+on: pull_request
+
 permissions:
   contents: read
   pull-requests: write
 
-steps:
-  - uses: actions/checkout@v4
-    with:
-      fetch-depth: 0
-  - uses: rajeev-chaurasia/acquit@main
-    with:
-      mode: report
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The base ref must exist locally; shallow clones always fall back to run-all.
+          fetch-depth: 0
+
+      - uses: rajeev-chaurasia/acquit@main
+        with:
+          mode: report
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The pytest plugin ships in the acquit package. Enforce mode silently
+      # changes nothing unless acquit is importable in the environment that
+      # runs pytest.
+      - run: pip install acquit
+      - run: pip install -e . pytest
+
+      - run: pytest
 ```
 
-Report mode never skips a test: the action analyzes the diff, verifies the evidence with a replay, posts a sticky PR comment explaining the decision, and sets outputs. Switch to `mode: enforce` once you trust what the comments say, and the pytest plugin will skip the provably unaffected files. Version pinning arrives with the first release; until then `@main` is the way in.
+Report mode never skips a test: the action analyzes the diff, verifies the evidence with a replay, posts a sticky PR comment explaining the decision, and sets outputs. Switch to `mode: enforce` once you trust what the comments say, and the pytest plugin will skip the provably unaffected files; any unrecognized `mode` value means `report`. The `pip install acquit` line (or its uv equivalent, `uv pip install acquit`) is what puts the plugin into the environment that runs pytest. Version pinning arrives with the first release; until then `@main` is the way in.
+
+## Run it locally
+
+The whole loop runs without CI:
+
+```
+pip install acquit                # or: uv pip install acquit
+acquit select --base origin/main
+ACQUIT_SELECTION_FILE=acquit-selection.json pytest
+```
+
+`acquit select --base origin/main` compares the working tree against the base ref and writes three documents: the report (`acquit-report.json`), the selection (`acquit-selection.json`), and the witnesses (`acquit-witnesses.json`). The defaults land in the current directory and work as they are, because the selection records its own outputs and they never invalidate the tree fingerprint; pointing `--report`, `--selection`, and `--witnesses` at an out-of-tree or gitignored directory keeps the checkout tidier.
+
+From there:
+
+- `ACQUIT_SELECTION_FILE=... pytest` verifies the selection against the tree and deselects the provably unaffected files; without the variable, pytest is untouched.
+- `acquit explain tests/test_something.py --base origin/main` walks through the decision for one test file.
+- `acquit replay acquit-report.json` re-verifies every witness from first principles. Replay rebuilds the analyzed commit, and a working-tree report records no head sha, so pass `--head <commit>` at select time if you want the run to be replayable.
+- `acquit analyze` prints the dependency graph's health.
 
 ## Design principles
 

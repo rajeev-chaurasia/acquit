@@ -94,11 +94,14 @@ and the README table quotes those json files.
   installs, so a change must come with re-frozen constraints.
 - Constraints (`study/constraints/{repo}.txt`) freeze the dependency set the
   suites run under, so a dependency release cannot change outcomes between
-  study runs.
+  study runs. Click has no constraints file: its debug-scale study ran
+  unconstrained by design.
 - Quarantine lists (`study/quarantine/{repo}.txt`, one normalized node id
   per line, `#` comments) name known-flaky tests excluded from the
   changed-outcome set. They never excuse a skipped new test, and every entry
-  is visible in review.
+  is visible in review. Empty quarantine files are committed deliberately,
+  so the absence of quarantined tests is distinguishable from the omission
+  of a list.
 - Exclusions are accounted, not hidden: a PR whose base suite will not run
   is recorded in the results dir (and, with `--record-exclusion`, in the
   manifest) with the stage that failed, and the summary reports the
