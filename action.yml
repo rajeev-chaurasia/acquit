@@ -23,8 +23,12 @@ inputs:
   mode:
     description: >-
       report: analyze, verify, comment, and set outputs, but never skip a test.
-      enforce: additionally export ACQUIT_SELECTION_FILE so the pytest plugin
-      honors the verified selection. Anything unrecognized means report.
+      canary: additionally export ACQUIT_SELECTION_FILE and ACQUIT_CANARY so
+      the full suite still runs while the pytest plugin classifies outcomes
+      against the verified selection; a failing would-be-skipped test raises a
+      loud alarm at zero risk. enforce: export ACQUIT_SELECTION_FILE alone so
+      the plugin honors the verified selection and skips. Anything
+      unrecognized means report.
     default: "report"
   comment:
     description: "Post a sticky PR comment with the decision (true|false)."
@@ -99,10 +103,14 @@ runs:
         printf 'report<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$REPORT" >> "$GITHUB_OUTPUT"
         printf 'selection<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$SELECTION" >> "$GITHUB_OUTPUT"
         printf 'witnesses<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$WITNESSES" >> "$GITHUB_OUTPUT"
-        # Only enforce mode hooks the pytest plugin; report mode observes and
-        # never touches the test run, and an unrecognized mode means report.
-        if [ "${ACQUIT_MODE:-report}" = "enforce" ]; then
+        # Only enforce and canary hook the pytest plugin; report mode observes
+        # and never touches the test run, and an unrecognized mode means report.
+        if [ "${ACQUIT_MODE:-report}" = "enforce" ] || [ "${ACQUIT_MODE:-report}" = "canary" ]; then
           printf 'ACQUIT_SELECTION_FILE<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$SELECTION" >> "$GITHUB_ENV"
+        fi
+        # Canary still runs everything; the plugin only classifies outcomes.
+        if [ "${ACQUIT_MODE:-report}" = "canary" ]; then
+          printf 'ACQUIT_CANARY<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "1" >> "$GITHUB_ENV"
         fi
         echo "### Acquit" >> "$GITHUB_STEP_SUMMARY"
         echo "Selection mode: \`$MODE\`" >> "$GITHUB_STEP_SUMMARY"

@@ -191,6 +191,15 @@ def test_enforce_mode_exports_the_selection(tmp_path: Path) -> None:
     run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode="enforce")
 
     assert run.exported["ACQUIT_SELECTION_FILE"] == run.outputs["selection"]
+    assert "ACQUIT_CANARY" not in run.exported
+
+
+def test_canary_mode_exports_the_selection_and_the_flag(tmp_path: Path) -> None:
+    """Canary hooks the plugin in watch-only posture: both variables, nothing skipped."""
+    run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode="canary")
+
+    assert run.exported["ACQUIT_SELECTION_FILE"] == run.outputs["selection"]
+    assert run.exported["ACQUIT_CANARY"] == "1"
 
 
 def test_report_mode_never_exports_the_selection(tmp_path: Path) -> None:
@@ -198,41 +207,48 @@ def test_report_mode_never_exports_the_selection(tmp_path: Path) -> None:
     run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode="report")
 
     assert "ACQUIT_SELECTION_FILE" not in run.exported
+    assert "ACQUIT_CANARY" not in run.exported
     assert run.outputs["mode"] == "selective"
     assert read_json(run.selection)["mode"] == "selective"
 
 
 def test_unrecognized_mode_is_treated_as_report(tmp_path: Path) -> None:
-    """Only a literal enforce may hook the plugin; anything else fails safe."""
-    run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode="Enforce")
+    """Only a literal enforce or canary may hook the plugin; anything else fails safe."""
+    for spelling in ("Enforce", "Canary"):
+        run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode=spelling)
 
-    assert "ACQUIT_SELECTION_FILE" not in run.exported
+        assert "ACQUIT_SELECTION_FILE" not in run.exported, spelling
+        assert "ACQUIT_CANARY" not in run.exported, spelling
 
 
 def test_missing_mode_env_is_treated_as_report(tmp_path: Path) -> None:
     run = run_action(tmp_path, UVX_WRITES_SELECTIVE, mode=None)
 
     assert "ACQUIT_SELECTION_FILE" not in run.exported
+    assert "ACQUIT_CANARY" not in run.exported
 
 
 def test_github_env_export_cannot_define_extra_variables(tmp_path: Path) -> None:
     """ADV-FC-11: a newline in the exported value never becomes a second variable."""
     bash = bash_for(tmp_path)
-    export_line = next(
-        line for line in action_select_script().splitlines() if "$GITHUB_ENV" in line
-    )
+    export_lines = [
+        line.strip() for line in action_select_script().splitlines() if '>> "$GITHUB_ENV"' in line
+    ]
+    # Every export the select step performs must go through the heredoc form;
+    # today that is the selection path and the canary flag.
+    assert len(export_lines) == 2, export_lines
     exported = tmp_path / "env.txt"
     exported.write_text("", encoding="utf-8")
     script = tmp_path / "export.sh"
     script.write_text(
         f'GITHUB_ENV="{exported.as_posix()}"\n'
-        "SELECTION=$'/workspace/hostile\\nACQUIT_INJECTED=1'\n"
-        f"{export_line}\n",
+        "SELECTION=$'/workspace/hostile\\nACQUIT_INJECTED=1'\n" + "\n".join(export_lines) + "\n",
         encoding="utf-8",
         newline="\n",
     )
     subprocess.run([bash, script.as_posix()], check=True, capture_output=True)
 
-    assert set(_entries(exported)) == {"ACQUIT_SELECTION_FILE"}, exported.read_text(
-        encoding="utf-8"
-    )
+    assert set(_entries(exported)) == {
+        "ACQUIT_SELECTION_FILE",
+        "ACQUIT_CANARY",
+    }, exported.read_text(encoding="utf-8")

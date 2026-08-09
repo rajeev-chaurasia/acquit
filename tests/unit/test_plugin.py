@@ -4,7 +4,7 @@ import shutil
 import pytest
 from conftest import init_repo
 
-from acquit.constants import ENV_SELECTION_FILE, SELECTION_SCHEMA
+from acquit.constants import CANARY_SCHEMA, ENV_CANARY, ENV_SELECTION_FILE, SELECTION_SCHEMA
 from acquit.vcs import working_tree_fingerprint
 
 pytest_plugins = ["pytester"]
@@ -133,6 +133,118 @@ def test_run_all_mode_deselects_nothing(
     monkeypatch.setenv(ENV_SELECTION_FILE, selection)
     result = pytester.runpytest_inprocess()
     result.assert_outcomes(passed=2)
+
+
+def test_canary_alarms_on_a_failing_would_be_skipped_file(
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pytester.makepyfile(
+        test_alpha="def test_alpha():\n    assert False\n",
+        test_beta="def test_beta():\n    assert True\n",
+    )
+    fingerprint = _git_tree(pytester)
+    selection = _write_selection(pytester, "selective", ["test_alpha.py"], fingerprint)
+    monkeypatch.setenv(ENV_SELECTION_FILE, selection)
+    monkeypatch.setenv(ENV_CANARY, "1")
+    result = pytester.runpytest_inprocess()
+    # Nothing was deselected, and the failure keeps its own exit status.
+    result.assert_outcomes(passed=1, failed=1)
+    assert result.ret == pytest.ExitCode.TESTS_FAILED
+    result.stdout.fnmatch_lines(
+        [
+            "*acquit canary: ALARM: test_alpha.py failed but was provably unaffected"
+            " (witness w-000001)*",
+            "*acquit canary: 1 alarm(s) across 1 would-be-skipped files*",
+        ]
+    )
+    verdict = json.loads((pytester.path / "selection.canary.json").read_text(encoding="utf-8"))
+    assert verdict == {
+        "schema": CANARY_SCHEMA,
+        "alarms": [{"path": "test_alpha.py", "witness": "w-000001"}],
+        "would_skip": 1,
+        "clean": False,
+    }
+
+
+def test_canary_clean_when_every_would_be_skipped_file_passes(
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pytester.makepyfile(**TEST_FILES)
+    fingerprint = _git_tree(pytester)
+    selection = _write_selection(pytester, "selective", ["test_alpha.py"], fingerprint)
+    monkeypatch.setenv(ENV_SELECTION_FILE, selection)
+    monkeypatch.setenv(ENV_CANARY, "1")
+    result = pytester.runpytest_inprocess()
+    result.assert_outcomes(passed=2)
+    result.stdout.fnmatch_lines(
+        ["*acquit canary: clean: all 1 would-be-skipped files passed (selection validated live)*"]
+    )
+    verdict = json.loads((pytester.path / "selection.canary.json").read_text(encoding="utf-8"))
+    assert verdict == {"schema": CANARY_SCHEMA, "alarms": [], "would_skip": 1, "clean": True}
+
+
+def test_canary_ignores_failures_outside_the_skip_set(
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pytester.makepyfile(
+        test_alpha="def test_alpha():\n    assert True\n",
+        test_beta="def test_beta():\n    assert False\n",
+    )
+    fingerprint = _git_tree(pytester)
+    selection = _write_selection(pytester, "selective", ["test_alpha.py"], fingerprint)
+    monkeypatch.setenv(ENV_SELECTION_FILE, selection)
+    monkeypatch.setenv(ENV_CANARY, "1")
+    result = pytester.runpytest_inprocess()
+    # beta was selected to run and failed; that is the selection working.
+    result.assert_outcomes(passed=1, failed=1)
+    result.stdout.fnmatch_lines(["*acquit canary: clean: all 1 would-be-skipped files passed*"])
+    verdict = json.loads((pytester.path / "selection.canary.json").read_text(encoding="utf-8"))
+    assert verdict["clean"] is True
+
+
+def test_canary_stale_fingerprint_refuses_without_claims(
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pytester.makepyfile(**TEST_FILES)
+    fingerprint = _git_tree(pytester)
+    selection = _write_selection(pytester, "selective", ["test_alpha.py"], fingerprint)
+    (pytester.path / "test_beta.py").write_text(
+        "def test_beta():\n    assert 1 + 1 == 2\n", encoding="utf-8"
+    )
+    monkeypatch.setenv(ENV_SELECTION_FILE, selection)
+    monkeypatch.setenv(ENV_CANARY, "1")
+    result = pytester.runpytest_inprocess()
+    result.assert_outcomes(passed=2)
+    result.stdout.fnmatch_lines(["*running every test*"])
+    assert "acquit canary" not in result.stdout.str()
+    assert not (pytester.path / "selection.canary.json").exists()
+
+
+def test_canary_run_all_document_has_nothing_to_validate(
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pytester.makepyfile(**TEST_FILES)
+    selection = _write_selection(pytester, "run-all", [], None)
+    monkeypatch.setenv(ENV_SELECTION_FILE, selection)
+    monkeypatch.setenv(ENV_CANARY, "1")
+    result = pytester.runpytest_inprocess()
+    result.assert_outcomes(passed=2)
+    result.stdout.fnmatch_lines(["*acquit canary: selection was run-all, nothing to validate*"])
+    assert not (pytester.path / "selection.canary.json").exists()
+
+
+def test_canary_flag_other_than_one_still_deselects(
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Enforce behavior is untouched unless the flag is a literal 1."""
+    pytester.makepyfile(**TEST_FILES)
+    fingerprint = _git_tree(pytester)
+    selection = _write_selection(pytester, "selective", ["test_alpha.py"], fingerprint)
+    monkeypatch.setenv(ENV_SELECTION_FILE, selection)
+    monkeypatch.setenv(ENV_CANARY, "0")
+    result = pytester.runpytest_inprocess()
+    result.assert_outcomes(passed=1, deselected=1)
+    assert "acquit canary" not in result.stdout.str()
 
 
 def test_oversized_selection_file_is_refused(
