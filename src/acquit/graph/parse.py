@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 from acquit.errors import ParseFailure
+from acquit.graph.resolvers.checkers import ReexportScan, scan_reexports
 
 _DYNAMIC_IMPORT_CALLEES = frozenset({"__import__", "import_module"})
 _IMPORT_MODULE = "import_module"
@@ -70,6 +71,9 @@ class ModuleFacts:
     suspects: tuple[Suspect, ...]
     defines_module_getattr: bool
     pytest_plugins_decl: tuple[str, ...]
+    # Content-based, so it survives the content-addressed cache; whether it
+    # applies (the file is a package init) is the builder's call.
+    reexport: ReexportScan
 
 
 def parse_module_facts(source: bytes, path: str) -> ModuleFacts:
@@ -87,6 +91,7 @@ def parse_module_facts(source: bytes, path: str) -> ModuleFacts:
         suspects=tuple(visitor.suspects),
         defines_module_getattr=visitor.defines_module_getattr,
         pytest_plugins_decl=tuple(visitor.pytest_plugins_decl),
+        reexport=scan_reexports(tree),
     )
 
 

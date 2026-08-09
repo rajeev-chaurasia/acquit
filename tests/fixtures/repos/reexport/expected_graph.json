@@ -1,0 +1,101 @@
+{
+  "edges": [
+    [
+      "legacy/__init__.py",
+      "legacy/__init__.py",
+      "imports"
+    ],
+    [
+      "legacy/__init__.py",
+      "legacy/engine.py",
+      "imports"
+    ],
+    [
+      "pkg/__init__.py",
+      "pkg/__init__.py",
+      "init-reexport"
+    ],
+    [
+      "pkg/__init__.py",
+      "pkg/console.py",
+      "init-reexport"
+    ],
+    [
+      "pkg/__init__.py",
+      "pkg/table.py",
+      "init-reexport"
+    ],
+    [
+      "test_console.py",
+      "pkg/__init__.py",
+      "imports"
+    ],
+    [
+      "test_console.py",
+      "pkg/console.py",
+      "imports"
+    ],
+    [
+      "test_legacy.py",
+      "legacy/__init__.py",
+      "imports"
+    ],
+    [
+      "test_table.py",
+      "pkg/__init__.py",
+      "imports"
+    ],
+    [
+      "test_table.py",
+      "pkg/table.py",
+      "imports"
+    ]
+  ],
+  "nodes": [
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "legacy/__init__.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "legacy/engine.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "pkg/__init__.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "pkg/console.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "pkg/table.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "test_console.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "test_legacy.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "test_table.py",
+      "tainted": false
+    }
+  ]
+}

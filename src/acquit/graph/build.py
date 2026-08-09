@@ -24,6 +24,9 @@ from acquit.graph.model import (
 )
 from acquit.graph.parse import ImportStmt, ModuleFacts
 from acquit.graph.resolve import resolve_import
+from acquit.graph.resolvers.framework import Decline, HazardSite, ResolveContext
+from acquit.graph.resolvers.reexport import PureInit, reexport_consumer_edges
+from acquit.graph.resolvers.registry import REGISTRY
 from acquit.pytestmap.conftree import ConftestFacts, conftest_scope_edges
 from acquit.pytestmap.pytestcfg import PytestConfig
 
@@ -61,8 +64,9 @@ def assemble_graph(
     """
     acc = _Acc()
     acc.tainted.update(unparseable)
+    pure = _proven_reexports(facts, index)
     for module in facts.values():
-        _collect_module(module, index, acc)
+        _collect_module(module, index, pure, acc)
 
     file_paths = sorted(set(files))
     tests = [path for path in file_paths if kinds[path] is NodeKind.TEST]
@@ -72,7 +76,7 @@ def assemble_graph(
 
     for conftest in conftest_facts.values():
         for plugin in conftest.pytest_plugins:
-            for target in _plugin_targets(plugin, index):
+            for target in _plugin_targets(plugin, index, pure):
                 acc.edges.add(Edge(src=conftest.path, dst=target, kind=EdgeKind.PLUGIN))
     # pytest honors pytest_plugins declared in test modules too.
     for test in tests:
@@ -80,10 +84,10 @@ def assemble_graph(
         if test_facts is None:
             continue
         for plugin in test_facts.pytest_plugins_decl:
-            for target in _plugin_targets(plugin, index):
+            for target in _plugin_targets(plugin, index, pure):
                 acc.edges.add(Edge(src=test, dst=target, kind=EdgeKind.PLUGIN))
     for plugin in pytest_config.extra_plugins:
-        for target in _plugin_targets(plugin, index):
+        for target in _plugin_targets(plugin, index, pure):
             for test in tests:
                 acc.edges.add(Edge(src=test, dst=target, kind=EdgeKind.PLUGIN))
 
@@ -94,43 +98,85 @@ def assemble_graph(
             if stub in present:
                 acc.edges.add(Edge(src=path, dst=stub, kind=EdgeKind.STUB_OF))
 
-    return _build(file_paths, kinds, index, acc)
+    return _build(file_paths, kinds, index, acc, pure)
 
 
 def _absolute_import(name: str) -> ImportStmt:
     return ImportStmt(module=None, names=(name,), level=0, is_star=False)
 
 
-def _collect_module(module: ModuleFacts, index: ModuleIndex, acc: _Acc) -> None:
+def _proven_reexports(facts: Mapping[str, ModuleFacts], index: ModuleIndex) -> dict[str, PureInit]:
+    """Run the resolver registry over every module, keeping the proven bounds.
+
+    Wave one has a single resident, so every bound is a PureInit; a Decline
+    anywhere simply leaves the site with today's behavior.
+    """
+    ctx = ResolveContext(index=index, facts=facts)
+    proven: dict[str, PureInit] = {}
+    for resolver in REGISTRY:
+        for path in sorted(facts):
+            candidate = resolver.recognize(HazardSite(path=path, facts=facts[path]))
+            if candidate is None:
+                continue
+            proof = resolver.prove(candidate, ctx)
+            if not isinstance(proof, Decline):
+                proven[proof.path] = proof
+    return proven
+
+
+def _collect_module(
+    module: ModuleFacts, index: ModuleIndex, pure: Mapping[str, PureInit], acc: _Acc
+) -> None:
     src = module.path
     if module.suspects:
         acc.tainted.add(src)
+    is_pure_init = src in pure
     for stmt in module.imports:
         resolution = resolve_import(stmt, src, index)
         for dst, kind in resolution.edges:
+            if is_pure_init and kind is EdgeKind.IMPORTS:
+                # The proven init's own import edges are import-time-only
+                # for consumers; star-expansion edges keep their kind.
+                kind = EdgeKind.INIT_REEXPORT
             acc.edges.add(Edge(src=src, dst=dst, kind=kind))
         for top_level in resolution.external_top_levels:
-            acc.external_edge(src, top_level, EdgeKind.IMPORTS)
+            acc.external_edge(
+                src, top_level, EdgeKind.INIT_REEXPORT if is_pure_init else EdgeKind.IMPORTS
+            )
         if resolution.broken_first_party:
             acc.tainted.add(src)
+        if not is_pure_init:
+            # Consumers importing through pure inits keep full edges to the
+            # symbol homes, so closures never shrink. A pure init consuming
+            # another gets nothing here: the chase covers its consumers.
+            for dst in reexport_consumer_edges(stmt, src, index, pure):
+                acc.edges.add(Edge(src=src, dst=dst, kind=EdgeKind.IMPORTS))
     for name in module.dyn_literal_imports:
         if not name:
             continue
-        resolution = resolve_import(_absolute_import(name), src, index)
+        dyn_stmt = _absolute_import(name)
+        resolution = resolve_import(dyn_stmt, src, index)
         for dst, _ in resolution.edges:
             acc.edges.add(Edge(src=src, dst=dst, kind=EdgeKind.DYNAMIC_IMPORT))
         for top_level in resolution.external_top_levels:
             acc.external_edge(src, top_level, EdgeKind.DYNAMIC_IMPORT)
         if resolution.broken_first_party:
             acc.tainted.add(src)
+        for dst in reexport_consumer_edges(dyn_stmt, src, index, pure):
+            acc.edges.add(Edge(src=src, dst=dst, kind=EdgeKind.DYNAMIC_IMPORT))
 
 
-def _plugin_targets(name: str, index: ModuleIndex) -> tuple[str, ...]:
+def _plugin_targets(name: str, index: ModuleIndex, pure: Mapping[str, PureInit]) -> tuple[str, ...]:
     # Plugin names are absolute, so the importer path is irrelevant here.
-    resolution = resolve_import(_absolute_import(name), "", index)
+    stmt = _absolute_import(name)
+    resolution = resolve_import(stmt, "", index)
     if resolution.broken_first_party or resolution.external_top_levels:
         return ()
-    return tuple(path for path, _ in resolution.edges)
+    targets = {path for path, _ in resolution.edges}
+    # pytest attribute-accesses the plugin module's hooks and fixtures, so
+    # any pure init on the dotted chain fans out in full (fail closed).
+    targets.update(reexport_consumer_edges(stmt, "", index, pure))
+    return tuple(sorted(targets))
 
 
 def _build(
@@ -138,6 +184,7 @@ def _build(
     kinds: Mapping[str, NodeKind],
     index: ModuleIndex,
     acc: _Acc,
+    pure: Mapping[str, PureInit],
 ) -> BuiltGraph:
     dotted_by_path: dict[str, list[str]] = {}
     for dotted, paths in index.by_dotted.items():
@@ -168,6 +215,7 @@ def _build(
         index_of=index_of,
         nodes={node.path: node for node in node_list},
         graph_hash=_graph_hash(node_list, edges),
+        reexport_inits={path: init.tier for path, init in sorted(pure.items())},
     )
 
 

@@ -4,6 +4,7 @@ import pytest
 
 from acquit.errors import GraphError, ParseFailure
 from acquit.graph.parse import ImportStmt, ModuleFacts, Suspect, SuspectKind, parse_module_facts
+from acquit.graph.resolvers.checkers import ReexportScan
 
 
 def facts(source: str) -> ModuleFacts:
@@ -435,4 +436,5 @@ def test_empty_module() -> None:
         suspects=(),
         defines_module_getattr=False,
         pytest_plugins_decl=(),
+        reexport=ReexportScan(reason=None, bindings=(), stars=(), local_names=(), all_names=None),
     )

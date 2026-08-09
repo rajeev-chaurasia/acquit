@@ -19,6 +19,7 @@ from acquit.constants import ENV_CACHE_DIR
 from acquit.errors import ExitCode
 from acquit.graph.cache import CACHE_FORMAT_VERSION, facts_to_dict, parse_cache_dir
 from acquit.graph.parse import ModuleFacts
+from acquit.graph.resolvers.checkers import ReexportScan
 from adversarial.failclosed_support import (
     commit,
     deselected_count,
@@ -48,6 +49,7 @@ def poison_cache(cache_dir: Path, blob_sha: str, path: str) -> Path:
         suspects=(),
         defines_module_getattr=False,
         pytest_plugins_decl=(),
+        reexport=ReexportScan(reason=None, bindings=(), stars=(), local_names=(), all_names=None),
     )
     entry = cache_dir / f"{blob_sha}.json"
     entry.parent.mkdir(parents=True, exist_ok=True)

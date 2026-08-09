@@ -1,0 +1,34 @@
+[
+  {
+    "name": "change_non_inert_sibling",
+    "changed": ["pkg/console.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_console.py", "test_table.py"],
+    "expect_skipped": ["test_legacy.py"]
+  },
+  {
+    "name": "change_inert_sibling",
+    "changed": ["pkg/table.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_console.py", "test_table.py"],
+    "expect_skipped": ["test_legacy.py"]
+  },
+  {
+    "name": "change_pure_init",
+    "changed": ["pkg/__init__.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_console.py", "test_table.py"],
+    "expect_skipped": ["test_legacy.py"]
+  },
+  {
+    "name": "change_behind_impure_init",
+    "changed": ["legacy/engine.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_legacy.py"],
+    "expect_skipped": ["test_console.py", "test_table.py"]
+  }
+]

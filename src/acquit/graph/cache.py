@@ -19,12 +19,19 @@ from typing import Any, Final
 from acquit.constants import ENV_CACHE_DIR
 from acquit.errors import GraphError
 from acquit.graph.parse import ImportStmt, ModuleFacts, Suspect, SuspectKind
+from acquit.graph.resolvers.checkers import (
+    BindingForm,
+    ReexportBinding,
+    ReexportScan,
+    StarImport,
+)
 
 # Bump whenever parser semantics change: cached ModuleFacts for an unchanged
 # blob must never outlive the rules that produced them. Version 4 split the
 # sys.path suspect into import-time and runtime kinds. Version 5 added
 # monkeypatch.syspath_prepend and pytester.syspathinsert as sys.path mutations.
-CACHE_FORMAT_VERSION: Final = 5
+# Version 6 added the re-export scan for ADR 0008 narrowing.
+CACHE_FORMAT_VERSION: Final = 6
 
 
 def parse_cache_dir(repo_root: Path) -> Path:
@@ -65,6 +72,26 @@ def facts_to_dict(facts: ModuleFacts) -> dict[str, Any]:
         ],
         "defines_module_getattr": facts.defines_module_getattr,
         "pytest_plugins_decl": list(facts.pytest_plugins_decl),
+        "reexport": _scan_to_dict(facts.reexport),
+    }
+
+
+def _scan_to_dict(scan: ReexportScan) -> dict[str, Any]:
+    return {
+        "reason": scan.reason,
+        "bindings": [
+            {
+                "name": binding.name,
+                "form": binding.form.value,
+                "module": binding.module,
+                "level": binding.level,
+                "member": binding.member,
+            }
+            for binding in scan.bindings
+        ],
+        "stars": [{"module": star.module, "level": star.level} for star in scan.stars],
+        "local_names": list(scan.local_names),
+        "all_names": None if scan.all_names is None else list(scan.all_names),
     }
 
 
@@ -78,9 +105,34 @@ def facts_from_dict(data: dict[str, Any]) -> ModuleFacts:
             suspects=tuple(_suspect_from_dict(item) for item in _expect_items(data["suspects"])),
             defines_module_getattr=_expect_bool(data["defines_module_getattr"]),
             pytest_plugins_decl=_expect_str_tuple(data["pytest_plugins_decl"]),
+            reexport=_scan_from_dict(_expect_dict(data["reexport"])),
         )
     except (KeyError, TypeError, ValueError) as error:
         raise GraphError(f"cached facts have an unexpected shape: {error!r}") from error
+
+
+def _scan_from_dict(data: Mapping[str, Any]) -> ReexportScan:
+    all_names = data["all_names"]
+    return ReexportScan(
+        reason=_expect_opt_str(data["reason"]),
+        bindings=tuple(_binding_from_dict(item) for item in _expect_items(data["bindings"])),
+        stars=tuple(
+            StarImport(module=_expect_str(item["module"]), level=_expect_int(item["level"]))
+            for item in _expect_items(data["stars"])
+        ),
+        local_names=_expect_str_tuple(data["local_names"]),
+        all_names=None if all_names is None else _expect_str_tuple(all_names),
+    )
+
+
+def _binding_from_dict(item: Mapping[str, Any]) -> ReexportBinding:
+    return ReexportBinding(
+        name=_expect_str(item["name"]),
+        form=BindingForm(_expect_str(item["form"])),
+        module=_expect_str(item["module"]),
+        level=_expect_int(item["level"]),
+        member=_expect_str(item["member"]),
+    )
 
 
 class ParseCache:
@@ -172,3 +224,9 @@ def _expect_items(value: object) -> list[dict[str, Any]]:
     if isinstance(value, list) and all(isinstance(item, dict) for item in value):
         return value
     raise GraphError(f"expected a list of objects, got {type(value).__name__}")
+
+
+def _expect_dict(value: object) -> dict[str, Any]:
+    if isinstance(value, dict):
+        return value
+    raise GraphError(f"expected an object, got {type(value).__name__}")

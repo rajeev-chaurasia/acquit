@@ -158,6 +158,25 @@ def test_facts_dict_round_trip() -> None:
     assert facts_from_dict(facts_to_dict(facts)) == facts
 
 
+def test_reexport_scan_round_trips_through_json() -> None:
+    # A pure-init shape populates every scan field: bindings, a star, local
+    # names, and the literal __all__.
+    source = b"from .a import x as y\nimport b.c\nfrom ._api import *\n__all__ = ['y']\n"
+    facts = parse_module_facts(source, "pkg/__init__.py")
+    assert facts.reexport.reason is None
+    assert facts.reexport.all_names == ("y",)
+    reloaded = json.loads(json.dumps(facts_to_dict(facts)))
+    assert facts_from_dict(reloaded) == facts
+
+
+def test_reexport_binding_with_an_unknown_form_is_rejected() -> None:
+    facts = parse_module_facts(b"from .a import x\n", "pkg/__init__.py")
+    data = facts_to_dict(facts)
+    data["reexport"]["bindings"][0]["form"] = "quantum-binding"
+    with pytest.raises(GraphError):
+        facts_from_dict(data)
+
+
 def test_facts_survive_json_serialization() -> None:
     facts = rich_facts()
     reloaded = json.loads(json.dumps(facts_to_dict(facts)))
@@ -204,6 +223,18 @@ def _dyn_imports_with_int(data: dict[str, Any]) -> None:
     data["dyn_literal_imports"] = ["ok", 3]
 
 
+def _drop_reexport(data: dict[str, Any]) -> None:
+    del data["reexport"]
+
+
+def _reexport_not_an_object(data: dict[str, Any]) -> None:
+    data["reexport"] = "pure"
+
+
+def _reexport_local_names_with_int(data: dict[str, Any]) -> None:
+    data["reexport"]["local_names"] = ["ok", 3]
+
+
 @pytest.mark.parametrize(
     "mutate",
     [
@@ -217,6 +248,9 @@ def _dyn_imports_with_int(data: dict[str, Any]) -> None:
         _lineno_as_bool,
         _getattr_flag_as_str,
         _dyn_imports_with_int,
+        _drop_reexport,
+        _reexport_not_an_object,
+        _reexport_local_names_with_int,
     ],
 )
 def test_facts_from_dict_rejects_bad_shapes(mutate: Callable[[dict[str, Any]], None]) -> None:

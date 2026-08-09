@@ -12,7 +12,13 @@ from typing import Final
 
 import rustworkx as rx
 
-GRAPH_SCHEMA_VERSION: Final = 1
+from acquit.graph.resolvers.checkers import ReexportTier
+
+# Bump whenever the canonical (nodes, edges) form changes meaning: hashes
+# anchor witnesses and replay, so old graphs must not verify against new
+# semantics. Version 2 added INIT_REEXPORT edges for pure re-exporter inits
+# (ADR 0008); edge kinds are hashed.
+GRAPH_SCHEMA_VERSION: Final = 2
 
 
 class NodeKind(StrEnum):
@@ -32,6 +38,13 @@ class EdgeKind(StrEnum):
     CONFTEST_SCOPE = "conftest-scope"
     PLUGIN = "plugin"
     STUB_OF = "stub-of"
+    # An outgoing import edge of a proven pure re-exporter __init__.py: the
+    # dependency is real but import-time-only for consumers bound to other
+    # symbols (ADR 0008). Inert by construction in this wave: selection
+    # treats every edge kind alike, so these participate in reachability
+    # exactly like IMPORTS and closures keep their full over-approximation;
+    # only a later impact rule may treat them conditionally.
+    INIT_REEXPORT = "init-reexport"
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,3 +77,8 @@ class BuiltGraph:
     index_of: Mapping[str, int]
     nodes: Mapping[str, Node]
     graph_hash: str
+    # Proven pure re-exporter inits and the whitelist tier each passed. The
+    # INIT_REEXPORT edge kind already names the init a path crosses (it is
+    # the edge source); this map carries the tier a wave-2 witness must
+    # re-verify at both revisions. Derivable data stays out of the hash.
+    reexport_inits: Mapping[str, ReexportTier] = field(default_factory=dict)

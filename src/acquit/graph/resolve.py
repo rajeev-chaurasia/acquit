@@ -72,17 +72,34 @@ def _resolve_from(
             acc.edges.add((path, EdgeKind.IMPORTS))
 
 
-def _resolve_relative(stmt: ImportStmt, importer_path: str, idx: ModuleIndex, acc: _Acc) -> None:
+def anchored_bases(
+    module: str, level: int, importer_path: str, idx: ModuleIndex
+) -> tuple[tuple[str, ...], bool]:
+    """Anchor a from-import base against every package identity of the importer.
+
+    Returns the absolute dotted candidates and whether any identity puts the
+    level beyond its root, which the caller must treat as broken (fail
+    closed). Level zero passes the module through untouched.
+    """
+    if level == 0:
+        return ((module,), False)
     identities = _package_parts(importer_path, idx.roots)
-    anchored: set[str] = set()
+    bases: list[str] = []
     beyond_root = not identities
     for parts in identities:
-        keep = len(parts) - stmt.level + 1
+        keep = len(parts) - level + 1
         if keep <= 0:
             beyond_root = True
             continue
         anchor = ".".join(parts[:keep])
-        anchored.add(f"{anchor}.{stmt.module}" if stmt.module else anchor)
+        base = f"{anchor}.{module}" if module else anchor
+        if base not in bases:
+            bases.append(base)
+    return tuple(bases), beyond_root
+
+
+def _resolve_relative(stmt: ImportStmt, importer_path: str, idx: ModuleIndex, acc: _Acc) -> None:
+    anchored, beyond_root = anchored_bases(stmt.module or "", stmt.level, importer_path, idx)
     if beyond_root:
         # Recorded even when another root anchors, so a level that is illegal
         # under any identity still taints the importer (fail closed).
