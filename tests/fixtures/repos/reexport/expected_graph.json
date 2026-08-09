@@ -11,6 +11,36 @@
       "imports"
     ],
     [
+      "obs/__init__.py",
+      "obs/__init__.py",
+      "init-reexport"
+    ],
+    [
+      "obs/__init__.py",
+      "obs/gadget.py",
+      "init-reexport"
+    ],
+    [
+      "obs/__init__.py",
+      "obs/quiet.py",
+      "init-reexport"
+    ],
+    [
+      "obs/__init__.py",
+      "obs/watcher.py",
+      "init-reexport"
+    ],
+    [
+      "obs/watcher.py",
+      "obs/__init__.py",
+      "imports"
+    ],
+    [
+      "obs/watcher.py",
+      "obs/quiet.py",
+      "imports"
+    ],
+    [
       "pkg/__init__.py",
       "pkg/__init__.py",
       "init-reexport"
@@ -38,6 +68,16 @@
     [
       "test_legacy.py",
       "legacy/__init__.py",
+      "imports"
+    ],
+    [
+      "test_obs.py",
+      "obs/__init__.py",
+      "imports"
+    ],
+    [
+      "test_obs.py",
+      "obs/gadget.py",
       "imports"
     ],
     [
@@ -69,6 +109,26 @@
     },
     {
       "kind": "module",
+      "path": "obs/__init__.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "obs/gadget.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "obs/quiet.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "obs/watcher.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
       "path": "pkg/__init__.py",
       "tainted": false
     },
@@ -90,6 +150,11 @@
     {
       "kind": "test",
       "path": "test_legacy.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "test_obs.py",
       "tainted": false
     },
     {

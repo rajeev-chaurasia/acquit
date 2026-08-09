@@ -5,7 +5,7 @@
     "expect_mode": "selective",
     "expect_rules": [],
     "expect_selected_contains": ["test_console.py", "test_table.py"],
-    "expect_skipped": ["test_legacy.py"]
+    "expect_skipped": ["test_legacy.py", "test_obs.py"]
   },
   {
     "name": "change_inert_sibling",
@@ -13,7 +13,7 @@
     "expect_mode": "selective",
     "expect_rules": [],
     "expect_selected_contains": ["test_console.py", "test_table.py"],
-    "expect_skipped": ["test_legacy.py"]
+    "expect_skipped": ["test_legacy.py", "test_obs.py"]
   },
   {
     "name": "change_pure_init",
@@ -21,7 +21,7 @@
     "expect_mode": "selective",
     "expect_rules": [],
     "expect_selected_contains": ["test_console.py", "test_table.py"],
-    "expect_skipped": ["test_legacy.py"]
+    "expect_skipped": ["test_legacy.py", "test_obs.py"]
   },
   {
     "name": "change_behind_impure_init",
@@ -29,7 +29,7 @@
     "expect_mode": "selective",
     "expect_rules": [],
     "expect_selected_contains": ["test_legacy.py"],
-    "expect_skipped": ["test_console.py", "test_table.py"]
+    "expect_skipped": ["test_console.py", "test_obs.py", "test_table.py"]
   },
   {
     "name": "narrow_inert_sibling_body_edit",
@@ -43,7 +43,7 @@
     "expect_mode": "selective",
     "expect_rules": [],
     "expect_selected_contains": ["test_table.py"],
-    "expect_skipped": ["test_console.py", "test_legacy.py"],
+    "expect_skipped": ["test_console.py", "test_legacy.py", "test_obs.py"],
     "expect_narrowed": { "test_console.py": ["pkg/table.py"] },
     "expect_selected_reasons": {
       "test_table.py": [
@@ -64,7 +64,7 @@
     "expect_mode": "selective",
     "expect_rules": [],
     "expect_selected_contains": ["test_console.py", "test_table.py"],
-    "expect_skipped": ["test_legacy.py"],
+    "expect_skipped": ["test_legacy.py", "test_obs.py"],
     "expect_narrowed": {},
     "expect_selected_reasons": {
       "test_console.py": ["narrowing-refused:bound-names-differ"]
@@ -77,12 +77,28 @@
     "expect_mode": "selective",
     "expect_rules": [],
     "expect_selected_contains": ["test_console.py", "test_table.py"],
-    "expect_skipped": ["test_legacy.py"],
+    "expect_skipped": ["test_legacy.py", "test_obs.py"],
     "expect_narrowed": {},
     "expect_selected_reasons": {
       "test_table.py": [
         "reachable-from:pkg/console.py",
         "narrowing-refused:not-import-inert"
+      ]
+    }
+  },
+  {
+    "name": "narrow_refuses_non_inert_observer",
+    "narrowing": true,
+    "changed": ["obs/quiet.py"],
+    "expect_mode": "selective",
+    "expect_rules": [],
+    "expect_selected_contains": ["test_obs.py"],
+    "expect_skipped": ["test_console.py", "test_legacy.py", "test_table.py"],
+    "expect_narrowed": {},
+    "expect_selected_reasons": {
+      "test_obs.py": [
+        "reachable-from:obs/quiet.py",
+        "narrowing-refused:non-inert-observer"
       ]
     }
   },
@@ -93,7 +109,7 @@
     "expect_mode": "selective",
     "expect_rules": [],
     "expect_selected_contains": ["test_console.py", "test_table.py"],
-    "expect_skipped": ["test_legacy.py"],
+    "expect_skipped": ["test_legacy.py", "test_obs.py"],
     "expect_narrowed": {},
     "expect_selected_reasons": {
       "test_console.py": ["narrowing-refused:changed-init"],

@@ -23,15 +23,21 @@ Import-time-only means the file sits in the closure but outside the semantic
 closure (the closure with the pure re-exporter inits' edges removed) at base
 and at head: every route from the test to the file crosses a proven pure
 `__init__.py`. Each intersecting file must additionally be modified in place,
-pass the import-inertness whitelist at both revisions, and keep its
-module-level bound-name set and resolved outgoing edge set identical across
-them; every init the narrowing relies on must prove pure at both revisions
-with the same tier. The witness records the per-file evidence (base and head
-blob shas, the inits crossed), and `acquit replay` rebuilds both commits
-cache-free and re-derives every condition with the production checkers
-before the skip is honored. Closures never shrink; a failed condition, a
-tainted closure, a changed init, an added or renamed or deleted file, or a
-working-tree run all decline into the disjointness behavior above.
+pass the import-inertness whitelist at both revisions, and keep its binding
+surface (module-level bound-name set plus literal `__all__` content) and
+resolved outgoing edge set identical across them; every init the narrowing
+relies on must prove pure at both revisions with the same tier; and every
+module in the test's import-time-only region that can reach the file must
+itself pass the inertness whitelist at both revisions, because bound values,
+`__all__` listings, and statement order are import-time behavior that a
+non-inert observer in the region can convert into effects reaching the test.
+The witness records the per-file evidence (base and head blob shas, the
+inits crossed, the observer-region accounting), and `acquit replay` rebuilds
+both commits cache-free and re-derives every condition with the production
+checkers before the skip is honored. Closures never shrink; a failed
+condition, a tainted closure, a changed init, an added or renamed or deleted
+file, or a working-tree run all decline into the disjointness behavior
+above.
 
 ## Assumptions
 

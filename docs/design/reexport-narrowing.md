@@ -78,7 +78,12 @@ intersecting file:
 1. The file's diff status is modified in place. Added, deleted, and renamed
    files never narrow; there is no pair of revisions to compare.
 2. The file passes the inertness whitelist at base and at head.
-3. The file's module-level bound-name set is identical at base and head.
+3. The file's binding surface is identical at base and head: the
+   module-level bound-name set, and the literal `__all__` value as a tuple
+   of strings (absent is distinct from empty; a value that cannot be pinned
+   to exactly one literal assignment compares as unprovable). Added by the
+   adversarial revision below; the original condition compared bound names
+   only.
 4. The file's resolved outgoing edge set (imports and literal dynamic
    imports, resolved against each revision's index) is identical at base
    and head.
@@ -86,14 +91,24 @@ intersecting file:
    passes the pure re-exporter check at base and at head.
 6. The file is outside the test's semantic closure in both the base and
    head graphs.
+7. Every module in the test's import-time-only region (closure minus
+   semantic closure, computed in both graphs) that can reach the changed
+   file, by directed reachability over any edge kind in the respective
+   graph, passes the inertness whitelist at that revision. The observers
+   are unchanged files, so one content check per revision's blob suffices,
+   but region membership can differ between the graphs, so both are
+   checked. Added by the adversarial revision below.
 
-Conditions 3 and 4 are relational: they compare revisions, not a single
-tree. The counterexample gallery below shows why per-revision checking is
+Conditions 3, 4, and 7 are relational or cross-file: they compare
+revisions or vet files the diff never touched. The counterexample gallery
+below shows why per-revision checking of the changed file alone is
 insufficient no matter how strict the whitelist is.
 
 The witnesses document gains a `narrowed` section per witness listing each
 intersecting file with its base and head blob shas, the init paths crossed,
-and the checker version. Witness schema becomes `acquit/witnesses-v2`;
+and the condition 7 observer accounting (`region_count`, plus
+`region_hash`, a sha256 over the sorted path-and-head-blob listing of the
+region files checked). Witness schema becomes `acquit/witnesses-v2`;
 documents with an empty `narrowed` section are byte-compatible with v1
 semantics. Narrowing requires a real base commit: working-tree selections
 (no base sha to rebuild) never narrow.
@@ -111,7 +126,10 @@ witness from first principles. For a narrowed witness it must additionally:
 - re-run the inertness whitelist on every intersecting file at both
   revisions, and recompute conditions 3 and 4 from both trees;
 - recompute the semantic closure in both graphs and require the file
-  outside it in both.
+  outside it in both;
+- re-derive the condition 7 region and its observers with the production
+  judge and require the recorded `region_count` and `region_hash` to match
+  exactly; a tampered region membership is a replay mismatch.
 
 Replay uses its own current checker, not the recorded one. If the checker
 has since become stricter and now rejects a file, the witness fails replay,
@@ -567,3 +585,95 @@ Rates above are from a single run against the census clones at their
 2026-08 HEADs. The shipped checker will be rebuilt inside
 `graph/resolvers/` with the same tests promoted to real fixtures; nothing
 from the prototype is imported.
+
+## Revision after adversarial review
+
+An adversarial pass on the shipped implementation constructed five unsafe
+narrowed skips, each a real two-revision repository where every original
+condition held, the skip was narrowed, and the skipped test's outcome
+genuinely differed between the revisions. They live as regression guards
+in `tests/adversarial/test_narrowing_claims.py`:
+
+1. NARROW-1: a constant flip in a whitelist-inert sibling (`LIMIT = 1` to
+   `LIMIT = 2`) is read at import time by an unchanged sibling that raises
+   on the new value. The reader is reachable only through the pure init,
+   so the changed file stays outside the victim's semantic closure in both
+   graphs, yet importing the package fails at head for every consumer.
+2. NARROW-2: the silent variant. The unchanged sibling copies the flipped
+   constant into a registry at import time; the victim reads the registry
+   at runtime through its own unchanged home module. Nothing raises; the
+   narrowed skip simply hides a failing test.
+3. NARROW-3: `__all__` is just another literal assignment to the whitelist
+   and the bound-name collector, but its value is import-time behavior: an
+   unchanged sibling star-importing the changed file raises AttributeError
+   at head because the new listing names a missing attribute.
+4. NARROW-4: condition 4 compares the resolved edge set, which erases
+   statement order. Reordering two imports inside the inert file reorders
+   the unchanged siblings' import-time side effects, and the victim
+   observes the order through its own home module at runtime.
+5. NARROW-5: condition 5 only vets inits whose re-export edges the route
+   crosses. An impure init below the pure one is an ordinary module on the
+   route, free to act on the changed value at import time. The changed
+   file itself is a plain inert submodule.
+
+The corollary also guarded: a def-body edit is harmless only until an
+unchanged module in the region calls the def at import time, converting
+the body into import-time behavior.
+
+The shared mechanism, precisely: conditions 2 through 4 pin what the
+changed file binds, not what its bound values are, and values, `__all__`
+listings, and statement order are import-time behavior. Condition 6 asks
+whether the test reaches the changed file semantically; nothing asked
+whether the changed file's import-time effects reach the test. The
+missing direction is exactly the import-time-only region: every module
+there executes during the test's import cascade, downstream of the
+changed file when it can reach it, and a non-inert module there can act
+on anything the changed file produced.
+
+Condition 7 closes the direction: every region member that can reach the
+changed file must itself pass the inertness whitelist, in both graphs,
+each at its own revision. An inert observer can only bind names from the
+changed file's values, and nothing downstream can see those private
+bindings without itself being a non-inert observer or holding a semantic
+edge. Star importers never pass the whitelist, so `__all__` content is
+structurally unobservable from a narrowed region; import-time callers and
+registry writers reject on the call expression; the impure nested init of
+NARROW-5 rejects on its conditional. Condition 3's strengthening to
+binding-surface equality (bound names plus literal `__all__` content) is
+defense in depth for NARROW-3 and catches the listing change even before
+the region is consulted.
+
+Refusal reasons: `narrowing-refused:non-inert-observer` (condition 7) and
+`narrowing-refused:all-listing-differs` (condition 3). The witness records
+the observer accounting per intersecting file: `region_count` and
+`region_hash` (sha256 over the sorted path-and-head-blob listing of the
+region files checked). Replay re-derives condition 7 with the production
+judge; tampering with region membership is a replay mismatch. Schemas
+evolve in place, per the repository's one-format rule.
+
+### Re-measured applicability
+
+Same census clones (2026-08 HEADs), production checker this time, observer
+sets approximated statically: for a changed submodule f of the fat
+package, the observers are every module in the fat init's import closure
+that can reach f (any edge kind), the init itself excluded. This ignores
+the per-test home exclusion, so it slightly over-counts observers and
+under-counts applicability.
+
+| Population | Submodules | Inert | Inert and all-inert observers |
+| --- | --- | --- | --- |
+| 15 pure-init repos, pooled | 1199 | 304 (25.4%) | 213 (17.8%, measured) |
+| The 9 whose init re-exports | 464 | 122 (26.3%) | 31 (6.7%, measured) |
+| The 6 vacuous inits | 735 | 182 (24.8%) | 182 (24.8%, trivially) |
+
+Median per-repo qualifying rate across the 15: 10 percent. The pooled row
+flatters: 6 of the 15 fat inits import nothing (empty or metadata-only
+inits, four of them test-package or dummy-server inits), so their observer
+sets are empty vacuously and there is no narrowing route through them in
+the first place. The honest headline is the middle row: on repos where
+narrowing can actually engage, condition 7 cuts the qualifying share from
+roughly a quarter of submodules to under 7 percent, because most fat
+packages contain at least one non-inert module that imports through the
+package and therefore observes every sibling. That is the price of the
+region being part of the trusted surface, and it is worth paying: the
+alternative was five demonstrated unsafe skips.
