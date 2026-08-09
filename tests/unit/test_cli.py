@@ -280,12 +280,13 @@ def test_internal_failure_writes_run_all_docs_and_exits_internal(
     )
 
     assert exit_code == ExitCode.INTERNAL
-    # Outside a repository every git call is a ref-resolution failure.
+    # Outside a repository every git call is a ref-resolution failure,
+    # which carries R016 rather than the R018 catch-all.
     assert "cannot resolve the requested refs, running all tests" in capsys.readouterr().err
     report = _read(report_path)
     assert report["decision"]["mode"] == "run-all"
     (finding,) = report["decision"]["findings"]
-    assert finding["rule"] == "R018"
+    assert finding["rule"] == "R016"
     assert finding["reason"]
     selection = _read(selection_path)
     assert selection["mode"] == "run-all"
@@ -308,7 +309,9 @@ def test_select_with_a_bad_ref_names_the_ref_problem(
     assert "acquit: cannot resolve the requested refs, running all tests:" in err
     assert "internal error" not in err
     assert _read(tmp_path / "selection.json")["mode"] == "run-all"
-    assert _read(tmp_path / "report.json")["decision"]["mode"] == "run-all"
+    report = _read(tmp_path / "report.json")
+    assert report["decision"]["mode"] == "run-all"
+    assert report["decision"]["findings"][0]["rule"] == "R016"
 
 
 def test_analyze_prints_graph_health(

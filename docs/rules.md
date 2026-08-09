@@ -198,12 +198,12 @@ subject at run time.
 - Trigger: the diff or the base ref cannot be obtained, most commonly a
   shallow clone that never fetched the base.
 - Scope: global.
-- How it surfaces: R016 reserves the rule id in the table, but in the
-  current CLI this failure travels the fail-closed error path instead of the
-  policy engine: `select` prints
+- How it surfaces: this failure travels the fail-closed error path rather
+  than the policy engine: `select` prints
   `acquit: cannot resolve the requested refs, running all tests: {detail}`,
-  writes a run-all selection plus a report whose finding carries R018, and
-  exits 3. Either way the answer is the same: run everything.
+  writes a run-all selection plus a report whose finding carries R016, and
+  exits 3. Any other unexpected failure carries R018 instead. Either way the
+  answer is the same: run everything.
 
 ## R017: corrupt or version-mismatched cache
 

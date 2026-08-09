@@ -231,8 +231,11 @@ def _run_replay(args: argparse.Namespace) -> int:
 
 
 def _write_failure_docs(args: argparse.Namespace, error: Exception) -> None:
+    # Git failures are R016 (the diff could not be established); everything
+    # else is the R018 catch-all. Both converge on run-all either way.
+    rule = RuleId.DIFF_UNAVAILABLE if isinstance(error, VcsError) else RuleId.INTERNAL_ERROR
     finding = Finding(
-        rule=RuleId.INTERNAL_ERROR,
+        rule=rule,
         scope=Scope(kind=ScopeKind.GLOBAL),
         subject="acquit",
         reason=str(error) or type(error).__name__,
