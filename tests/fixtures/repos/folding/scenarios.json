@@ -1,0 +1,35 @@
+[
+  {
+    "name": "change_folded_registry_target_selects_consumer",
+    "changed": ["csv_impl.py"],
+    "expect_mode": "selective",
+    "expect_rules": ["R007"],
+    "expect_selected_contains": ["tests/test_registry.py"],
+    "expect_skipped": ["tests/test_loop.py"],
+    "expect_always_run": {
+      "tests/test_params.py": "R007:params.py"
+    }
+  },
+  {
+    "name": "change_folded_loop_target_selects_consumer",
+    "changed": ["alpha.py"],
+    "expect_mode": "selective",
+    "expect_rules": ["R007"],
+    "expect_selected_contains": ["tests/test_loop.py"],
+    "expect_skipped": ["tests/test_registry.py"],
+    "expect_always_run": {
+      "tests/test_params.py": "R007:params.py"
+    }
+  },
+  {
+    "name": "change_unrelated_folded_sibling_skips_the_rest",
+    "changed": ["json_impl.py"],
+    "expect_mode": "selective",
+    "expect_rules": ["R007"],
+    "expect_selected_contains": ["tests/test_registry.py"],
+    "expect_skipped": ["tests/test_loop.py"],
+    "expect_always_run": {
+      "tests/test_params.py": "R007:params.py"
+    }
+  }
+]

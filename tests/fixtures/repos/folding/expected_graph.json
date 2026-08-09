@@ -1,0 +1,116 @@
+{
+  "edges": [
+    [
+      "loopload.py",
+      "alpha.py",
+      "dynamic-import"
+    ],
+    [
+      "loopload.py",
+      "beta.py",
+      "dynamic-import"
+    ],
+    [
+      "loopload.py",
+      "ext:importlib",
+      "imports"
+    ],
+    [
+      "params.py",
+      "ext:importlib",
+      "imports"
+    ],
+    [
+      "registry.py",
+      "csv_impl.py",
+      "dynamic-import"
+    ],
+    [
+      "registry.py",
+      "ext:importlib",
+      "imports"
+    ],
+    [
+      "registry.py",
+      "json_impl.py",
+      "dynamic-import"
+    ],
+    [
+      "tests/test_loop.py",
+      "loopload.py",
+      "imports"
+    ],
+    [
+      "tests/test_params.py",
+      "params.py",
+      "imports"
+    ],
+    [
+      "tests/test_registry.py",
+      "registry.py",
+      "imports"
+    ]
+  ],
+  "nodes": [
+    {
+      "kind": "resource",
+      "path": ".gitignore",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "alpha.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "beta.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "csv_impl.py",
+      "tainted": false
+    },
+    {
+      "kind": "external",
+      "path": "ext:importlib",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "json_impl.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "loopload.py",
+      "tainted": false
+    },
+    {
+      "kind": "module",
+      "path": "params.py",
+      "tainted": true
+    },
+    {
+      "kind": "module",
+      "path": "registry.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_loop.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_params.py",
+      "tainted": false
+    },
+    {
+      "kind": "test",
+      "path": "tests/test_registry.py",
+      "tainted": false
+    }
+  ]
+}

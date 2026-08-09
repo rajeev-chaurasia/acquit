@@ -1,6 +1,10 @@
 # ADR 0009: constant folding for non-literal dynamic imports
 
-Status: proposed
+Status: accepted
+
+Implemented in `graph/resolvers/folding.py` as the seam's second resident:
+the v1 grammar as specified, the prototype gallery promoted to committed
+tests, cache format 8, graph schema 3.
 
 ## Context
 

@@ -41,10 +41,12 @@ above.
 
 ## Assumptions
 
-- A1. First-party code acquires modules through static import statements or
-  literal dynamic imports. Everything else we can detect (non-literal
-  importlib, exec, sys.path and sys.modules games, opaque module __getattr__,
-  unparseable files) fails closed through the ADR 0001 rule table. Detection
+- A1. First-party code acquires modules through static import statements,
+  literal dynamic imports, or dynamic imports whose argument provably folds
+  to a finite literal set (ADR 0009). Everything else we can detect
+  (non-literal importlib, exec, sys.path and sys.modules games, opaque
+  module __getattr__, unparseable files) fails closed through the ADR 0001
+  rule table. Detection
   completeness is a tested claim, not an axiom: the soundness oracle runs real
   pytest under an import recorder and asserts every runtime-observed
   first-party import edge is inside the static closure.

@@ -104,6 +104,14 @@ subject at run time.
 - Reason: `{path} imports a module chosen at runtime, so its true dependencies are unknown.`
 - Example: `plugins.py` calls `importlib.import_module(name)` on a computed
   string. Every test whose closure reaches `plugins.py` always runs.
+- Narrowed by the constant folder
+  ([ADR 0009](adr/0009-dynamic-import-constant-folding.md)): a site whose
+  argument provably evaluates to a finite set of names (a loop over a
+  literal tuple, an all-literal constant, a literal dict registry, a
+  `__package__` or `__name__` anchor) becomes `DYNAMIC_IMPORT` edges
+  instead of a suspect, so R007 stops firing on it. Any unresolved part
+  declines the whole site into today's taint; the full pattern list and
+  every counterexample live in the ADR and its design doc.
 
 ## R008: sys.path mutation
 
