@@ -19,12 +19,8 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-<<<<<<< Updated upstream
-      - uses: googleapis/release-please-action@v5
-=======
       - id: release
-        uses: googleapis/release-please-action@v4
->>>>>>> Stashed changes
+        uses: googleapis/release-please-action@v5
         with:
           release-type: python
 
