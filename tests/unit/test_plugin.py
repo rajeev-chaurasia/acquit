@@ -19,16 +19,23 @@ GITIGNORE = "selection.json\n__pycache__/\n*.pyc\n.pytest_cache/\n"
 
 
 def _write_selection(
-    pytester: pytest.Pytester, mode: str, skip: list[str], fingerprint: str | None
+    pytester: pytest.Pytester,
+    mode: str,
+    skip: list[str],
+    fingerprint: str | None,
+    name: str = "selection.json",
+    artifacts: dict[str, str | None] | None = None,
 ) -> str:
-    document = {
+    document: dict[str, object] = {
         "schema": SELECTION_SCHEMA,
         "mode": mode,
         "graph_hash": "0" * 64,
         "tree": {"head_sha": None, "fingerprint": fingerprint},
         "skip": [{"path": path, "witness": f"w-{index:06d}"} for index, path in enumerate(skip, 1)],
     }
-    path = pytester.path / "selection.json"
+    if artifacts is not None:
+        document["artifacts"] = artifacts
+    path = pytester.path / name
     path.write_text(json.dumps(document), encoding="utf-8")
     return str(path)
 
@@ -72,6 +79,38 @@ def test_stale_fingerprint_refuses_the_document(
     result = pytester.runpytest_inprocess()
     result.assert_outcomes(passed=2)
     result.stdout.fnmatch_lines(["*running every test*"])
+
+
+def test_the_selection_file_itself_is_exempt_from_the_fingerprint(
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pytester.makepyfile(**TEST_FILES)
+    fingerprint = _git_tree(pytester)
+    # Not gitignored: without the self-exemption this write drifts the tree.
+    selection = _write_selection(
+        pytester, "selective", ["test_alpha.py"], fingerprint, name="acquit-selection.json"
+    )
+    monkeypatch.setenv(ENV_SELECTION_FILE, selection)
+    result = pytester.runpytest_inprocess()
+    result.assert_outcomes(passed=1, deselected=1)
+
+
+def test_recorded_artifacts_are_exempt_from_the_fingerprint(
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pytester.makepyfile(**TEST_FILES)
+    fingerprint = _git_tree(pytester)
+    (pytester.path / "acquit-report.json").write_text("{}", encoding="utf-8")
+    selection = _write_selection(
+        pytester,
+        "selective",
+        ["test_alpha.py"],
+        fingerprint,
+        artifacts={"report": "acquit-report.json", "selection": None, "witnesses": None},
+    )
+    monkeypatch.setenv(ENV_SELECTION_FILE, selection)
+    result = pytester.runpytest_inprocess()
+    result.assert_outcomes(passed=1, deselected=1)
 
 
 def test_missing_selection_file_runs_everything_without_warning(

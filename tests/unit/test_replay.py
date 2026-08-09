@@ -162,6 +162,64 @@ def test_replay_refuses_working_tree_reports(
     assert "replay needs a commit" in capsys.readouterr().err
 
 
+@pytest.fixture
+def default_named_docs(scenario_repo: ScenarioRepo, tmp_path: Path) -> Path:
+    """One select run whose three documents carry the default names."""
+    out = tmp_path / "docs"
+    out.mkdir()
+    with pytest.MonkeyPatch.context() as patcher:
+        patcher.chdir(scenario_repo.path)
+        exit_code = main(
+            [
+                "select",
+                "--base",
+                scenario_repo.base,
+                "--head",
+                scenario_repo.alpha_change,
+                "--report",
+                str(out / "acquit-report.json"),
+                "--selection",
+                str(out / "acquit-selection.json"),
+                "--witnesses",
+                str(out / "acquit-witnesses.json"),
+            ]
+        )
+    assert exit_code == ExitCode.OK
+    return out
+
+
+def test_replay_defaults_resolve_beside_the_report(
+    default_named_docs: Path,
+    scenario_repo: ScenarioRepo,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # cwd is the repo, the documents live elsewhere: siblings must be found.
+    monkeypatch.chdir(scenario_repo.path)
+
+    exit_code = main(["replay", str(default_named_docs / "acquit-report.json")])
+
+    assert exit_code == ExitCode.OK
+    assert capsys.readouterr().out.strip() == "replay ok: 3 witnesses verified"
+
+
+def test_replay_cross_checks_the_default_selection_sibling(
+    default_named_docs: Path,
+    scenario_repo: ScenarioRepo,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    document = _load(default_named_docs / "acquit-selection.json")
+    document["skip"].append({"path": "tests/test_alpha.py", "witness": "w-000099"})
+    _dump(document, default_named_docs / "acquit-selection.json")
+    monkeypatch.chdir(scenario_repo.path)
+
+    exit_code = main(["replay", str(default_named_docs / "acquit-report.json")])
+
+    assert exit_code == ExitCode.REPLAY_MISMATCH
+    assert "but the report does not" in capsys.readouterr().err
+
+
 def test_replay_missing_witnesses_file_is_a_usage_error(
     select_docs: tuple[Path, Path],
     scenario_repo: ScenarioRepo,

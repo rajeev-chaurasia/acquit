@@ -211,13 +211,15 @@ def _dirty_paths(root: Path) -> frozenset[str]:
     return frozenset(dirty)
 
 
-def working_tree_fingerprint(root: Path) -> str:
+def working_tree_fingerprint(root: Path, exclude: frozenset[str] = frozenset()) -> str:
     """Fingerprint the working tree at the repository root.
 
     Clean tracked files reuse their index blob shas; dirty and untracked files
     are hashed from disk. Unreadable or vanished files are omitted, and both
     the pipeline and the pytest plugin run this same code, so any divergence
     between select time and test time surfaces as a mismatch, never a skip.
+    exclude names repo-relative posix paths (acquit's own output documents)
+    left out on both sides, so a selection cannot invalidate itself.
     """
     raw = _run_git_text(["ls-files", "-z", "--cached", "--others", "--exclude-standard"], root)
     listing = tuple(entry for entry in raw.split("\0") if entry)
@@ -225,7 +227,7 @@ def working_tree_fingerprint(root: Path) -> str:
     dirty = _dirty_paths(root)
     shas: dict[str, str] = {}
     for path in listing:
-        if path in gitlinks:
+        if path in gitlinks or path in exclude:
             continue
         sha = index_shas.get(path) if path not in dirty else None
         if sha is None:

@@ -171,16 +171,29 @@ def build_witnesses_doc(decision: Decision, graph_hash: str) -> dict[str, Any]:
 
 
 def build_selection_doc(
-    decision: Decision, graph_hash: str, head_sha: str | None, tree_fingerprint: str
+    decision: Decision,
+    graph_hash: str,
+    head_sha: str | None,
+    tree_fingerprint: str,
+    artifacts: Mapping[str, str | None] | None = None,
 ) -> dict[str, Any]:
     """The document the pytest plugin consumes. It lists provably skippable files
     bound to the analyzed tree; anything not listed runs, so unknown files run
-    by default, and a tree that no longer matches the fingerprint runs everything."""
+    by default, and a tree that no longer matches the fingerprint runs everything.
+    artifacts records where select wrote its three documents, repo-relative when
+    they land inside the repo and null otherwise, so verifiers can exempt them
+    from the tree fingerprint."""
+    recorded: dict[str, str | None] = (
+        {"report": None, "selection": None, "witnesses": None}
+        if artifacts is None
+        else dict(artifacts)
+    )
     return {
         "schema": SELECTION_SCHEMA,
         "mode": str(decision.mode),
         "graph_hash": graph_hash,
         "tree": {"head_sha": head_sha, "fingerprint": tree_fingerprint},
+        "artifacts": recorded,
         "skip": [{"path": entry.path, "witness": entry.witness_id} for entry in decision.skipped],
     }
 

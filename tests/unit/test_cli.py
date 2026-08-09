@@ -44,6 +44,39 @@ def _skip_paths(selection: dict[str, Any]) -> list[str]:
     return [entry["path"] for entry in selection["skip"]]
 
 
+def _run_pytest(cwd: Path, selection: Path) -> subprocess.CompletedProcess[str]:
+    """Run real pytest in a subprocess so the installed acquit plugin applies."""
+    env = dict(os.environ)
+    env[ENV_SELECTION_FILE] = str(selection)
+    env["PYTHONPATH"] = str(cwd)
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    return subprocess.run(
+        [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"],
+        cwd=cwd,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+
+
+def _two_module_history(repo_builder: RepoBuilder, gitignore: str) -> tuple[str, str]:
+    """Commit a two-module project, change one module, and return both shas."""
+    repo_builder.write(
+        {
+            ".gitignore": gitignore,
+            "mod.py": "X = 1\n",
+            "other.py": "Y = 1\n",
+            "tests/test_mod.py": module_test_source("mod"),
+            "tests/test_other.py": module_test_source("other"),
+        }
+    )
+    base = repo_builder.commit("base")
+    repo_builder.write({"mod.py": "X = 2\n"})
+    head = repo_builder.commit("head")
+    return base, head
+
+
 def test_select_writes_report_selection_and_witnesses(
     scenario_repo: ScenarioRepo,
     tmp_path: Path,
@@ -155,18 +188,7 @@ def test_selection_file_drives_pytest_deselection(
 ) -> None:
     # The selection binds the analyzed tree, so pytest must run on that tree:
     # a fresh repo whose head commit is exactly what select analyzed.
-    repo_builder.write(
-        {
-            ".gitignore": "out/\n__pycache__/\n*.pyc\n.pytest_cache/\n",
-            "mod.py": "X = 1\n",
-            "other.py": "Y = 1\n",
-            "tests/test_mod.py": module_test_source("mod"),
-            "tests/test_other.py": module_test_source("other"),
-        }
-    )
-    base = repo_builder.commit("base")
-    repo_builder.write({"mod.py": "X = 2\n"})
-    head = repo_builder.commit("head")
+    base, head = _two_module_history(repo_builder, "out/\n__pycache__/\n*.pyc\n.pytest_cache/\n")
     out = repo_builder.path / "out"
     out.mkdir()
     monkeypatch.chdir(repo_builder.path)
@@ -186,22 +208,52 @@ def test_selection_file_drives_pytest_deselection(
     assert main(args) == ExitCode.OK
     assert _skip_paths(_read(out / "selection.json")) == ["tests/test_other.py"]
 
-    env = dict(os.environ)
-    env[ENV_SELECTION_FILE] = str(out / "selection.json")
-    env["PYTHONPATH"] = str(repo_builder.path)
-    env["PYTHONDONTWRITEBYTECODE"] = "1"
-    completed = subprocess.run(
-        [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"],
-        cwd=repo_builder.path,
-        env=env,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    )
+    completed = _run_pytest(repo_builder.path, out / "selection.json")
 
     assert completed.returncode == 0, completed.stdout + completed.stderr
     assert "1 passed" in completed.stdout
     assert "1 deselected" in completed.stdout
+
+
+def test_default_output_paths_do_not_invalidate_the_selection(
+    repo_builder: RepoBuilder, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The local loop: select with default output paths drops three untracked
+    # documents into the repo, and pytest must still honor the selection.
+    base, _ = _two_module_history(repo_builder, "__pycache__/\n*.pyc\n.pytest_cache/\n")
+    monkeypatch.chdir(repo_builder.path)
+
+    assert main(["select", "--base", base]) == ExitCode.OK
+    selection = _read(repo_builder.path / "acquit-selection.json")
+    assert _skip_paths(selection) == ["tests/test_other.py"]
+    assert selection["artifacts"] == {
+        "report": "acquit-report.json",
+        "selection": "acquit-selection.json",
+        "witnesses": "acquit-witnesses.json",
+    }
+
+    completed = _run_pytest(repo_builder.path, repo_builder.path / "acquit-selection.json")
+
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    assert "1 passed" in completed.stdout
+    assert "1 deselected" in completed.stdout
+
+
+def test_a_foreign_untracked_file_still_refuses_the_selection(
+    repo_builder: RepoBuilder, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Only select's own outputs are exempt; any other new file is tree drift.
+    base, _ = _two_module_history(repo_builder, "__pycache__/\n*.pyc\n.pytest_cache/\n")
+    monkeypatch.chdir(repo_builder.path)
+    assert main(["select", "--base", base]) == ExitCode.OK
+
+    (repo_builder.path / "scratch.txt").write_text("drift\n", encoding="utf-8")
+    completed = _run_pytest(repo_builder.path, repo_builder.path / "acquit-selection.json")
+
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    assert "2 passed" in completed.stdout
+    assert "tree fingerprint mismatch" in completed.stdout
+    assert "running every test" in completed.stdout
 
 
 def test_internal_failure_writes_run_all_docs_and_exits_internal(
@@ -228,7 +280,8 @@ def test_internal_failure_writes_run_all_docs_and_exits_internal(
     )
 
     assert exit_code == ExitCode.INTERNAL
-    assert "internal error" in capsys.readouterr().err
+    # Outside a repository every git call is a ref-resolution failure.
+    assert "cannot resolve the requested refs, running all tests" in capsys.readouterr().err
     report = _read(report_path)
     assert report["decision"]["mode"] == "run-all"
     (finding,) = report["decision"]["findings"]
@@ -238,6 +291,24 @@ def test_internal_failure_writes_run_all_docs_and_exits_internal(
     assert selection["mode"] == "run-all"
     assert selection["skip"] == []
     assert selection["tree"] == {"head_sha": None, "fingerprint": None}
+
+
+def test_select_with_a_bad_ref_names_the_ref_problem(
+    scenario_repo: ScenarioRepo,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    monkeypatch.chdir(scenario_repo.path)
+
+    exit_code = main(_select_args(scenario_repo, tmp_path, "no-such-ref-anywhere", None))
+
+    assert exit_code == ExitCode.INTERNAL
+    err = capsys.readouterr().err
+    assert "acquit: cannot resolve the requested refs, running all tests:" in err
+    assert "internal error" not in err
+    assert _read(tmp_path / "selection.json")["mode"] == "run-all"
+    assert _read(tmp_path / "report.json")["decision"]["mode"] == "run-all"
 
 
 def test_analyze_prints_graph_health(

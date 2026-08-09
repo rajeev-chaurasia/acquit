@@ -179,6 +179,20 @@ def test_dirty_file_changes_the_working_tree_fingerprint(repo_builder: RepoBuild
     assert vcs.working_tree_fingerprint(repo_builder.path) != clean
 
 
+def test_excluded_paths_leave_the_working_tree_fingerprint_alone(
+    repo_builder: RepoBuilder,
+) -> None:
+    repo_builder.write({"mod.py": "X = 1\n"})
+    repo_builder.commit("base")
+    clean = vcs.working_tree_fingerprint(repo_builder.path)
+
+    repo_builder.write({"acquit-report.json": "{}\n"})
+
+    assert vcs.working_tree_fingerprint(repo_builder.path) != clean
+    excluded = frozenset({"acquit-report.json"})
+    assert vcs.working_tree_fingerprint(repo_builder.path, excluded) == clean
+
+
 def test_working_tree_blob_shas_match_git(scenario_repo: ScenarioRepo, tmp_path: Path) -> None:
     repo = scenario_repo.path
     cache_root = tmp_path / "parse"

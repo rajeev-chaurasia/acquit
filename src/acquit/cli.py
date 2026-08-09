@@ -13,13 +13,13 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from acquit import __version__
+from acquit import __version__, vcs
 from acquit.constants import (
     DEFAULT_REPORT_FILE,
     DEFAULT_SELECTION_FILE,
     DEFAULT_WITNESSES_FILE,
 )
-from acquit.errors import AcquitError, ExitCode
+from acquit.errors import AcquitError, ExitCode, VcsError
 from acquit.explain import explain_lines
 from acquit.gh.comment import run_comment
 from acquit.gh.outputs import run_ci_outputs
@@ -61,8 +61,17 @@ def _build_parser() -> argparse.ArgumentParser:
 
     replay = subcommands.add_parser("replay", help="re-verify the witnesses behind a report")
     replay.add_argument("report", help="path to an acquit report file")
-    replay.add_argument("--witnesses", default=DEFAULT_WITNESSES_FILE, help="witnesses file path")
-    replay.add_argument("--selection", help="selection file to cross-check against the report")
+    replay.add_argument(
+        "--witnesses",
+        help=f"witnesses file path, defaults to {DEFAULT_WITNESSES_FILE} beside the report",
+    )
+    replay.add_argument(
+        "--selection",
+        help=(
+            "selection file to cross-check against the report, defaults to "
+            f"{DEFAULT_SELECTION_FILE} beside the report when present"
+        ),
+    )
 
     comment = subcommands.add_parser(
         "comment", help="post or update the sticky PR comment for a report; never fails CI"
@@ -137,14 +146,39 @@ def _write_document(path: Path, document: dict[str, Any]) -> None:
         raise
 
 
+def _artifact_paths(repo: Path, args: argparse.Namespace) -> dict[str, str | None]:
+    """Repo-relative posix paths of the three output documents, None when outside."""
+    resolved_repo = repo.resolve()
+    out: dict[str, str | None] = {}
+    named = (("report", args.report), ("selection", args.selection), ("witnesses", args.witnesses))
+    for key, raw in named:
+        try:
+            target = (Path.cwd() / raw).resolve()
+        except OSError:
+            out[key] = None
+            continue
+        out[key] = (
+            target.relative_to(resolved_repo).as_posix()
+            if target.is_relative_to(resolved_repo)
+            else None
+        )
+    return out
+
+
 def _run_select(args: argparse.Namespace) -> int:
     created_at = _now()
     durations = _load_durations(args.durations)
-    result = run_select(args.base, args.head, Path.cwd())
+    artifacts = _artifact_paths(vcs.repo_root(Path.cwd()), args)
+    # Select's own outputs are exempt from the working-tree fingerprint on both
+    # sides. Sound: excluding acquit's freshly written documents cannot hide a
+    # user change, and once committed they are tracked diff content covered by
+    # R001 like any other resource.
+    exclude = frozenset(path for path in artifacts.values() if path is not None)
+    result = run_select(args.base, args.head, Path.cwd(), exclude)
     graph_hash = result.head.graph.graph_hash
     report = build_report(result, created_at=created_at, durations=durations)
     selection = build_selection_doc(
-        result.decision, graph_hash, result.head_sha, result.tree_fingerprint
+        result.decision, graph_hash, result.head_sha, result.tree_fingerprint, artifacts
     )
     witnesses = build_witnesses_doc(result.decision, graph_hash)
     _write_document(Path(args.report), report)
@@ -180,8 +214,16 @@ def _run_explain(args: argparse.Namespace) -> int:
 
 
 def _run_replay(args: argparse.Namespace) -> int:
-    selection = None if args.selection is None else Path(args.selection)
-    lines, code = run_replay(Path(args.report), Path(args.witnesses), selection, Path.cwd())
+    report = Path(args.report)
+    # Omitted document flags resolve beside the report, never against the cwd.
+    witnesses = (
+        report.with_name(DEFAULT_WITNESSES_FILE) if args.witnesses is None else Path(args.witnesses)
+    )
+    selection: Path | None = None if args.selection is None else Path(args.selection)
+    if selection is None:
+        sibling = report.with_name(DEFAULT_SELECTION_FILE)
+        selection = sibling if sibling.is_file() else None
+    lines, code = run_replay(report, witnesses, selection, Path.cwd())
     stream = sys.stdout if code is ExitCode.OK else sys.stderr
     for line in lines:
         print(line, file=stream)
@@ -229,7 +271,15 @@ def main(argv: list[str] | None = None) -> int:
             # Delivery must never fail CI, even if its own guard rails break.
             print(f"acquit: warning: {args.command} skipped: {error}", file=sys.stderr)
             return ExitCode.OK
-        print(f"acquit: internal error, run all tests: {error}", file=sys.stderr)
+        if args.command == "select" and isinstance(error, VcsError):
+            # A bad ref is an operator mistake, not a tool bug; say so plainly.
+            detail = str(error).splitlines()[0] if str(error) else type(error).__name__
+            print(
+                f"acquit: cannot resolve the requested refs, running all tests: {detail}",
+                file=sys.stderr,
+            )
+        else:
+            print(f"acquit: internal error, run all tests: {error}", file=sys.stderr)
         if args.command == "select":
             _write_failure_docs(args, error)
         return ExitCode.INTERNAL

@@ -197,8 +197,15 @@ def _with_untracked_additions(
     return changed + extra
 
 
-def run_select(base: str, head: str | None, cwd: Path) -> SelectResult:
-    """Run the full selection pipeline for one diff and return its outcome."""
+def run_select(
+    base: str, head: str | None, cwd: Path, exclude: frozenset[str] = frozenset()
+) -> SelectResult:
+    """Run the full selection pipeline for one diff and return its outcome.
+
+    exclude lists repo-relative posix paths (select's own output documents)
+    left out of the working-tree fingerprint; ref-tree fingerprints never
+    exclude anything.
+    """
     repo = vcs.repo_root(cwd)
     acquit_config = load_config(repo)
     pytest_config = load_pytest_config(repo)
@@ -206,7 +213,9 @@ def run_select(base: str, head: str | None, cwd: Path) -> SelectResult:
     cache = ParseCache(parse_cache_dir(repo))
     head_snapshot = snapshot_tree(head, repo, acquit_config, pytest_config, cache)
     fingerprint = (
-        vcs.working_tree_fingerprint(repo) if head is None else vcs.ref_tree_fingerprint(head, repo)
+        vcs.working_tree_fingerprint(repo, exclude)
+        if head is None
+        else vcs.ref_tree_fingerprint(head, repo)
     )
     if head is None:
         base_files = frozenset(vcs.list_files(base, repo))

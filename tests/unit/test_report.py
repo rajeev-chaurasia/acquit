@@ -158,7 +158,20 @@ def test_build_selection_doc_binds_skips_to_the_analyzed_tree() -> None:
     assert document["mode"] == "selective"
     assert document["graph_hash"] == "hand-built"
     assert document["tree"] == {"head_sha": "h" * 40, "fingerprint": "f" * 64}
+    assert document["artifacts"] == {"report": None, "selection": None, "witnesses": None}
     assert document["skip"] == [{"path": "tests/test_b.py", "witness": "w-000001"}]
+
+
+def test_build_selection_doc_records_in_repo_artifacts() -> None:
+    result = _result()
+    artifacts: dict[str, str | None] = {
+        "report": "out/acquit-report.json",
+        "selection": None,
+        "witnesses": "out/acquit-witnesses.json",
+    }
+    document = build_selection_doc(result.decision, "hand-built", None, "f" * 64, artifacts)
+
+    assert document["artifacts"] == artifacts
 
 
 def test_run_all_report_shape() -> None:

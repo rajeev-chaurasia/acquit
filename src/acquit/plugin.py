@@ -43,6 +43,27 @@ def _parse_skip_paths(document: dict[str, Any]) -> frozenset[str]:
     return frozenset(paths)
 
 
+def _fingerprint_exclusions(
+    document: dict[str, Any], selection_path: Path, root: Path
+) -> frozenset[str]:
+    """Repo-relative paths exempt from the tree fingerprint: the outputs the
+    selection document records, plus the selection file itself. Sound, because
+    excluding acquit's own freshly written documents cannot hide a user change,
+    and if a user commits these files they become tracked diff content covered
+    by R001 like any other resource."""
+    paths: set[str] = set()
+    artifacts = document.get("artifacts")
+    if isinstance(artifacts, dict):
+        paths.update(value for value in artifacts.values() if isinstance(value, str))
+    try:
+        resolved = selection_path.resolve()
+    except OSError:
+        return frozenset(paths)
+    if resolved.is_relative_to(root):
+        paths.add(resolved.relative_to(root).as_posix())
+    return frozenset(paths)
+
+
 def _load_document(path: Path) -> dict[str, Any]:
     if path.stat().st_size > SELECTION_SIZE_CAP:
         raise _Refused("selection file is too large")
@@ -79,7 +100,8 @@ class AcquitSelectionPlugin:
         if not isinstance(tree, dict) or not isinstance(tree.get("fingerprint"), str):
             raise _Refused("selective document carries no tree fingerprint")
         root = vcs.repo_root(Path(config.rootpath)).resolve()
-        if vcs.working_tree_fingerprint(root) != tree["fingerprint"]:
+        exclude = _fingerprint_exclusions(document, path, root)
+        if vcs.working_tree_fingerprint(root, exclude) != tree["fingerprint"]:
             raise _Refused("tree fingerprint mismatch, the analyzed tree has moved on")
         self._skip = skip
         self._root = root
