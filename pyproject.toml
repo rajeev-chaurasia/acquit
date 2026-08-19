@@ -1,6 +1,6 @@
 [project]
 name = "acquit"
-version = "0.1.1"
+version = "0.1.2"
 description = "Provably skip unaffected pytest tests on every PR. Static analysis, fail-closed, with evidence for every skip."
 readme = "README.md"
 requires-python = ">=3.12"
