@@ -11,6 +11,14 @@
         {
           "type": "generic",
           "path": "README.md"
+        },
+        {
+          "type": "generic",
+          "path": "docs/cli.md"
+        },
+        {
+          "type": "generic",
+          "path": "uv.lock"
         }
       ]
     }

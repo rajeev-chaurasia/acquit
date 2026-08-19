@@ -11,6 +11,7 @@ import shlex
 import tomllib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from fnmatch import fnmatchcase
 from pathlib import Path
 from typing import Final
 
@@ -52,6 +53,9 @@ class PytestConfig:
     pythonpath: tuple[str, ...]
     doctest_modules: bool
     extra_plugins: tuple[str, ...]
+    # Repo-relative directory pytest treats as its root. An empty testpaths
+    # setting collects below this directory, not below the Git root.
+    rootdir: str = ""
 
 
 def _as_word_list(value: object, key: str, source: str) -> tuple[str, ...]:
@@ -88,9 +92,42 @@ def _extra_plugins(addopts: Sequence[str]) -> tuple[str, ...]:
     return tuple(plugins)
 
 
-def _build_config(source: str | None, raw: Mapping[str, object]) -> PytestConfig:
+def _rebase_paths(
+    values: tuple[str, ...], config_dir: Path, repo_root: Path, source: str
+) -> tuple[str, ...]:
+    rebased: list[str] = []
+    resolved_repo = repo_root.resolve()
+    for value in values:
+        try:
+            relative = (config_dir / value).resolve().relative_to(resolved_repo).as_posix()
+        except (OSError, ValueError) as error:
+            raise AcquitError(
+                f"{source}: configured path {value!r} resolves outside the repository"
+            ) from error
+        if relative == ".":
+            relative = ""
+        if relative not in rebased:
+            rebased.append(relative)
+    return tuple(rebased)
+
+
+def _build_config(
+    source: str | None,
+    raw: Mapping[str, object],
+    *,
+    repo_root: Path | None = None,
+    config_dir: Path | None = None,
+) -> PytestConfig:
     lists = {key: _as_word_list(raw[key], key, source or "?") for key in _LIST_KEYS if key in raw}
     addopts = _as_addopts(raw["addopts"], source or "?") if "addopts" in raw else ()
+    rootdir = ""
+    if source is not None and repo_root is not None and config_dir is not None:
+        rootdir = config_dir.resolve().relative_to(repo_root.resolve()).as_posix()
+        if rootdir == ".":
+            rootdir = ""
+        for key in ("testpaths", "pythonpath"):
+            if key in lists:
+                lists[key] = _rebase_paths(lists[key], config_dir, repo_root, source)
     return PytestConfig(
         source=source,
         python_files=lists.get("python_files", DEFAULT_PYTHON_FILES),
@@ -100,6 +137,7 @@ def _build_config(source: str | None, raw: Mapping[str, object]) -> PytestConfig
         pythonpath=lists.get("pythonpath", ()),
         doctest_modules="--doctest-modules" in addopts,
         extra_plugins=_extra_plugins(addopts),
+        rootdir=rootdir,
     )
 
 
@@ -131,14 +169,9 @@ def _read_toml_section(path: Path) -> Mapping[str, object] | None:
     return {str(key): value for key, value in ini_options.items()}
 
 
-def load_pytest_config(repo_root: Path) -> PytestConfig:
-    """Locate and statically parse the winning pytest config under repo_root.
-
-    This is the only function in the pytest mapping layer that touches the
-    filesystem. Returns all-defaults with source=None when no config exists.
-    """
+def _config_in_directory(directory: Path, repo_root: Path) -> PytestConfig | None:
     for filename, section in _CANDIDATES:
-        path = repo_root / filename
+        path = directory / filename
         if not path.is_file():
             continue
         if filename == "pyproject.toml":
@@ -150,5 +183,69 @@ def load_pytest_config(repo_root: Path) -> PytestConfig:
             # [pytest] section; other candidates need their section present.
             raw = {}
         if raw is not None:
-            return _build_config(filename, raw)
+            source = path.resolve().relative_to(repo_root.resolve()).as_posix()
+            return _build_config(source, raw, repo_root=repo_root, config_dir=directory)
+    return None
+
+
+def _ancestors(start: Path, stop: Path) -> tuple[Path, ...]:
+    current = start.resolve()
+    resolved_stop = stop.resolve()
+    if not current.is_relative_to(resolved_stop):
+        raise AcquitError(f"pytest invocation directory {start} is outside repository {stop}")
+    out: list[Path] = []
+    while True:
+        out.append(current)
+        if current == resolved_stop:
+            return tuple(out)
+        current = current.parent
+
+
+def _nested_configs(repo_root: Path, searched: set[Path]) -> tuple[PytestConfig, ...]:
+    directories: set[Path] = set()
+    candidate_names = {filename for filename, _ in _CANDIDATES}
+    for directory, dirnames, filenames in repo_root.walk():
+        # Avoid both false configs and expensive traversal in environments,
+        # dependency trees, build output, and hidden metadata such as .git.
+        dirnames[:] = [
+            name
+            for name in dirnames
+            if not any(fnmatchcase(name, pattern) for pattern in DEFAULT_NORECURSEDIRS)
+        ]
+        if directory.resolve() not in searched and candidate_names.intersection(filenames):
+            directories.add(directory)
+    configs = [
+        config
+        for directory in sorted(directories, key=lambda item: item.as_posix())
+        if (config := _config_in_directory(directory, repo_root)) is not None
+    ]
+    return tuple(configs)
+
+
+def load_pytest_config(repo_root: Path, invocation_dir: Path | None = None) -> PytestConfig:
+    """Locate and statically parse the pytest config for one invocation.
+
+    This is the only function in the pytest mapping layer that touches the
+    filesystem. Pytest searches from the invocation directory upward. When a
+    Git-root invocation has no config above it, Acquit also recognizes one
+    unambiguous nested suite config so monorepo ``backend/`` layouts work from
+    either directory. Multiple nested suite configs fail closed rather than
+    merging incompatible collection rules.
+    """
+    start = repo_root if invocation_dir is None else invocation_dir
+    ancestors = _ancestors(start, repo_root)
+    for directory in ancestors:
+        config = _config_in_directory(directory, repo_root)
+        if config is not None:
+            return config
+
+    nested = _nested_configs(repo_root, {path.resolve() for path in ancestors})
+    if len(nested) == 1:
+        return nested[0]
+    if len(nested) > 1:
+        sources = ", ".join(config.source or "?" for config in nested)
+        raise AcquitError(
+            "multiple nested pytest configurations found; invoke acquit from one suite "
+            f"directory or add a repository-level pytest config: {sources}"
+        )
     return _build_config(None, {})

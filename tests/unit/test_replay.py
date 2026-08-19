@@ -7,7 +7,14 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from conftest import ScenarioRepo, commit_all, init_repo, module_test_source, write_files
+from conftest import (
+    RepoBuilder,
+    ScenarioRepo,
+    commit_all,
+    init_repo,
+    module_test_source,
+    write_files,
+)
 
 from acquit.cli import main
 from acquit.config import load_config
@@ -89,6 +96,76 @@ def test_replay_accepts_the_matching_selection_document(
     )
 
     assert exit_code == ExitCode.OK
+
+
+def test_nested_src_layout_replay_has_no_unsafe_skip(
+    repo_builder: RepoBuilder,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    repo_builder.write(
+        {
+            "backend/pyproject.toml": """\
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+""",
+            "backend/src/app/__init__.py": "",
+            "backend/src/app/service.py": "def answer() -> int:\n    return 41\n",
+            "backend/tests/test_service.py": (
+                "from app.service import answer\n\n\n"
+                "def test_answer() -> None:\n"
+                "    assert answer() == 41\n"
+            ),
+        }
+    )
+    base = repo_builder.commit("base")
+    repo_builder.write({"backend/src/app/service.py": "def answer() -> int:\n    return 42\n"})
+    head = repo_builder.commit("break service test")
+    report = tmp_path / "report.json"
+    selection = tmp_path / "selection.json"
+    witnesses = tmp_path / "witnesses.json"
+    monkeypatch.chdir(repo_builder.path)
+
+    select_code = main(
+        [
+            "select",
+            "--base",
+            base,
+            "--head",
+            head,
+            "--report",
+            str(report),
+            "--selection",
+            str(selection),
+            "--witnesses",
+            str(witnesses),
+        ]
+    )
+    capsys.readouterr()
+    selection_doc = _load(selection)
+    witnesses_doc = _load(witnesses)
+
+    assert select_code == ExitCode.OK
+    assert selection_doc["mode"] == "run-all"
+    assert selection_doc["skip"] == []
+    assert witnesses_doc["witnesses"] == []
+
+    monkeypatch.chdir(repo_builder.path / "backend")
+    replay_code = main(
+        [
+            "replay",
+            str(report),
+            "--witnesses",
+            str(witnesses),
+            "--selection",
+            str(selection),
+        ]
+    )
+
+    assert replay_code == ExitCode.OK
+    assert capsys.readouterr().out.strip() == "replay ok: 0 witnesses verified"
 
 
 def test_replay_rejects_a_selection_with_an_extra_skip(

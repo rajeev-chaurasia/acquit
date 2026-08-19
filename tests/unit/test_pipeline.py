@@ -46,6 +46,43 @@ def test_select_change_selects_only_the_importing_test(scenario_repo: ScenarioRe
     assert result.head_sha == scenario_repo.alpha_change
 
 
+@pytest.mark.parametrize("invocation_subdir", ["", "backend"])
+def test_nested_src_layout_never_skips_direct_importer(
+    repo_builder: RepoBuilder, invocation_subdir: str
+) -> None:
+    repo_builder.write(
+        {
+            "backend/pyproject.toml": """\
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+""",
+            "backend/src/app/__init__.py": "",
+            "backend/src/app/service.py": "def answer() -> int:\n    return 41\n",
+            "backend/tests/test_service.py": (
+                "from app.service import answer\n\n\n"
+                "def test_answer() -> None:\n"
+                "    assert answer() == 41\n"
+            ),
+        }
+    )
+    base = repo_builder.commit("base")
+    repo_builder.write({"backend/src/app/service.py": "def answer() -> int:\n    return 42\n"})
+    head = repo_builder.commit("break service test")
+    cwd = repo_builder.path / invocation_subdir
+
+    result = run_select(base, head, cwd)
+
+    assert result.head.index.roots == ("", "backend/src", "backend/tests")
+    assert import_closure(result.head.graph, "backend/tests/test_service.py") >= {
+        "backend/src/app/__init__.py",
+        "backend/src/app/service.py",
+    }
+    assert result.decision.mode is SelectionMode.RUN_ALL
+    assert result.decision.skipped == ()
+    assert result.decision.witnesses == ()
+
+
 def test_select_witnesses_verify_against_recomputed_closures(
     scenario_repo: ScenarioRepo,
 ) -> None:
