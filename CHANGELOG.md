@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/rajeev-chaurasia/acquit/compare/v0.1.1...v0.1.2) (2026-08-19)
+
+
+### Bug Fixes
+
+* handle nested pytest configs and sync release pins ([#9](https://github.com/rajeev-chaurasia/acquit/issues/9)) ([d5bb932](https://github.com/rajeev-chaurasia/acquit/commit/d5bb93263eabd8d610bc2071f7cc3e4531eb1206))
+
 ## [0.1.1](https://github.com/rajeev-chaurasia/acquit/compare/v0.1.0...v0.1.1) (2026-08-09)
 
 
