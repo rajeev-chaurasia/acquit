@@ -164,7 +164,7 @@ def snapshot_working_tree(cwd: Path) -> Snapshot:
         None,
         repo,
         load_config(repo),
-        load_pytest_config(repo),
+        load_pytest_config(repo, cwd),
         ParseCache(parse_cache_dir(repo)),
     )
 
@@ -212,7 +212,7 @@ def run_select(
     """
     repo = vcs.repo_root(cwd)
     acquit_config = load_config(repo)
-    pytest_config = load_pytest_config(repo)
+    pytest_config = load_pytest_config(repo, cwd)
     changed = vcs.changed_files(base, head, repo)
     cache = ParseCache(parse_cache_dir(repo))
     head_snapshot = snapshot_tree(head, repo, acquit_config, pytest_config, cache)

@@ -114,6 +114,98 @@ def test_defaults_when_nothing_found(tmp_path: Path) -> None:
     assert cfg.pythonpath == ()
     assert cfg.doctest_modules is False
     assert cfg.extra_plugins == ()
+    assert cfg.rootdir == ""
+
+
+@pytest.mark.parametrize("from_nested_directory", [False, True])
+def test_nested_config_is_discovered_and_paths_are_config_relative(
+    tmp_path: Path, from_nested_directory: bool
+) -> None:
+    backend = tmp_path / "backend"
+    backend.mkdir()
+    write_all(
+        backend,
+        {
+            "pyproject.toml": """\
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "../shared"]
+"""
+        },
+    )
+    invocation_dir = backend if from_nested_directory else tmp_path
+
+    cfg = load_pytest_config(tmp_path, invocation_dir)
+
+    assert cfg.source == "backend/pyproject.toml"
+    assert cfg.rootdir == "backend"
+    assert cfg.testpaths == ("backend/tests",)
+    assert cfg.pythonpath == ("backend/src", "shared")
+
+
+def test_invocation_directory_config_beats_repository_config(tmp_path: Path) -> None:
+    write_all(tmp_path, {"pytest.ini": PYTEST_INI})
+    backend = tmp_path / "backend"
+    backend.mkdir()
+    write_all(backend, {"pyproject.toml": PYPROJECT_TOML})
+
+    cfg = load_pytest_config(tmp_path, backend)
+
+    assert cfg.source == "backend/pyproject.toml"
+    assert cfg.python_files == ("beta_*.py",)
+
+
+def test_repository_config_beats_nested_fallback_from_root(tmp_path: Path) -> None:
+    write_all(tmp_path, {"pytest.ini": PYTEST_INI})
+    backend = tmp_path / "backend"
+    backend.mkdir()
+    write_all(backend, {"pyproject.toml": PYPROJECT_TOML})
+
+    cfg = load_pytest_config(tmp_path, tmp_path)
+
+    assert cfg.source == "pytest.ini"
+    assert cfg.python_files == ("alpha_*.py",)
+
+
+def test_multiple_nested_configs_fail_closed_from_repository_root(tmp_path: Path) -> None:
+    for name in ("backend", "worker"):
+        directory = tmp_path / name
+        directory.mkdir()
+        write_all(directory, {"pyproject.toml": PYPROJECT_TOML})
+
+    with pytest.raises(AcquitError, match="multiple nested pytest configurations"):
+        load_pytest_config(tmp_path, tmp_path)
+
+
+def test_nested_discovery_ignores_environment_and_dependency_trees(tmp_path: Path) -> None:
+    backend = tmp_path / "backend"
+    backend.mkdir()
+    write_all(backend, {"pyproject.toml": PYPROJECT_TOML})
+    for ignored in (".venv", "node_modules"):
+        directory = tmp_path / ignored
+        directory.mkdir()
+        write_all(directory, {"pytest.ini": PYTEST_INI})
+
+    cfg = load_pytest_config(tmp_path, tmp_path)
+
+    assert cfg.source == "backend/pyproject.toml"
+
+
+def test_nested_config_path_outside_repository_fails_closed(tmp_path: Path) -> None:
+    backend = tmp_path / "backend"
+    backend.mkdir()
+    write_all(
+        backend,
+        {
+            "pyproject.toml": """\
+[tool.pytest.ini_options]
+pythonpath = ["../../outside"]
+"""
+        },
+    )
+
+    with pytest.raises(AcquitError, match="resolves outside the repository"):
+        load_pytest_config(tmp_path, backend)
 
 
 def test_unset_keys_keep_defaults(tmp_path: Path) -> None:

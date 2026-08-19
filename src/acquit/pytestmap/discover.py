@@ -64,6 +64,8 @@ def discover_test_files(files: Sequence[str], cfg: PytestConfig) -> tuple[str, .
             continue
         if cfg.testpaths and not _within_testpaths(path, cfg.testpaths):
             continue
+        if not cfg.testpaths and cfg.rootdir and not _within_testpaths(path, (cfg.rootdir,)):
+            continue
         if _under_norecursedir(path, cfg.norecursedirs):
             continue
         selected.add(path)

@@ -242,7 +242,7 @@ def run_replay(
 
     repo = vcs.repo_root(cwd)
     acquit_config = load_config(repo)
-    pytest_config = load_pytest_config(repo)
+    pytest_config = load_pytest_config(repo, cwd)
     snapshot = snapshot_tree(head_sha, repo, acquit_config, pytest_config, cache=None)
 
     failures: list[str] = []

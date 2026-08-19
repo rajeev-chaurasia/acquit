@@ -15,6 +15,7 @@ def make_cfg(
     python_files: tuple[str, ...] = DEFAULT_PYTHON_FILES,
     testpaths: tuple[str, ...] = (),
     norecursedirs: tuple[str, ...] = DEFAULT_NORECURSEDIRS,
+    rootdir: str = "",
 ) -> PytestConfig:
     return PytestConfig(
         source=source,
@@ -25,6 +26,7 @@ def make_cfg(
         pythonpath=(),
         doctest_modules=False,
         extra_plugins=(),
+        rootdir=rootdir,
     )
 
 
@@ -66,6 +68,18 @@ def test_multiple_testpaths() -> None:
     ]
     expected = ("integration/suite/test_b.py", "tests/test_a.py")
     assert discover_test_files(files, cfg) == expected
+
+
+def test_nested_rootdir_bounds_default_collection() -> None:
+    cfg = make_cfg(rootdir="backend")
+    files = ["backend/tests/test_api.py", "frontend/tests/test_ui.py", "test_root.py"]
+    assert discover_test_files(files, cfg) == ("backend/tests/test_api.py",)
+
+
+def test_explicit_testpaths_can_reach_outside_nested_rootdir() -> None:
+    cfg = make_cfg(rootdir="backend", testpaths=("shared/tests",))
+    files = ["backend/tests/test_api.py", "shared/tests/test_contract.py"]
+    assert discover_test_files(files, cfg) == ("shared/tests/test_contract.py",)
 
 
 @pytest.mark.parametrize(
