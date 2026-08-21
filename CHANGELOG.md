@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/rajeev-chaurasia/acquit/compare/v0.1.2...v0.1.3) (2026-08-21)
+
+
+### Bug Fixes
+
+* preserve selection for unreachable sys.path scripts ([#12](https://github.com/rajeev-chaurasia/acquit/issues/12)) ([4315065](https://github.com/rajeev-chaurasia/acquit/commit/4315065c9a7150a61a196f8fb55daa0cb3df9262))
+
 ## [0.1.2](https://github.com/rajeev-chaurasia/acquit/compare/v0.1.1...v0.1.2) (2026-08-19)
 
 

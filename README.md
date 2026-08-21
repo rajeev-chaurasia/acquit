@@ -9,9 +9,9 @@ Provably skip unaffected pytest tests on every pull request. Static analysis, fa
 
 > Status: alpha. The engine works: on real pull requests acquit makes selective decisions, and every skip ships with a machine-checkable witness that is re-verified by replay before pytest honors it. Every failure mode still converges on "run everything".
 >
-> The CLI is on PyPI (`pip install acquit==0.1.2`<!-- x-release-please-version -->), so the analysis itself pins cleanly.
+> The CLI is on PyPI (`pip install acquit==0.1.3`<!-- x-release-please-version -->), so the analysis itself pins cleanly.
 >
-> Both the CLI and the GitHub Action pin cleanly to v0.1.2. <!-- x-release-please-version -->
+> Both the CLI and the GitHub Action pin cleanly to v0.1.3. <!-- x-release-please-version -->
 >
 > Re-export narrowing for fat package inits exists and ships disabled: it survived an adversarial break-and-fix cycle before anyone relied on it, and its measured applicability where it engages is 6.7 percent of submodules ([docs/study.md](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/study.md) has the full story).
 
@@ -59,7 +59,7 @@ jobs:
           # The base ref must exist locally; shallow clones always fall back to run-all.
           fetch-depth: 0
 
-      - uses: rajeev-chaurasia/acquit@v0.1.2 # x-release-please-version
+      - uses: rajeev-chaurasia/acquit@v0.1.3 # x-release-please-version
         with:
           mode: report
 
