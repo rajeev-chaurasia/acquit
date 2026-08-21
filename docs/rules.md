@@ -120,17 +120,19 @@ subject at run time.
   `pkgutil.extend_path`, and pytest's helpers `monkeypatch.syspath_prepend`
   and `pytester.syspathinsert` (matched by method name on any receiver;
   over-approximating a look-alike costs precision, never soundness).
-- Scope and reasons, three cases:
+- Scope and reasons, four cases:
   - Import-time (module level or class body) in a conftest: global.
     `{path} mutates sys.path at import time, and conftests execute unconditionally during collection.`
-  - Import-time in a plain module: global-if-reached.
+  - Import-time in a changed plain module: global.
+    `{path} changed and mutates sys.path at import time, so its process-wide import effects cannot be bounded.`
+  - Import-time in an unchanged plain module: global-if-reached.
     `{path} mutates sys.path at import time, which perturbs every later import in the process, but only if something imports this module during the test session.`
   - Function-level anywhere: closure-taint.
     `{path} mutates sys.path inside a function, making its own dynamic behavior unknowable at runtime.`
 - Example: a module does `sys.path.insert(0, ...)` at the top level. If any
   test imports it, every later import in the process may resolve
-  differently, so the run goes global; if nothing reaches it, the finding is
-  recorded and changes nothing. The three-way split was refined by the
+  differently, so the run goes global; if the module is unchanged and nothing
+  reaches it, the finding is recorded and changes nothing. The scope split was refined by the
   replay study; the story is in [docs/study.md](study.md).
 
 ## R009: exec, eval, or compile

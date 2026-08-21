@@ -18,7 +18,7 @@ from acquit.graph.index import ModuleIndex, build_index, detect_roots, pytest_sy
 from acquit.graph.model import BuiltGraph, NodeKind
 from acquit.graph.parse import ModuleFacts, parse_module_facts
 from acquit.policy.engine import PolicyContext, PolicyOutcome, evaluate
-from acquit.policy.model import ScopeKind
+from acquit.policy.model import Finding, ScopeKind
 from acquit.pytestmap.conftree import UNPARSEABLE_MARKER, ConftestFacts, inspect_conftest
 from acquit.pytestmap.discover import classify_file, discover_test_files
 from acquit.pytestmap.pytestcfg import PytestConfig, load_pytest_config
@@ -49,6 +49,9 @@ class SelectResult:
 
     decision: Decision
     outcome: PolicyOutcome
+    # Findings that actually forced this decision to run all. Other active
+    # findings remain reportable observations but did not affect selection.
+    blocking_findings: tuple[Finding, ...]
     head: Snapshot
     changed: tuple[ChangedFile, ...]
     changed_kinds: Mapping[str, NodeKind]
@@ -278,9 +281,16 @@ def run_select(
         outcome.findings,
         narrowing=narrowing,
     )
+    escalated = frozenset(escalated_findings(head_snapshot.graph, outcome.findings))
+    blocking_findings = tuple(
+        finding
+        for finding in outcome.findings
+        if finding.scope.kind is ScopeKind.GLOBAL or finding in escalated
+    )
     return SelectResult(
         decision=decision,
         outcome=outcome,
+        blocking_findings=blocking_findings,
         head=head_snapshot,
         changed=changed,
         changed_kinds=_classify_changed(changed, head_snapshot.kinds, pytest_config),

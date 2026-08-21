@@ -234,13 +234,14 @@ def non_literal_dynamic_import(ctx: PolicyContext) -> Iterator[Finding]:
 def sys_path_mutation(ctx: PolicyContext) -> Iterator[Finding]:
     """R008: mutating sys.path perturbs how every later import resolves.
 
-    Three-way scope, split on when the mutation executes. Import-time in a
+    Scope splits on when and where the mutation executes. Import-time in a
     conftest is global because conftests execute unconditionally during
-    collection. Import-time in a plain module goes global only if some test
-    reaches the module. A function-level mutation runs only if called, so it
-    taints the module's own closure; for a conftest, its scope edges already
-    propagate that taint to exactly the tests under it.
+    collection. A changed plain module is also global; an unchanged one goes
+    global only if some test reaches it. A function-level mutation runs only
+    if called, so it taints the module's own closure; for a conftest, its scope
+    edges already propagate that taint to exactly the tests under it.
     """
+    changed = frozenset(_changed_paths(ctx))
     for path, facts in ctx.facts.items():
         kinds = {suspect.kind for suspect in facts.suspects}
         if SuspectKind.SYS_PATH_MUTATION_IMPORT_TIME in kinds:
@@ -252,6 +253,16 @@ def sys_path_mutation(ctx: PolicyContext) -> Iterator[Finding]:
                     reason=(
                         f"{path} mutates sys.path at import time, and conftests "
                         "execute unconditionally during collection."
+                    ),
+                )
+            elif path in changed:
+                yield Finding(
+                    rule=RuleId.SYS_PATH_MUTATION,
+                    scope=_GLOBAL,
+                    subject=path,
+                    reason=(
+                        f"{path} changed and mutates sys.path at import time, "
+                        "so its process-wide import effects cannot be bounded."
                     ),
                 )
             else:

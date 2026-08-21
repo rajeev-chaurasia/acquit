@@ -42,8 +42,10 @@ def _selective_report(
     }
 
 
-def _run_all_report(findings: list[dict[str, str]]) -> dict[str, Any]:
-    return {
+def _run_all_report(
+    findings: list[dict[str, str]], blockers: list[dict[str, str]] | None = None
+) -> dict[str, Any]:
+    report = {
         "schema": "acquit/report-v1",
         "decision": {"mode": "run-all", "findings": findings, "waivers": []},
         "tests": {"selected": [], "skipped": [], "always_run": []},
@@ -56,6 +58,9 @@ def _run_all_report(findings: list[dict[str, str]]) -> dict[str, Any]:
             "durations_source": None,
         },
     }
+    if blockers is not None:
+        report["decision"]["blockers"] = blockers
+    return report
 
 
 def _finding(
@@ -156,6 +161,25 @@ def test_run_all_comment_lists_findings() -> None:
     assert "| Rule | Subject | Reason |" in body
     assert "| `R002` | `pyproject.toml` | changed dependency manifest |" in body
     assert "[!TIP]" not in body
+
+
+def test_run_all_comment_separates_blockers_from_non_blocking_findings() -> None:
+    workflow = _finding("R003", ".github/workflows/ci.yml", reason="changed workflow")
+    mutator = _finding(
+        "R008",
+        "backend/scripts/benchmark_27b.py",
+        scope="global-if-reached",
+        reason="mutates sys.path at import time",
+    )
+    report = _run_all_report([workflow, mutator], blockers=[workflow])
+
+    body = render_comment(report)
+
+    assert "The blockers:" in body
+    assert "1 non-blocking finding" in body
+    assert "These findings were observed but did not force the full suite." in body
+    assert body.index("`.github/workflows/ci.yml`") < body.index("<details>")
+    assert body.index("`backend/scripts/benchmark_27b.py`") > body.index("<details>")
 
 
 def test_run_all_comment_without_findings_explains_full_impact() -> None:

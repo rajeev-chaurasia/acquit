@@ -10,7 +10,7 @@ from acquit import pipeline, vcs
 from acquit.config import AcquitConfig, load_config
 from acquit.graph.cache import ParseCache
 from acquit.pipeline import Snapshot, run_select, snapshot_tree
-from acquit.policy.model import RuleId
+from acquit.policy.model import RuleId, ScopeKind
 from acquit.pytestmap.pytestcfg import PytestConfig, load_pytest_config
 from acquit.report import SelectionMode
 from acquit.select import Decision, import_closure
@@ -81,6 +81,67 @@ pythonpath = ["src"]
     assert result.decision.mode is SelectionMode.RUN_ALL
     assert result.decision.skipped == ()
     assert result.decision.witnesses == ()
+
+
+def test_unreachable_sys_path_script_does_not_block_nested_suite(
+    repo_builder: RepoBuilder,
+) -> None:
+    repo_builder.write(
+        {
+            "backend/pyproject.toml": """\
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+""",
+            "backend/src/app/__init__.py": "",
+            "backend/src/app/alpha.py": "VALUE = 1\n",
+            "backend/src/app/beta.py": "VALUE = 1\n",
+            "backend/scripts/benchmark_27b.py": (
+                "import sys\n"
+                "from pathlib import Path\n\n"
+                "sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))\n"
+            ),
+            "backend/tests/test_alpha.py": (
+                "from app import alpha\n\n\ndef test_alpha():\n    assert alpha.VALUE\n"
+            ),
+            "backend/tests/test_beta.py": (
+                "from app import beta\n\n\ndef test_beta():\n    assert beta.VALUE\n"
+            ),
+        }
+    )
+    base = repo_builder.commit("base")
+    repo_builder.write({"backend/src/app/alpha.py": "VALUE = 2\n"})
+    head = repo_builder.commit("change alpha")
+
+    result = run_select(base, head, repo_builder.path / "backend")
+
+    r008 = tuple(
+        finding for finding in result.outcome.findings if finding.rule is RuleId.SYS_PATH_MUTATION
+    )
+    assert len(r008) == 1
+    assert r008[0].scope.kind is ScopeKind.GLOBAL_IF_REACHED
+    assert result.blocking_findings == ()
+    assert result.decision.mode is SelectionMode.SELECTIVE
+    assert selected_paths(result.decision) == {"backend/tests/test_alpha.py"}
+    assert skipped_paths(result.decision) == {"backend/tests/test_beta.py"}
+
+    repo_builder.write(
+        {
+            "backend/scripts/benchmark_27b.py": (
+                "import sys\n"
+                "from pathlib import Path\n\n"
+                "sys.path.insert(0, str(Path(__file__).parent.parent / 'vendor'))\n"
+            )
+        }
+    )
+    mutator_head = repo_builder.commit("change benchmark path")
+
+    changed_mutator = run_select(head, mutator_head, repo_builder.path / "backend")
+
+    assert changed_mutator.decision.mode is SelectionMode.RUN_ALL
+    assert [finding.subject for finding in changed_mutator.blocking_findings] == [
+        "backend/scripts/benchmark_27b.py"
+    ]
 
 
 def test_select_witnesses_verify_against_recomputed_closures(

@@ -84,6 +84,7 @@ def build_run_all_report(run: RunInfo, findings: list[Finding]) -> dict[str, Any
         "decision": {
             "mode": str(SelectionMode.RUN_ALL),
             "findings": [finding_to_dict(f) for f in findings],
+            "blockers": [finding_to_dict(f) for f in findings],
             "waivers": [],
         },
         "tests": {"selected": [], "skipped": [], "always_run": []},
@@ -128,6 +129,7 @@ def build_report(
         "decision": {
             "mode": str(decision.mode),
             "findings": [finding_to_dict(f) for f in result.outcome.findings],
+            "blockers": [finding_to_dict(f) for f in result.blocking_findings],
             "waivers": [_waiver_to_dict(w) for w in result.outcome.waived],
         },
         "tests": {

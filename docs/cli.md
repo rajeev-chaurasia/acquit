@@ -151,7 +151,8 @@ The full account of the run, for humans and for `comment`/`ci-outputs`:
 tool version and graph schema, base and head shas, graph summary (hash,
 node and edge counts, import roots), every changed file with its
 classification and status, the decision mode with every policy finding and
-waiver, the per-test verdicts (`selected` with reasons, `skipped` with
+the causal `blockers` that forced a full-suite decision, every waiver, the
+per-test verdicts (`selected` with reasons, `skipped` with
 witness ids, `always_run` with the capturing finding), and stats, including
 `estimated_seconds_saved` when `--durations` was given.
 

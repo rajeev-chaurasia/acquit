@@ -348,6 +348,17 @@ def test_r008_import_time_mutation_in_module_is_global_if_reached() -> None:
     assert finding.subject == "pkg/paths.py"
 
 
+def test_r008_changed_import_time_mutation_in_module_is_global() -> None:
+    path = "scripts/paths.py"
+    source = "import sys\n\nsys.path.append('vendored')\n"
+    ctx = make_ctx(changed=(modified(path),), facts={path: facts_for(path, source)})
+
+    (finding,) = findings_for(evaluate(ctx), RuleId.SYS_PATH_MUTATION)
+
+    assert finding.scope == Scope(ScopeKind.GLOBAL)
+    assert "changed and mutates sys.path" in finding.reason
+
+
 # A function-level mutation runs only if called, so it taints its own module
 # everywhere, conftests included: scope edges carry the taint to their tests.
 @pytest.mark.parametrize("path", ["pkg/paths.py", "tests/unit/conftest.py"])
