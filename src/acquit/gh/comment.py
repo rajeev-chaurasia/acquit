@@ -158,26 +158,55 @@ def _docs_nudge(findings: Sequence[Mapping[str, Any]]) -> list[str] | None:
     ]
 
 
-def _render_run_all(findings: Sequence[Mapping[str, Any]]) -> list[str]:
-    lines = ["## Acquit: ran everything", ""]
-    if not findings:
-        lines.append(
-            "No rule fired; the change reaches every test file through the import graph, "
-            "so nothing could be skipped."
-        )
-        return lines
-    lines += [
-        "No test file could be proven unaffected, so the full suite ran. The reasons:",
-        "",
-        "| Rule | Subject | Reason |",
-        "| --- | --- | --- |",
-    ]
+def _finding_key(finding: Mapping[str, Any]) -> tuple[str, str, str, str]:
+    return (
+        str(finding.get("rule", "")),
+        str(finding.get("scope", "")),
+        str(finding.get("subject", "")),
+        str(finding.get("reason", "")),
+    )
+
+
+def _finding_table(findings: Sequence[Mapping[str, Any]]) -> list[str]:
+    lines = ["| Rule | Subject | Reason |", "| --- | --- | --- |"]
     for finding in findings:
         rule = _cell(str(finding.get("rule", "?")))
         subject = _cell(str(finding.get("subject", "?")))
         reason = _cell(str(finding.get("reason", "?")))
         lines.append(f"| `{rule}` | `{subject}` | {reason} |")
-    nudge = _docs_nudge(findings)
+    return lines
+
+
+def _render_run_all(
+    blockers: Sequence[Mapping[str, Any]], observations: Sequence[Mapping[str, Any]]
+) -> list[str]:
+    lines = ["## Acquit: ran everything", ""]
+    if not blockers:
+        prefix = "No rule fired" if not observations else "No finding forced the full suite"
+        lines.append(
+            f"{prefix}; the change reaches every test file through the import graph, "
+            "so nothing could be skipped."
+        )
+    else:
+        lines += [
+            "No test file could be proven unaffected, so the full suite ran. The blockers:",
+            "",
+            *_finding_table(blockers),
+        ]
+    if observations:
+        plural = "finding" if len(observations) == 1 else "findings"
+        lines += [
+            "",
+            "<details>",
+            f"<summary>{len(observations)} non-blocking {plural}</summary>",
+            "",
+            "These findings were observed but did not force the full suite.",
+            "",
+            *_finding_table(observations),
+            "",
+            "</details>",
+        ]
+    nudge = _docs_nudge(blockers)
     if nudge is not None:
         lines += ["", *nudge]
     return lines
@@ -189,12 +218,24 @@ def render_comment(report: Mapping[str, Any]) -> str:
     decision = report.get("decision")
     findings_raw = decision.get("findings") if isinstance(decision, Mapping) else None
     findings = [f for f in findings_raw if isinstance(f, Mapping)] if findings_raw else []
+    blockers_raw = decision.get("blockers") if isinstance(decision, Mapping) else None
+    if isinstance(blockers_raw, list):
+        blockers = [finding for finding in blockers_raw if isinstance(finding, Mapping)]
+        blocker_keys = {_finding_key(finding) for finding in blockers}
+        observations = [
+            finding for finding in findings if _finding_key(finding) not in blocker_keys
+        ]
+    else:
+        # Reports predating blocker accounting treated every finding as a
+        # reason. Preserve that rendering when reading an old document.
+        blockers = findings
+        observations = []
     tests_raw = report.get("tests")
     tests: Mapping[str, Any] = tests_raw if isinstance(tests_raw, Mapping) else {}
     if digest.mode == str(SelectionMode.SELECTIVE):
         body = _render_selective(digest, tests)
     else:
-        body = _render_run_all(findings)
+        body = _render_run_all(blockers, observations)
     return "\n".join([COMMENT_MARKER, "", *body]) + "\n"
 
 
