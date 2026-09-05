@@ -229,7 +229,7 @@ outputs mirror [action.yml](../action.yml).
 | Input | Default | Meaning |
 | --- | --- | --- |
 | `base-ref` | the PR base | Base ref to diff against. |
-| `acquit-version` | `0.1.3` <!-- x-release-please-version --> | Version of the acquit package to run. |
+| `acquit-version` | `0.2.0` <!-- x-release-please-version --> | Version of the acquit package to run. |
 | `acquit-source` | `pypi` | Where acquit itself is installed from. `pypi` pins `acquit==acquit-version`; `local` installs from the working-directory checkout, which is how acquit dogfoods unreleased code on its own PRs. |
 | `working-directory` | `.` | Directory containing the project to analyze. |
 | `mode` | `report` | `report`: analyze, verify, comment, and set outputs, but never skip a test. `canary`: additionally export `ACQUIT_SELECTION_FILE` and `ACQUIT_CANARY` so the full suite still runs while the pytest plugin classifies outcomes against the verified selection; a failing would-be-skipped test raises a loud alarm at zero risk. `enforce`: export `ACQUIT_SELECTION_FILE` alone so the pytest plugin honors the verified selection and skips. Anything unrecognized means `report`. |
