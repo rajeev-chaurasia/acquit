@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/rajeev-chaurasia/acquit/compare/v0.1.3...v0.2.0) (2026-09-05)
+
+
+### Features
+
+* add canary runtime evidence ([#17](https://github.com/rajeev-chaurasia/acquit/issues/17)) ([2c1e378](https://github.com/rajeev-chaurasia/acquit/commit/2c1e37800f03439fba925021530afdec6c901694))
+
 ## [0.1.3](https://github.com/rajeev-chaurasia/acquit/compare/v0.1.2...v0.1.3) (2026-08-21)
 
 
