@@ -44,6 +44,12 @@ outputs:
   selection-file:
     description: "Path to the selection JSON consumed by the pytest plugin."
     value: ${{ steps.select.outputs.selection }}
+  canary-report-file:
+    description: "Path to the canary JSON evidence written after pytest finishes."
+    value: ${{ steps.select.outputs.canary-report }}
+  canary-summary-file:
+    description: "Path to the reviewer-facing canary Markdown summary written after pytest finishes."
+    value: ${{ steps.select.outputs.canary-summary }}
   skipped-count:
     description: "Number of test files provably unaffected."
     value: ${{ steps.ci-outputs.outputs.skipped }}
@@ -82,6 +88,8 @@ runs:
           REPORT="$OUT_DIR/acquit-report.json"
           SELECTION="$OUT_DIR/acquit-selection.json"
           WITNESSES="$OUT_DIR/acquit-witnesses.json"
+          CANARY_REPORT="${SELECTION%.*}.canary.json"
+          CANARY_SUMMARY="${SELECTION%.*}.canary.md"
           if ! uvx --from "$ACQUIT_FROM" acquit select \
               --base "origin/${BASE_REF:-main}" --head HEAD \
               --report "$REPORT" --selection "$SELECTION" --witnesses "$WITNESSES"; then
@@ -98,11 +106,15 @@ runs:
           REPORT=""
           SELECTION=""
           WITNESSES=""
+          CANARY_REPORT=""
+          CANARY_SUMMARY=""
         fi
         printf 'mode<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$MODE" >> "$GITHUB_OUTPUT"
         printf 'report<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$REPORT" >> "$GITHUB_OUTPUT"
         printf 'selection<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$SELECTION" >> "$GITHUB_OUTPUT"
         printf 'witnesses<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$WITNESSES" >> "$GITHUB_OUTPUT"
+        printf 'canary-report<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$CANARY_REPORT" >> "$GITHUB_OUTPUT"
+        printf 'canary-summary<<EOF_ACQUIT_c9d41e\n%s\nEOF_ACQUIT_c9d41e\n' "$CANARY_SUMMARY" >> "$GITHUB_OUTPUT"
         # Only enforce and canary hook the pytest plugin; report mode observes
         # and never touches the test run, and an unrecognized mode means report.
         if [ "${ACQUIT_MODE:-report}" = "enforce" ] || [ "${ACQUIT_MODE:-report}" = "canary" ]; then

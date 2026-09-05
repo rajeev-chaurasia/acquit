@@ -178,7 +178,22 @@ def _run_select(args: argparse.Namespace) -> int:
     graph_hash = result.head.graph.graph_hash
     report = build_report(result, created_at=created_at, durations=durations)
     selection = build_selection_doc(
-        result.decision, graph_hash, result.head_sha, result.tree_fingerprint, artifacts
+        result.decision,
+        graph_hash,
+        result.head_sha,
+        result.tree_fingerprint,
+        artifacts,
+        result.blocking_findings,
+        [
+            {
+                "path": change.path,
+                "kind": str(result.changed_kinds[change.path]),
+                "status": str(change.status),
+            }
+            for change in sorted(
+                result.changed, key=lambda change: (change.path, str(change.status))
+            )
+        ],
     )
     witnesses = build_witnesses_doc(result.decision, graph_hash)
     _write_document(Path(args.report), report)

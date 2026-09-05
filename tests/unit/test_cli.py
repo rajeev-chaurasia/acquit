@@ -105,6 +105,10 @@ def test_select_writes_report_selection_and_witnesses(
     assert selection["mode"] == "selective"
     assert selection["tree"]["head_sha"] == scenario_repo.alpha_change
     assert len(selection["tree"]["fingerprint"]) == 64
+    assert selection["canary"]["changed"] == [
+        {"path": "alpha.py", "kind": "module", "status": "modified"}
+    ]
+    assert selection["canary"]["fallback"] == []
     assert _skip_paths(selection) == [
         "tests/pkg/test_pkg.py",
         "tests/test_beta.py",
@@ -135,6 +139,17 @@ def test_select_run_all_from_rules_exits_ok(
     assert [f["rule"] for f in report["decision"]["findings"]] == ["R002"]
     assert selection["mode"] == "run-all"
     assert selection["skip"] == []
+    assert selection["canary"]["fallback"] == [
+        {
+            "rule": "R002",
+            "scope": "global",
+            "subject": "pyproject.toml",
+            "reason": (
+                "pyproject.toml is a dependency manifest, so the environment "
+                "of every test may change."
+            ),
+        }
+    ]
 
 
 def test_select_durations_estimate_seconds_saved(

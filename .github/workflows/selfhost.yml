@@ -48,3 +48,13 @@ jobs:
         env:
           ACQUIT_SELECTION_FILE: ${{ steps.acquit.outputs.selection-file }}
         run: uv run pytest
+
+      - name: Upload canary evidence
+        if: ${{ vars.ACQUIT_ENFORCE != 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: acquit-canary-evidence
+          path: |
+            ${{ steps.acquit.outputs.canary-report-file }}
+            ${{ steps.acquit.outputs.canary-summary-file }}
+          if-no-files-found: warn

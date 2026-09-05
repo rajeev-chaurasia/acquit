@@ -158,12 +158,31 @@ def test_canary_alarms_on_a_failing_would_be_skipped_file(
         ]
     )
     verdict = json.loads((pytester.path / "selection.canary.json").read_text(encoding="utf-8"))
-    assert verdict == {
-        "schema": CANARY_SCHEMA,
-        "alarms": [{"path": "test_alpha.py", "witness": "w-000001"}],
+    assert verdict["schema"] == CANARY_SCHEMA
+    assert verdict["selection"]["status"] == "verified"
+    assert verdict["stats"] == {
+        "collected": 2,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
         "would_skip": 1,
-        "clean": False,
     }
+    assert verdict["shadow_validation"] == {
+        "status": "missed-impact",
+        "missed_impact": [
+            {
+                "severity": "high",
+                "path": "test_alpha.py",
+                "witness": "w-000001",
+                "nodes": ["test_alpha.py::test_alpha"],
+            }
+        ],
+    }
+    assert (
+        (pytester.path / "selection.canary.md")
+        .read_text(encoding="utf-8")
+        .startswith("# Acquit canary evidence\n")
+    )
 
 
 def test_canary_clean_when_every_would_be_skipped_file_passes(
@@ -180,7 +199,9 @@ def test_canary_clean_when_every_would_be_skipped_file_passes(
         ["*acquit canary: clean: all 1 would-be-skipped files passed (selection validated live)*"]
     )
     verdict = json.loads((pytester.path / "selection.canary.json").read_text(encoding="utf-8"))
-    assert verdict == {"schema": CANARY_SCHEMA, "alarms": [], "would_skip": 1, "clean": True}
+    assert verdict["schema"] == CANARY_SCHEMA
+    assert verdict["selection"]["status"] == "verified"
+    assert verdict["shadow_validation"] == {"status": "clean", "missed_impact": []}
 
 
 def test_canary_ignores_failures_outside_the_skip_set(
@@ -199,7 +220,8 @@ def test_canary_ignores_failures_outside_the_skip_set(
     result.assert_outcomes(passed=1, failed=1)
     result.stdout.fnmatch_lines(["*acquit canary: clean: all 1 would-be-skipped files passed*"])
     verdict = json.loads((pytester.path / "selection.canary.json").read_text(encoding="utf-8"))
-    assert verdict["clean"] is True
+    assert verdict["stats"]["failed"] == 1
+    assert verdict["shadow_validation"] == {"status": "clean", "missed_impact": []}
 
 
 def test_canary_stale_fingerprint_refuses_without_claims(
@@ -217,7 +239,10 @@ def test_canary_stale_fingerprint_refuses_without_claims(
     result.assert_outcomes(passed=2)
     result.stdout.fnmatch_lines(["*running every test*"])
     assert "acquit canary" not in result.stdout.str()
-    assert not (pytester.path / "selection.canary.json").exists()
+    verdict = json.loads((pytester.path / "selection.canary.json").read_text(encoding="utf-8"))
+    assert verdict["selection"]["status"] == "refused"
+    assert "tree fingerprint mismatch" in verdict["selection"]["reason"]
+    assert verdict["shadow_validation"]["status"] == "incomplete"
 
 
 def test_canary_run_all_document_has_nothing_to_validate(
@@ -230,7 +255,58 @@ def test_canary_run_all_document_has_nothing_to_validate(
     result = pytester.runpytest_inprocess()
     result.assert_outcomes(passed=2)
     result.stdout.fnmatch_lines(["*acquit canary: selection was run-all, nothing to validate*"])
-    assert not (pytester.path / "selection.canary.json").exists()
+    verdict = json.loads((pytester.path / "selection.canary.json").read_text(encoding="utf-8"))
+    assert verdict["selection"]["status"] == "run-all"
+    assert verdict["shadow_validation"]["status"] == "incomplete"
+
+
+def test_canary_records_runtime_imports_and_fixture_providers(
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pytester.makeconftest(
+        "import pytest\n"
+        "@pytest.fixture\n"
+        "def helper():\n"
+        "    import support\n"
+        "    return support.VALUE\n"
+    )
+    pytester.makepyfile(
+        support="VALUE = 1\n",
+        dynamic="VALUE = 2\n",
+        test_alpha=(
+            "import importlib\n"
+            "def test_alpha(helper):\n"
+            "    assert helper == 1\n"
+            "    assert importlib.import_module('dynamic').VALUE == 2\n"
+        ),
+    )
+    fingerprint = _git_tree(pytester)
+    selection = _write_selection(pytester, "selective", ["test_alpha.py"], fingerprint)
+    monkeypatch.setenv(ENV_SELECTION_FILE, selection)
+    monkeypatch.setenv(ENV_CANARY, "1")
+
+    result = pytester.runpytest_inprocess()
+
+    result.assert_outcomes(passed=1)
+    verdict = json.loads((pytester.path / "selection.canary.json").read_text(encoding="utf-8"))
+    (observation,) = verdict["tests"]
+    assert observation["nodeid"] == "test_alpha.py::test_alpha"
+    assert observation["selection"] == {
+        "source": "static",
+        "classification": "would-skip",
+        "witness": "w-000001",
+    }
+    assert observation["dependencies"]["modules"] == [
+        {"path": "dynamic.py", "kind": "runtime-import"},
+        {"path": "support.py", "kind": "runtime-import"},
+    ]
+    assert {entry["provider"] for entry in observation["dependencies"]["fixtures"]} == {
+        "conftest.py"
+    }
+    assert {entry["module"] for entry in verdict["observations"]["runtime_edges"]} == {
+        "dynamic.py",
+        "support.py",
+    }
 
 
 def test_canary_flag_other_than_one_still_deselects(
