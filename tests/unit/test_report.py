@@ -232,6 +232,12 @@ def test_build_selection_doc_binds_skips_to_the_analyzed_tree() -> None:
     assert document["tree"] == {"head_sha": "h" * 40, "fingerprint": "f" * 64}
     assert document["artifacts"] == {"report": None, "selection": None, "witnesses": None}
     assert document["skip"] == [{"path": "tests/test_b.py", "witness": "w-000001"}]
+    assert document["canary"] == {
+        "selected": [{"path": "tests/test_a.py", "reasons": ["reachable-from:src/a.py"]}],
+        "always_run": [],
+        "fallback": [],
+        "changed": [],
+    }
 
 
 def test_build_selection_doc_records_in_repo_artifacts() -> None:

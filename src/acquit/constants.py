@@ -5,7 +5,7 @@ from typing import Final
 REPORT_SCHEMA: Final = "acquit/report-v1"
 SELECTION_SCHEMA: Final = "acquit/selection-v2"
 WITNESSES_SCHEMA: Final = "acquit/witnesses-v1"
-CANARY_SCHEMA: Final = "acquit/canary-v1"
+CANARY_SCHEMA: Final = "acquit/canary-v2"
 
 ENV_SELECTION_FILE: Final = "ACQUIT_SELECTION_FILE"
 ENV_CANARY: Final = "ACQUIT_CANARY"

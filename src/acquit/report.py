@@ -206,6 +206,8 @@ def build_selection_doc(
     head_sha: str | None,
     tree_fingerprint: str,
     artifacts: Mapping[str, str | None] | None = None,
+    blockers: tuple[Finding, ...] = (),
+    canary_changed: list[dict[str, str]] | None = None,
 ) -> dict[str, Any]:
     """The document the pytest plugin consumes. It lists provably skippable files
     bound to the analyzed tree; anything not listed runs, so unknown files run
@@ -225,6 +227,17 @@ def build_selection_doc(
         "tree": {"head_sha": head_sha, "fingerprint": tree_fingerprint},
         "artifacts": recorded,
         "skip": [{"path": entry.path, "witness": entry.witness_id} for entry in decision.skipped],
+        # Diagnostics only; enforcement reads skip.
+        "canary": {
+            "selected": [
+                {"path": entry.path, "reasons": list(entry.reasons)} for entry in decision.selected
+            ],
+            "always_run": [
+                {"path": entry.path, "finding": entry.finding} for entry in decision.always_run
+            ],
+            "fallback": [finding_to_dict(finding) for finding in blockers],
+            "changed": [] if canary_changed is None else canary_changed,
+        },
     }
 
 
