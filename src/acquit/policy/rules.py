@@ -41,6 +41,13 @@ _NATIVE_BASENAMES: Final = frozenset({"CMakeLists.txt", "Makefile", "meson.build
 _NATIVE_SUFFIXES: Final = (".c", ".h", ".cc", ".cpp", ".hpp", ".pyx", ".pxd", ".so", ".pyd")
 
 _GLOBAL: Final = Scope(ScopeKind.GLOBAL)
+_ENTRYPOINT_BLOCKING_SUSPECTS: Final = frozenset(
+    {
+        SuspectKind.NON_LITERAL_DYNAMIC_IMPORT,
+        SuspectKind.EXEC_EVAL,
+        SuspectKind.LAZY_MODULE_GETATTR,
+    }
+)
 
 
 def _basename(path: str) -> str:
@@ -231,6 +238,46 @@ def non_literal_dynamic_import(ctx: PolicyContext) -> Iterator[Finding]:
     )
 
 
+def _entrypoint_proof_failure(ctx: PolicyContext, path: str) -> str | None:
+    node = ctx.graph.nodes.get(path)
+    if node is None or node.kind is not NodeKind.MODULE or path not in ctx.facts:
+        return "it is not a parseable plain Python module"
+    if ctx.pytest_config.doctest_modules:
+        return "--doctest-modules can collect source modules"
+    if ctx.unparseable:
+        return "the repository contains unparseable Python files"
+    for source, facts in ctx.facts.items():
+        if any(suspect.kind in _ENTRYPOINT_BLOCKING_SUSPECTS for suspect in facts.suspects):
+            return f"{source} has an import-affecting dynamic construct"
+    target = ctx.graph.index_of[path]
+    incoming = ctx.graph.digraph.in_edges(target)
+    if incoming:
+        source = min(ctx.graph.digraph[src].path for src, _dst, _kind in incoming)
+        return f"{source} imports it"
+    return None
+
+
+def isolated_entrypoint_proof(ctx: PolicyContext) -> Iterator[Finding]:
+    """R019: every declared entry point needs a complete isolation proof."""
+    for path in ctx.config.isolated_entrypoints:
+        failure = _entrypoint_proof_failure(ctx, path)
+        if failure is None:
+            continue
+        yield Finding(
+            rule=RuleId.ISOLATED_ENTRYPOINT_UNPROVEN,
+            scope=_GLOBAL,
+            subject=path,
+            reason=(
+                f"{path} is declared as an isolated entry point but cannot be proven isolated: "
+                f"{failure}."
+            ),
+        )
+
+
+def _is_verified_isolated_entrypoint(ctx: PolicyContext, path: str) -> bool:
+    return path in ctx.config.isolated_entrypoints and _entrypoint_proof_failure(ctx, path) is None
+
+
 def sys_path_mutation(ctx: PolicyContext) -> Iterator[Finding]:
     """R008: mutating sys.path perturbs how every later import resolves.
 
@@ -253,6 +300,16 @@ def sys_path_mutation(ctx: PolicyContext) -> Iterator[Finding]:
                     reason=(
                         f"{path} mutates sys.path at import time, and conftests "
                         "execute unconditionally during collection."
+                    ),
+                )
+            elif path in changed and _is_verified_isolated_entrypoint(ctx, path):
+                yield Finding(
+                    rule=RuleId.SYS_PATH_MUTATION,
+                    scope=Scope(ScopeKind.GLOBAL_IF_REACHED, path),
+                    subject=path,
+                    reason=(
+                        f"{path} mutates sys.path at import time, but it is a verified "
+                        "isolated entry point and no test can reach it."
                     ),
                 )
             elif path in changed:
@@ -397,6 +454,7 @@ ALL_RULES: Final[tuple[RuleFn, ...]] = (
     changed_conftest,
     collection_altering_hook,
     non_literal_dynamic_import,
+    isolated_entrypoint_proof,
     sys_path_mutation,
     exec_eval,
     unparseable_file,

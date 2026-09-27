@@ -12,7 +12,7 @@ every Python behavior, so the boundary must be explicit, enumerated, and tested.
 
 ## Decision
 
-A fixed, ordered rule table (R001 to R018) turns everything the analysis cannot
+A fixed, ordered rule table (R001 to R019) turns everything the analysis cannot
 bound into findings. Every rule is evaluated on every run; the engine never
 short-circuits, so reports list every reason. Scopes:
 
@@ -33,7 +33,7 @@ short-circuits, so reports list every reason. Scopes:
 | R005 | changed non-root conftest.py | subtree |
 | R006 | conftest with collection-altering hooks or unresolvable first-party pytest_plugins | global |
 | R007 | non-literal dynamic import (importlib, __import__, non-literal sys.modules access) | closure-taint |
-| R008 | sys.path mutation (direct, site.addsitedir, pkgutil.extend_path, monkeypatch.syspath_prepend, pytester.syspathinsert) | import-time (module level or class body) in a conftest or changed plain module: global; import-time in an unchanged plain module: global-if-reached, the mutation leaks process-wide but only once something imports the module; function-level anywhere: closure-taint, it runs only if called |
+| R008 | sys.path mutation (direct, site.addsitedir, pkgutil.extend_path, monkeypatch.syspath_prepend, pytester.syspathinsert) | import-time (module level or class body) in a conftest or changed plain module: global; a changed verified isolated entry point or unchanged plain module: global-if-reached, the mutation leaks process-wide but only once something imports the module; function-level anywhere: closure-taint, it runs only if called |
 | R009 | exec, eval, or compile | closure-taint |
 | R010 | file that fails to parse | closure-taint |
 | R011 | import that looks first-party but does not resolve | closure-taint |
@@ -44,6 +44,7 @@ short-circuits, so reports list every reason. Scopes:
 | R016 | diff or base ref unavailable | global |
 | R017 | corrupt or version-mismatched cache (silent full rebuild) | rebuild |
 | R018 | any internal error | global |
+| R019 | declared isolated entry point that cannot be proven unimported and uncollectable | global |
 
 Deliberate non-triggers, because over-approximation already covers them: imports
 inside try/except ImportError, TYPE_CHECKING blocks, platform conditionals, and

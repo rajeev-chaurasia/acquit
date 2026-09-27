@@ -144,6 +144,30 @@ pythonpath = ["src"]
     ]
 
 
+def test_changed_verified_isolated_entrypoint_stays_selective(repo_builder: RepoBuilder) -> None:
+    repo_builder.write(
+        {
+            ".acquit.toml": 'isolated_entrypoints = ["scripts/import_data.py"]\n',
+            "scripts/import_data.py": "import sys\n\nsys.path.insert(0, 'src')\n",
+            "app.py": "VALUE = 1\n",
+            "tests/test_app.py": "import app\n\n\ndef test_app():\n    assert app.VALUE == 1\n",
+        }
+    )
+    base = repo_builder.commit("base")
+    repo_builder.write({"scripts/import_data.py": "import sys\n\nsys.path.insert(0, 'lib')\n"})
+    head = repo_builder.commit("change import script")
+
+    result = run_select(base, head, repo_builder.path)
+
+    assert result.decision.mode is SelectionMode.SELECTIVE
+    assert result.blocking_findings == ()
+    assert selected_paths(result.decision) == set()
+    assert skipped_paths(result.decision) == {"tests/test_app.py"}
+    assert RuleId.ISOLATED_ENTRYPOINT_UNPROVEN not in {
+        finding.rule for finding in result.outcome.findings
+    }
+
+
 def test_select_witnesses_verify_against_recomputed_closures(
     scenario_repo: ScenarioRepo,
 ) -> None:

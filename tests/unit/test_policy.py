@@ -3,6 +3,7 @@ import random
 import pytest
 
 from acquit.config import AcquitConfig, Waiver
+from acquit.graph.build import assemble_graph
 from acquit.graph.index import build_index, detect_roots
 from acquit.graph.model import NodeKind
 from acquit.graph.parse import ModuleFacts, parse_module_facts
@@ -10,6 +11,7 @@ from acquit.policy.engine import PolicyContext, PolicyOutcome, evaluate
 from acquit.policy.model import Finding, RuleId, Scope, ScopeKind
 from acquit.policy.rules import ALL_RULES
 from acquit.pytestmap.conftree import UNPARSEABLE_MARKER, ConftestFacts
+from acquit.pytestmap.discover import classify_file, discover_test_files
 from acquit.pytestmap.pytestcfg import DEFAULT_NORECURSEDIRS, DEFAULT_PYTHON_FILES, PytestConfig
 from acquit.vcs import ChangedFile, ChangeStatus
 
@@ -38,15 +40,40 @@ def make_ctx(
     pytest_config: PytestConfig | None = None,
     config: AcquitConfig | None = None,
 ) -> PolicyContext:
+    pytest_config = pytest_config or make_pytest_config()
+    all_files = tuple(
+        sorted(
+            set(files)
+            | set(kinds or {})
+            | set(facts or {})
+            | set(conftest_facts or {})
+            | set(unparseable)
+        )
+    )
+    test_files = frozenset(discover_test_files(all_files, pytest_config))
+    all_kinds = {
+        path: (kinds or {}).get(path, classify_file(path, pytest_config, test_files))
+        for path in all_files
+    }
+    index = build_index(all_files, detect_roots(all_files))
     return PolicyContext(
         changed=changed,
-        kinds=kinds or {},
+        kinds=all_kinds,
         facts=facts or {},
         conftest_facts=conftest_facts or {},
         unparseable=unparseable,
-        index=build_index(files, detect_roots(files)),
-        pytest_config=pytest_config or make_pytest_config(),
+        index=index,
+        pytest_config=pytest_config,
         config=config or AcquitConfig(),
+        graph=assemble_graph(
+            all_files,
+            all_kinds,
+            facts or {},
+            unparseable,
+            index,
+            conftest_facts or {},
+            pytest_config,
+        ),
     )
 
 
@@ -66,8 +93,8 @@ def findings_for(outcome: PolicyOutcome, rule: RuleId) -> tuple[Finding, ...]:
     return tuple(finding for finding in outcome.findings if finding.rule is rule)
 
 
-def test_registry_holds_all_fifteen_engine_rules() -> None:
-    assert len(ALL_RULES) == 15
+def test_registry_holds_all_sixteen_engine_rules() -> None:
+    assert len(ALL_RULES) == 16
 
 
 # R001 CHANGED_RESOURCE
@@ -357,6 +384,128 @@ def test_r008_changed_import_time_mutation_in_module_is_global() -> None:
 
     assert finding.scope == Scope(ScopeKind.GLOBAL)
     assert "changed and mutates sys.path" in finding.reason
+
+
+def test_r008_changed_verified_isolated_entrypoint_is_not_global() -> None:
+    path = "scripts/paths.py"
+    source = "import sys\n\nsys.path.append('vendored')\n"
+    ctx = make_ctx(
+        changed=(modified(path),),
+        files=(path,),
+        facts={path: facts_for(path, source)},
+        config=AcquitConfig(isolated_entrypoints=(path,)),
+    )
+
+    (finding,) = findings_for(evaluate(ctx), RuleId.SYS_PATH_MUTATION)
+
+    assert finding.scope == Scope(ScopeKind.GLOBAL_IF_REACHED, path)
+    assert "verified isolated entry point" in finding.reason
+    assert RuleId.ISOLATED_ENTRYPOINT_UNPROVEN not in fired_rules(evaluate(ctx))
+
+
+@pytest.mark.parametrize(
+    ("files", "facts", "unparseable", "expected"),
+    [
+        pytest.param(
+            ("scripts/paths.py", "tests/test_paths.py"),
+            {
+                "scripts/paths.py": facts_for(
+                    "scripts/paths.py", "import sys\nsys.path.append('x')\n"
+                ),
+                "tests/test_paths.py": facts_for("tests/test_paths.py", "import scripts.paths\n"),
+            },
+            (),
+            "tests/test_paths.py imports it",
+            id="test-importer",
+        ),
+        pytest.param(
+            ("scripts/paths.py", "pkg/loader.py"),
+            {
+                "scripts/paths.py": facts_for(
+                    "scripts/paths.py", "import sys\nsys.path.append('x')\n"
+                ),
+                "pkg/loader.py": facts_for("pkg/loader.py", "import scripts.paths\n"),
+            },
+            (),
+            "pkg/loader.py imports it",
+            id="first-party-importer",
+        ),
+        pytest.param(
+            ("scripts/paths.py", "pkg/dynamic.py"),
+            {
+                "scripts/paths.py": facts_for(
+                    "scripts/paths.py", "import sys\nsys.path.append('x')\n"
+                ),
+                "pkg/dynamic.py": facts_for(
+                    "pkg/dynamic.py", "import importlib\nimportlib.import_module(name)\n"
+                ),
+            },
+            (),
+            "pkg/dynamic.py has an import-affecting dynamic construct",
+            id="opaque-dynamic-import",
+        ),
+        pytest.param(
+            ("scripts/paths.py", "pkg/broken.py"),
+            {
+                "scripts/paths.py": facts_for(
+                    "scripts/paths.py", "import sys\nsys.path.append('x')\n"
+                )
+            },
+            ("pkg/broken.py",),
+            "the repository contains unparseable Python files",
+            id="unparseable-file",
+        ),
+    ],
+)
+def test_r019_rejects_unproven_isolated_entrypoint(
+    files: tuple[str, ...],
+    facts: dict[str, ModuleFacts],
+    unparseable: tuple[str, ...],
+    expected: str,
+) -> None:
+    path = "scripts/paths.py"
+    ctx = make_ctx(
+        files=files,
+        facts=facts,
+        unparseable=unparseable,
+        config=AcquitConfig(isolated_entrypoints=(path,)),
+    )
+
+    (finding,) = findings_for(evaluate(ctx), RuleId.ISOLATED_ENTRYPOINT_UNPROVEN)
+
+    assert finding.scope == Scope(ScopeKind.GLOBAL)
+    assert expected in finding.reason
+
+
+def test_r019_rejects_pytest_collected_entrypoint() -> None:
+    path = "scripts/test_paths.py"
+    ctx = make_ctx(
+        files=(path,),
+        facts={path: facts_for(path, "import sys\nsys.path.append('x')\n")},
+        config=AcquitConfig(isolated_entrypoints=(path,)),
+    )
+
+    (finding,) = findings_for(evaluate(ctx), RuleId.ISOLATED_ENTRYPOINT_UNPROVEN)
+
+    assert "not a parseable plain Python module" in finding.reason
+
+
+def test_r019_rejects_pytest_plugin_importer() -> None:
+    path = "scripts/paths.py"
+    ctx = make_ctx(
+        files=(path, "tests/test_plugin.py"),
+        facts={
+            path: facts_for(path, "import sys\nsys.path.append('x')\n"),
+            "tests/test_plugin.py": facts_for(
+                "tests/test_plugin.py", "pytest_plugins = ['scripts.paths']\n"
+            ),
+        },
+        config=AcquitConfig(isolated_entrypoints=(path,)),
+    )
+
+    (finding,) = findings_for(evaluate(ctx), RuleId.ISOLATED_ENTRYPOINT_UNPROVEN)
+
+    assert "tests/test_plugin.py imports it" in finding.reason
 
 
 # A function-level mutation runs only if called, so it taints its own module

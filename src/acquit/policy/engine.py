@@ -11,7 +11,7 @@ from fnmatch import fnmatch
 
 from acquit.config import AcquitConfig, Waiver
 from acquit.graph.index import ModuleIndex
-from acquit.graph.model import NodeKind
+from acquit.graph.model import BuiltGraph, NodeKind
 from acquit.graph.parse import ModuleFacts
 from acquit.policy.model import Finding
 from acquit.policy.rules import ALL_RULES
@@ -37,6 +37,7 @@ class PolicyContext:
     index: ModuleIndex
     pytest_config: PytestConfig
     config: AcquitConfig
+    graph: BuiltGraph
 
 
 @dataclass(frozen=True, slots=True)

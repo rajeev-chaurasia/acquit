@@ -61,6 +61,11 @@ above.
   another test having run. This is the one assumption acquit cannot check.
   Skipping test A can, in principle, change coupled test B's outcome. Suites
   that violate A4 are already at the mercy of pytest ordering and xdist.
+- A5. An `isolated_entrypoints` declaration is accepted only after the head
+  graph proves the declared script is a plain, uncollected Python module with
+  no first-party importer or plugin edge. Opaque dynamic importers and
+  unparseable files reject the declaration. The selection artifact binds that
+  proof to the analyzed tree fingerprint.
 
 ## Known limitations
 

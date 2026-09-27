@@ -237,6 +237,7 @@ def run_select(
         index=head_snapshot.index,
         pytest_config=pytest_config,
         config=acquit_config,
+        graph=head_snapshot.graph,
     )
     outcome = evaluate(ctx)
 
