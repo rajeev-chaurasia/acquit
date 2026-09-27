@@ -27,6 +27,7 @@ class RuleId(StrEnum):
     DIFF_UNAVAILABLE = "R016"
     CACHE_INVALID = "R017"
     INTERNAL_ERROR = "R018"
+    ISOLATED_ENTRYPOINT_UNPROVEN = "R019"
 
 
 class ScopeKind(StrEnum):

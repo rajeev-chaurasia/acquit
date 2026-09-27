@@ -23,6 +23,7 @@ def test_acquit_toml_top_level_keys(tmp_path: Path) -> None:
         """
         roots = ["src", "lib"]
         assume_inert = ["docs/**"]
+        isolated_entrypoints = ["scripts/import_data.py", "scripts/import_data.py"]
 
         [[waive]]
         rule = "R009"
@@ -33,6 +34,7 @@ def test_acquit_toml_top_level_keys(tmp_path: Path) -> None:
     config = load_config(tmp_path)
     assert config.roots == ("src", "lib")
     assert config.assume_inert == ("docs/**",)
+    assert config.isolated_entrypoints == ("scripts/import_data.py",)
     assert config.waivers == (VALID_WAIVER,)
 
 
@@ -204,6 +206,16 @@ def test_unknown_key_in_pyproject_section_raises(tmp_path: Path) -> None:
 def test_non_array_roots_raises(tmp_path: Path) -> None:
     _write(tmp_path / ".acquit.toml", 'roots = "src"\n')
     with pytest.raises(PolicyError, match="'roots' must be an array of strings"):
+        load_config(tmp_path)
+
+
+@pytest.mark.parametrize("entry", ["/scripts/run.py", "scripts/../run.py", "scripts/run.txt"])
+def test_isolated_entrypoints_require_normalized_relative_python_paths(
+    tmp_path: Path, entry: str
+) -> None:
+    _write(tmp_path / ".acquit.toml", f'isolated_entrypoints = ["{entry}"]\n')
+
+    with pytest.raises(PolicyError, match="normalized relative Python paths"):
         load_config(tmp_path)
 
 

@@ -119,7 +119,7 @@ Acquit occupies one niche: fail-closed static selection with a proof per skip, o
 
 ## FAQ
 
-**Static analysis cannot be sound in Python.** It cannot bound everything, and acquit does not try. Anything outside what static imports can bound (non-literal importlib, exec, sys.path mutation, changed conftests, dependency bumps, unparseable files, and the rest of an eighteen-rule table) fails closed to running more tests, up to everything. Soundness comes from the direction of the failure, not from the reach of the analysis. Measured: 198 replayed PRs, zero unsafe skips, every skip re-verified by `acquit replay` from first principles.
+**Static analysis cannot be sound in Python.** It cannot bound everything, and acquit does not try. Anything outside what static imports can bound (non-literal importlib, exec, sys.path mutation, changed conftests, dependency bumps, unparseable files, and the rest of a nineteen-rule table) fails closed to running more tests, up to everything. Soundness comes from the direction of the failure, not from the reach of the analysis. Measured: 198 replayed PRs, zero unsafe skips, every skip re-verified by `acquit replay` from first principles.
 
 **Why file-level selection instead of test-level?** Module-level imports are the unit static analysis can bound honestly. Function-level selection would require bounding fixture resolution and parametrization behavior, and a bound I cannot defend is a skip I will not make. Function-level granularity is on the research list, not in the product.
 
@@ -130,7 +130,7 @@ Acquit occupies one niche: fail-closed static selection with a proof per skip, o
 ## Documentation
 
 - [CLI reference](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/cli.md): every subcommand, flag, document schema, exit code, and the action's inputs and outputs
-- [Rule reference](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/rules.md): R001 to R018, with triggers, scopes, and the exact reason texts
+- [Rule reference](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/rules.md): R001 to R019, with triggers, scopes, and the exact reason texts
 - [Soundness contract](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/soundness.md): what "provably unaffected" means, its assumptions, and its limits
 - [Architecture decision records](https://github.com/rajeev-chaurasia/acquit/tree/main/docs/adr): fail-closed policy, static analysis, rustworkx, the action, the study, granularity, tree binding, and the precision work (re-export narrowing, constant folding, derived registries)
 - [The replay study](https://github.com/rajeev-chaurasia/acquit/blob/main/docs/study.md): 198 replayed PRs, and [how to re-run it](https://github.com/rajeev-chaurasia/acquit/blob/main/study/README.md)

@@ -158,6 +158,21 @@ def _docs_nudge(findings: Sequence[Mapping[str, Any]]) -> list[str] | None:
     ]
 
 
+def _sys_path_nudge(blockers: Sequence[Mapping[str, Any]]) -> list[str] | None:
+    mutators = [finding for finding in blockers if str(finding.get("rule", "")) == "R008"]
+    if not mutators:
+        return None
+    count = len(mutators)
+    noun = "mutation" if count == 1 else "mutations"
+    return [
+        "> [!TIP]",
+        f"> {count} import-time `sys.path` {noun} blocked selective execution.",
+        "> Move path setup to package entry points where possible. For standalone command scripts,",
+        "> `isolated_entrypoints` can be used only when acquit proves no first-party file imports",
+        "> or collects it, and no opaque dynamic importer prevents that proof.",
+    ]
+
+
 def _finding_key(finding: Mapping[str, Any]) -> tuple[str, str, str, str]:
     return (
         str(finding.get("rule", "")),
@@ -209,6 +224,9 @@ def _render_run_all(
     nudge = _docs_nudge(blockers)
     if nudge is not None:
         lines += ["", *nudge]
+    sys_path_nudge = _sys_path_nudge(blockers)
+    if sys_path_nudge is not None:
+        lines += ["", *sys_path_nudge]
     return lines
 
 

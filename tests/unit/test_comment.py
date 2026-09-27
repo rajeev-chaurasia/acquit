@@ -182,6 +182,16 @@ def test_run_all_comment_separates_blockers_from_non_blocking_findings() -> None
     assert body.index("`backend/scripts/benchmark_27b.py`") > body.index("<details>")
 
 
+def test_run_all_comment_explains_sys_path_remediation() -> None:
+    report = _run_all_report([_finding("R008", "scripts/seed.py")])
+
+    body = render_comment(report)
+
+    assert "1 import-time `sys.path` mutation blocked selective execution." in body
+    assert "`isolated_entrypoints`" in body
+    assert "no first-party file imports" in body
+
+
 def test_run_all_comment_without_findings_explains_full_impact() -> None:
     body = render_comment(_run_all_report([]))
 

@@ -7,12 +7,12 @@ rejected: a typo in a soundness-sensitive config must not be silently ignored.
 
 import tomllib
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from acquit.errors import PolicyError
 
-_KNOWN_KEYS = frozenset({"roots", "assume_inert", "narrowing", "waive"})
+_KNOWN_KEYS = frozenset({"roots", "assume_inert", "isolated_entrypoints", "narrowing", "waive"})
 _WAIVER_KEYS = ("rule", "glob", "justification")
 
 
@@ -33,6 +33,8 @@ class AcquitConfig:
     # Re-export narrowing (ADR 0008). Ships disabled; the rollout is
     # evidence-gated, and working-tree selections never narrow either way.
     narrowing: bool = False
+    # Standalone Python entry points subject to policy-time proof.
+    isolated_entrypoints: tuple[str, ...] = ()
 
 
 def load_config(repo_root: Path) -> AcquitConfig:
@@ -71,6 +73,7 @@ def _parse(data: dict[str, Any], source: str) -> AcquitConfig:
     return AcquitConfig(
         roots=_string_tuple(data.get("roots", []), key="roots", source=source),
         assume_inert=_string_tuple(data.get("assume_inert", []), key="assume_inert", source=source),
+        isolated_entrypoints=_entrypoint_tuple(data.get("isolated_entrypoints", []), source=source),
         waivers=_parse_waivers(data.get("waive", []), source=source),
         narrowing=_flag(data.get("narrowing", False), key="narrowing", source=source),
     )
@@ -80,6 +83,23 @@ def _string_tuple(value: Any, key: str, source: str) -> tuple[str, ...]:
     if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
         raise PolicyError(f"{source}: {key!r} must be an array of strings")
     return tuple(value)
+
+
+def _entrypoint_tuple(value: Any, source: str) -> tuple[str, ...]:
+    paths = _string_tuple(value, key="isolated_entrypoints", source=source)
+    for path in paths:
+        pure = PurePosixPath(path)
+        if (
+            pure.is_absolute()
+            or path != pure.as_posix()
+            or path in {".", ""}
+            or ".." in pure.parts
+            or pure.suffix != ".py"
+        ):
+            raise PolicyError(
+                f"{source}: isolated_entrypoints entries must be normalized relative Python paths"
+            )
+    return tuple(dict.fromkeys(paths))
 
 
 def _flag(value: Any, key: str, source: str) -> bool:
