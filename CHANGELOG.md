@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.3.0](https://github.com/rajeev-chaurasia/acquit/compare/v0.2.0...v0.3.0) (2026-09-27)
+## [0.3.0](https://github.com/rajeev-chaurasia/acquit/compare/v0.2.0...v0.3.0) (2026-09-28)
 
 
 ### Features
