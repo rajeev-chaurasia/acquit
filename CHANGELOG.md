@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/rajeev-chaurasia/acquit/compare/v0.2.0...v0.3.0) (2026-09-27)
+
+
+### Features
+
+* verify isolated entry points ([#21](https://github.com/rajeev-chaurasia/acquit/issues/21)) ([b8cdc43](https://github.com/rajeev-chaurasia/acquit/commit/b8cdc435fa0a26c3865f1f2292ab04254f828b5f))
+
 ## [0.2.0](https://github.com/rajeev-chaurasia/acquit/compare/v0.1.3...v0.2.0) (2026-09-05)
 
 
